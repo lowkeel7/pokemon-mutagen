@@ -3818,6 +3818,18 @@ static void DoBattleIntro(void)
             if (runPressed)
             {
                 battler = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
+                if (gBattleTypeFlags & BATTLE_TYPE_SAFARI)
+                {
+                    // The player has no battler in a Safari battle (its gBattleMons entry is
+                    // zeroed above), so the speed-based escape check can never succeed. Running
+                    // from the Safari Zone always works, exactly as HandleAction_SafariZoneRun does.
+                    gBattlerAttacker = battler;
+                    PlaySE(SE_FLEE);
+                    gCurrentTurnActionNumber = gBattlersCount;
+                    gBattleOutcome = B_OUTCOME_RAN;
+                    gBattleMainFunc = HandleEndTurn_RanFromBattle;
+                    return;
+                }
                 if (IsRunningFromBattleImpossible(battler) == BATTLE_RUN_SUCCESS && TryRunFromBattle(battler))
                 {
                     gBattleMainFunc = HandleEndTurn_RanFromBattle;
