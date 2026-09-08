@@ -2710,7 +2710,7 @@ static void Task_OnSelectedMon(u8 taskId)
             {
                 sStorage->state = 3;
             }
-            else if (sStorage->displayMonIsEgg)
+            else if (sStorage->displayMonIsEgg && !OW_PC_RELEASE_EGGS)
             {
                 sStorage->state = 5; // Cannot release an Egg.
             }
