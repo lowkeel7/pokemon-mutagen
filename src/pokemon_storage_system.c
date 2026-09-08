@@ -2879,12 +2879,14 @@ static void Task_WithdrawMon(u8 taskId)
             PrintMessage(MSG_PARTY_FULL);
             sStorage->state = 1;
         }
-        else if (IsBoxMonNuzlockeDead(StorageGetCurrentBox(), sCursorPosition))
+        else if (IsMovingMonNuzlockeDead()
+              || (!sIsMonBeingMoved && IsBoxMonNuzlockeDead(StorageGetCurrentBox(), sCursorPosition)))
         {
             PrintMessage(MSG_NUZLOCKE_FAINTED);
             sStorage->state = 1;
         }
-        else if (IsBoxMonOffType(StorageGetCurrentBox(), sCursorPosition))
+        else if (IsMovingMonOffType()
+              || (!sIsMonBeingMoved && IsBoxMonOffType(StorageGetCurrentBox(), sCursorPosition)))
         {
             PrintMessage(MSG_ONE_TYPE_BLOCKED);
             sStorage->state = 1;
