@@ -29,7 +29,7 @@ DragonsDen_Cavern_Trigger_ClairLeft::
 	lock
 	setflag FLAG_TEMP_HIDE_FOLLOWER 
 	playse SE_PIN
-	playbgm MUS_HG_CLAIR, TRUE
+	playbgm MUS_HG_CLAIR, FALSE
 	applymovement2 LOCALID_DRAGONSDEN2_CLAIR, Common_Movement_ExclamationMark
 	delay 55
 	waitmovement LOCALID_DRAGONSDEN2_CLAIR
@@ -50,7 +50,7 @@ DragonsDen_Cavern_Trigger_ClairLeft::
 DragonsDen_Cavern_Trigger_ClairMid::
 	lock 
 	playse SE_PIN
-	playbgm MUS_HG_CLAIR, TRUE
+	playbgm MUS_HG_CLAIR, FALSE
 	applymovement2 LOCALID_DRAGONSDEN2_CLAIR, Common_Movement_ExclamationMark
 	delay 55
 	waitmovement LOCALID_DRAGONSDEN2_CLAIR
@@ -69,7 +69,7 @@ DragonsDen_Cavern_Trigger_ClairMid::
 DragonsDen_Cavern_Trigger_ClairRight::
 	lock 
 	playse SE_PIN
-	playbgm MUS_HG_CLAIR, TRUE
+	playbgm MUS_HG_CLAIR, FALSE
 	applymovement2 LOCALID_DRAGONSDEN2_CLAIR, Common_Movement_ExclamationMark
 	delay 55
 	waitmovement LOCALID_DRAGONSDEN2_CLAIR
