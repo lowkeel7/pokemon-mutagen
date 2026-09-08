@@ -1,9 +1,14 @@
 MtSilver_1F_WaterfallRoom_hns_MapScripts::
 	map_script MAP_SCRIPT_ON_TRANSITION, MtSilver_1F_WaterfallRoom_OnTransition
-	map_script MAP_SCRIPT_ON_RESUME, SetTimeEncounters
 	map_script MAP_SCRIPT_ON_WARP_INTO_MAP_TABLE, MtSilver_1F_WaterfallRoom_OnWarp
 	map_script MAP_SCRIPT_ON_FRAME_TABLE, MtSilver_1F_WaterfallRoom_OnFrame
+	map_script MAP_SCRIPT_ON_RESUME, MtSilver_1F_WaterfallRoom_OnResume
 	.byte 0
+
+MtSilver_1F_WaterfallRoom_OnResume::
+	callnative SetTimeBasedEncounters
+	setescapewarp MAP_MT_SILVER_OUTSIDE_HNS, 17, 8
+	end
 
 MtSilver_1F_WaterfallRoom_OnWarp::
 	map_script_2 VAR_SINJOH_STORYLINE, 1, MtSilver_1F_WaterfallRoom_TurnPlayer
@@ -33,7 +38,7 @@ MtSilver_1F_WaterfallRoom_Text_Scientist:
 	.string "This is the entrance to the\n"
 	.string "unexplored branch... {PAUSE 0x0F}{PAUSE 0x0F}{PAUSE 0x0F}\p"
 	.string "Does it feel cold here to you?\p"
-	.string "Okay I'm going to leave now.\p"
+	.string "Okay, I'm going to leave now.\p"
 	.string "Good luck!$"
 
 MtSilver_1F_Movement_Scientist:
@@ -46,6 +51,7 @@ MtSilver_1F_Movement_Scientist:
 
 MtSilver_1F_WaterfallRoom_OnTransition: 
 	callnative SetTimeBasedEncounters
+	setescapewarp MAP_MT_SILVER_OUTSIDE_HNS, 17, 8
 	end
 
 MtSilver_1F_WaterfallRoom_EventScript_MaxPotion::

@@ -3254,7 +3254,11 @@ static void BattleStartClearSetData(void)
     gBattleStruct->runTries = 0;
     gBattleStruct->safariGoNearCounter = 0;
     gBattleStruct->safariPkblThrowCounter = 0;
+    // Species with a catch rate under 13 would truncate to a factor of 0, which
+    // zeroes the capture odds and leaves bait/rock unable to move it off 0.
     gBattleStruct->safariCatchFactor = gSpeciesInfo[GetMonData(&gEnemyParty[0], MON_DATA_SPECIES)].catchRate * 100 / 1275;
+    if (gBattleStruct->safariCatchFactor == 0)
+        gBattleStruct->safariCatchFactor = 1;
     gBattleStruct->safariEscapeFactor = 3;
     gBattleStruct->wildVictorySong = 0;
     // Amulet Coin applies as long as any party mon holds it, even if that mon never enters the battle.
@@ -3814,6 +3818,18 @@ static void DoBattleIntro(void)
             if (runPressed)
             {
                 battler = GetBattlerAtPosition(B_POSITION_PLAYER_LEFT);
+                if (gBattleTypeFlags & BATTLE_TYPE_SAFARI)
+                {
+                    // The player has no battler in a Safari battle (its gBattleMons entry is
+                    // zeroed above), so the speed-based escape check can never succeed. Running
+                    // from the Safari Zone always works, exactly as HandleAction_SafariZoneRun does.
+                    gBattlerAttacker = battler;
+                    PlaySE(SE_FLEE);
+                    gCurrentTurnActionNumber = gBattlersCount;
+                    gBattleOutcome = B_OUTCOME_RAN;
+                    gBattleMainFunc = HandleEndTurn_RanFromBattle;
+                    return;
+                }
                 if (IsRunningFromBattleImpossible(battler) == BATTLE_RUN_SUCCESS && TryRunFromBattle(battler))
                 {
                     gBattleMainFunc = HandleEndTurn_RanFromBattle;
