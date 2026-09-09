@@ -31,13 +31,13 @@ const struct HelpWindow gHelpWindowInfo[] =
     [HELP_TRADE_WINDOW] =
     {
         .header = COMPOUND_STRING("WARNING: COMPATIBILITY"),
-        .desc = COMPOUND_STRING("Attempting to link incorrectly may\n"
-                                "result in permanent damage to your\n"
-                                "save file.\n"
+        .desc = COMPOUND_STRING("Attempting to link incorrectly may result\n"
+                                "in permanent damage to your save file.\n"
                                 "Only link with another player if:\n"
                                 "You are both playing Heart & Soul.\n"
                                 "You are both on the same version.\n"
-                                "You both have the same challenge settings."
+                                "You both have the same challenge settings.\n"
+                                "You are NOT using any randomizer settings."
                             ),
         .headerFont = FONT_NORMAL,
         .descFont = FONT_SMALL,
