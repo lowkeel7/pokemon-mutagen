@@ -118,8 +118,8 @@
 #define VAR_UNUSED_HNS_0x40D8                           0x40D8 // Emerald VAR_SOOTOPOLIS_WALLACE_STATE - SootopolisCity/scripts.inc, linked for labels, map not in HnS build
 #define VAR_UNUSED_HNS_0x40D9                           0x40D9 // Emerald VAR_HAS_TALKED_TO_SEAFLOOR_CAVERN_ENTRANCE_GRUNT - SeafloorCavern_Entrance only
 #define VAR_UNUSED_HNS_0x40DA                           0x40DA // Emerald VAR_REGISTER_BIRCH_STATE - ProfBirchsLab / Route110, linked for labels, unreachable
-#define VAR_UNUSED_HNS_0x40DB                           0x40DB // Emerald VAR_UNUSED_0x40DB - no references in any build
-#define VAR_UNUSED_HNS_0x40DC                           0x40DC // Emerald VAR_UNUSED_0x40DC - no references in any build
+#define VAR_VERMILION_CITY_SAMSON                           0x40DB // Emerald VAR_UNUSED_0x40DB - no references in any build
+#define VAR_ROUTE28_SCIENTIST                           0x40DC // Emerald VAR_UNUSED_0x40DC - no references in any build
 
 // --- CONDITIONAL: Mystery Gift block. The only writer is ClearMysteryGiftVars()
 // --- in src/event_data.c, which sits inside #if FREE_MYSTERY_GIFT == FALSE.
