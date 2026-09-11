@@ -5631,6 +5631,10 @@ static void HandleEndTurn_BattleWon(void)
         case TRAINER_CLASS_ELITE_FOUR_HNS:
         case TRAINER_CLASS_CHAMPION_HNS:
         case TRAINER_CLASS_PKMN_TRAINER_1_HNS:
+        // Same for FR/LG, which has no separate league victory theme at all - its
+        // Elite Four and Champion share the Gym Leader one.
+        case TRAINER_CLASS_ELITE_FOUR_FRLG:
+        case TRAINER_CLASS_CHAMPION_FRLG:
         #if IS_HNS
             // Steven is an Emerald guest, so he keeps the Emerald league victory theme
             // to match the Emerald champion battle theme GetBattleBGM gives him. No
@@ -5640,6 +5644,8 @@ static void HandleEndTurn_BattleWon(void)
                 PlayBGM(MUS_VICTORY_LEAGUE);
             else
                 PlayBGM(MUS_HG_VICTORY_GYM_LEADER);
+        #elif IS_FRLG
+            PlayBGM(MUS_RG_VICTORY_GYM_LEADER);
         #else
             PlayBGM(MUS_VICTORY_LEAGUE);
         #endif
@@ -5655,8 +5661,11 @@ static void HandleEndTurn_BattleWon(void)
         case TRAINER_CLASS_LEADER:
         case TRAINER_CLASS_LEADER_HNS:
         case TRAINER_CLASS_LEADER_KANTO_HNS:
+        case TRAINER_CLASS_LEADER_FRLG:
         #if IS_HNS
             PlayBGM(MUS_HG_VICTORY_GYM_LEADER);
+        #elif IS_FRLG
+            PlayBGM(MUS_RG_VICTORY_GYM_LEADER);
         #else
             PlayBGM(MUS_VICTORY_GYM_LEADER);
         #endif

@@ -8809,7 +8809,7 @@ Name: WILL
 Class: Elite Four Hns
 Pic: Elite Four Will Hns
 Gender: Male
-Music: Elite Four
+Music: Hg Elite Four
 Double Battle: No
 AI: Basic Trainer
 Mugshot: Pink
@@ -8860,7 +8860,7 @@ Name: WILL
 Class: Elite Four Hns
 Pic: Elite Four Will Hns
 Gender: Male
-Music: Elite Four
+Music: Hg Elite Four
 Double Battle: No
 AI: Basic Trainer
 Mugshot: Pink
@@ -8919,7 +8919,7 @@ Name: BRUNO
 Class: Elite Four Hns
 Pic: Elite Four Bruno Hns
 Gender: Male
-Music: Elite Four
+Music: Hg Elite Four
 Double Battle: No
 AI: Basic Trainer
 Mugshot: Orange
@@ -8970,7 +8970,7 @@ Name: BRUNO
 Class: Elite Four Hns
 Pic: Elite Four Bruno Hns
 Gender: Male
-Music: Elite Four
+Music: Hg Elite Four
 Double Battle: No
 AI: Basic Trainer
 Mugshot: Orange
@@ -9029,7 +9029,7 @@ Name: KAREN
 Class: Elite Four Hns
 Pic: Elite Four Karen Hns
 Gender: Male
-Music: Elite Four
+Music: Hg Elite Four
 Double Battle: No
 AI: Basic Trainer
 Mugshot: Yellow
@@ -9080,7 +9080,7 @@ Name: KAREN
 Class: Elite Four Hns
 Pic: Elite Four Karen Hns
 Gender: Male
-Music: Elite Four
+Music: Hg Elite Four
 Double Battle: No
 AI: Basic Trainer
 Mugshot: Yellow
@@ -9139,7 +9139,7 @@ Name: KOGA
 Class: Elite Four Hns
 Pic: Elite Four Koga Hns
 Gender: Male
-Music: Elite Four
+Music: Hg Elite Four
 Double Battle: No
 AI: Basic Trainer
 Mugshot: Purple
@@ -9190,7 +9190,7 @@ Name: KOGA
 Class: Elite Four Hns
 Pic: Elite Four Koga Hns
 Gender: Male
-Music: Elite Four
+Music: Hg Elite Four
 Double Battle: No
 AI: Basic Trainer
 Mugshot: Purple
@@ -13418,7 +13418,7 @@ Name: SAMSON OAK
 Class: Professor Hns
 Pic: Samson Oak Hns
 Gender: Male
-Music: Elite Four
+Music: Rg Gym Leader
 Double Battle: No
 AI: Smart Trainer
 Mugshot: Green
@@ -15637,7 +15637,7 @@ Name: WILL
 Class: Elite Four Hns
 Pic: Elite Four Will Hns
 Gender: Male
-Music: Elite Four
+Music: Hg Elite Four
 Double Battle: No
 AI: Smart Trainer / Prediction
 Mugshot: Pink
@@ -15701,7 +15701,7 @@ Name: KOGA
 Class: Elite Four Hns
 Pic: Elite Four Koga Hns
 Gender: Male
-Music: Elite Four
+Music: Hg Elite Four
 Double Battle: No
 AI: Smart Trainer / Prediction
 Mugshot: Purple
@@ -15764,7 +15764,7 @@ Name: BRUNO
 Class: Elite Four Hns
 Pic: Elite Four Bruno Hns
 Gender: Male
-Music: Elite Four
+Music: Hg Elite Four
 Double Battle: No
 AI: Smart Trainer / Prediction
 Mugshot: Orange
@@ -15825,7 +15825,7 @@ Name: KAREN
 Class: Elite Four Hns
 Pic: Elite Four Karen Hns
 Gender: Male
-Music: Elite Four
+Music: Hg Elite Four
 Double Battle: No
 AI: Smart Trainer / Prediction
 Mugshot: Yellow
