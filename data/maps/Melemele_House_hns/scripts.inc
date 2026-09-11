@@ -7,12 +7,13 @@ Melemele_House_hns_MapScripts_MAP_SCRIPT_ON_TRANSITION:
 	end
 
 Alola_Melemele_Pokecenter_Map::
-	lock
-	setvar VAR_0x8000, 0
+	lockall
+	setvar VAR_0x8000, 0 @ SCREENSHOT_ALOLA_MAP
 	msgbox Alola_Melemele_Pokecenter_Map_Text_0, MSGBOX_DEFAULT
+	closemessage
 	callnative OpenScreenshotsFromScript
 	waitstate
-	release
+	releaseall
 	end
 
 Alola_Melemele_Pokecenter_AceTrainer::

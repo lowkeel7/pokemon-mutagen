@@ -20,12 +20,13 @@ NewSinjoh_EventScript_Artist::
 	end
 
 NewSinjoh_PokemonCenter_hns_Map::
-	lock
-	setvar VAR_0x8000, 1
+	lockall
+	setvar VAR_0x8000, 1 @ SCREENSHOT_SINJOH_MAP
 	msgbox NewSinjoh_PokemonCenter_hns_Text_0, MSGBOX_DEFAULT
+	closemessage
 	callnative OpenScreenshotsFromScript
 	waitstate
-	release
+	releaseall
 	end
 
 NewSinjoh_Text_Artist:
