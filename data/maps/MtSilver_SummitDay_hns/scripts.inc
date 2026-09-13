@@ -35,7 +35,7 @@ MtSilver_SummitDay_EventScript_Red::
 	goto_if_ge VAR_SINJOH_STORYLINE, 13, MtSilver_SummitDay_EventScript_RedPostOBC
 
 MtSilver_SummitDay_EventScript_RedStandard::
-	trainerbattle_no_intro TRAINER_RED_2_HNS, MtSilver_SummitDay_Text_RedBeaten
+	trainerbattle_no_intro TRAINER_RED_HNS, MtSilver_SummitDay_Text_RedBeaten
 	goto MtSilver_SummitDay_EventScript_RedOnDefeat
 
 MtSilver_SummitDay_EventScript_RedPostOBC::

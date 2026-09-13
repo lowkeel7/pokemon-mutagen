@@ -10386,7 +10386,7 @@ IVs: 31 HP / 31 Atk / 31 Def / 31 SpA / 31 SpD / 31 Spe
 - Stone Edge
 - Fire Fang
 
-=== TRAINER_RED_2_HNS ===
+=== TRAINER_RED_HNS ===
 Name: RED
 Class: Pkmn Trainer 1 Hns
 Pic: Red Hns
@@ -10405,7 +10405,7 @@ IVs: 31 HP / 31 Atk / 31 Def / 31 SpA / 31 SpD / 31 Spe
 - Double Team
 
 Snorlax @ Leftovers
-Level: 75
+Level: 77
 IVs: 31 HP / 31 Atk / 31 Def / 31 SpA / 31 SpD / 31 Spe
 - Belly Drum
 - Curse
@@ -10413,7 +10413,7 @@ IVs: 31 HP / 31 Atk / 31 Def / 31 SpA / 31 SpD / 31 Spe
 - Earthquake
 
 Charizard @ Charcoal
-Level: 77
+Level: 79
 IVs: 31 HP / 31 Atk / 31 Def / 31 SpA / 31 SpD / 31 Spe
 - Fire Blast
 - Aerial Ace
@@ -10421,7 +10421,7 @@ IVs: 31 HP / 31 Atk / 31 Def / 31 SpA / 31 SpD / 31 Spe
 - Steel Wing
 
 Venusaur @ Miracle Seed
-Level: 77
+Level: 79
 IVs: 31 HP / 31 Atk / 31 Def / 31 SpA / 31 SpD / 31 Spe
 - Petal Blizzard
 - Double Edge
@@ -10429,7 +10429,7 @@ IVs: 31 HP / 31 Atk / 31 Def / 31 SpA / 31 SpD / 31 Spe
 - Leech Seed
 
 Blastoise @ Quick Claw
-Level: 77
+Level: 79
 IVs: 31 HP / 31 Atk / 31 Def / 31 SpA / 31 SpD / 31 Spe
 - Ice Beam
 - Hydro Pump
@@ -15952,7 +15952,7 @@ Items: Full Restore / Full Restore
 
 Pikachu-Starter @ Light Ball  
 Ability: Lightning Rod
-Level: 95
+Level: 100
 - Volt Tackle  
 - Surf  
 - Iron Tail  
@@ -15960,7 +15960,7 @@ Level: 95
 
 Snorlax @ Chesto Berry  
 Ability: Immunity  
-Level: 81
+Level: 85
 - Belly Drum  
 - Earthquake  
 - Rest  
@@ -15968,7 +15968,7 @@ Level: 81
 
 Charizard  
 Ability: Blaze  
-Level: 83  
+Level: 87  
 - Fire Blast  
 - Seismic Toss  
 - Outrage  
@@ -15976,7 +15976,7 @@ Level: 83
 
 Venusaur @ Blunder Policy  
 Ability: Chlorophyll  
-Level: 84  
+Level: 87  
 Tera Type: Grass  
 EVs: 252 Spe  
 IVs: 0 Atk  
@@ -15987,7 +15987,7 @@ IVs: 0 Atk
 
 Blastoise @ Leftovers  
 Ability: Torrent  
-Level: 82
+Level: 86
 - Hydro Cannon  
 - Skull Bash  
 - Ice Beam  
@@ -15995,7 +15995,7 @@ Level: 82
 
 Tauros-Paldea-Combat @ Sitrus Berry  
 Ability: Cud Chew  
-Level: 81  
+Level: 85  
 Tera Type: Fighting  
 - Raging Bull  
 - Wild Charge  

@@ -474,7 +474,7 @@
 #define TRAINER_RIVAL_TOTODILE_5_HNS                  461
 #define TRAINER_RIVAL_TOTODILE_6_HNS                  462
 #define TRAINER_RIVAL_TOTODILE_7_HNS                  463
-#define TRAINER_RED_2_HNS                             464
+#define TRAINER_RED_HNS                             464
 #define TRAINER_EUSINE_HNS                            465
 #define TRAINER_GIOVANNI_HNS                          466
 #define TRAINER_PROTON_1_HNS                          467
