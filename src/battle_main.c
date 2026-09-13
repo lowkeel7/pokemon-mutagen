@@ -5935,7 +5935,10 @@ static void HandleEndTurn_FinishBattle(void)
             {
                 // An off-type mon under the One Type Challenge could never have been
                 // caught, so it must not burn the route's Nuzlocke encounter.
-                if (!NuzlockeIsSpeciesClauseActive && !OneTypeChallengeCaptureBlocked)
+                // The Safari Zone / Bug Contest suspend the one-encounter-per-zone
+                // rule, so a catch there must not burn the zone either.
+                if (!NuzlockeIsSpeciesClauseActive && !OneTypeChallengeCaptureBlocked
+                 && !IsNuzlockeCaptureSuspended())
                     NuzlockeFlagSet(NuzlockeGetCurrentRegionMapSectionId());
             }
             NuzlockeIsCaptureBlocked = FALSE;
