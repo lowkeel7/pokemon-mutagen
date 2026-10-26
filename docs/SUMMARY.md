@@ -2,7 +2,7 @@
 
 - [README](./README.md)
 - [FEATURES](./FEATURES.md)
-- [Pokérom]()
+- [Pokémon Mutagen]()
     - [Backlog](./pokerom/BACKLOG.md)
     - [Provenance](./pokerom/PROVENANCE.md)
 - [Installation](./INSTALL.md)

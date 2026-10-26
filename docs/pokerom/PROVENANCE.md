@@ -10,3 +10,4 @@ pret pokeemerald → rh-hideout pokeemerald-expansion → Modern Emerald (resete
 ## Imported work
 | What | From | Commit / version | Author(s) | Terms |
 |---|---|---|---|---|
+| CI that builds only `hns` and reports ROM fill; BPS patch script (adapted: macOS-portable, renamed cache) | HnS+ (Marcogn/pokehns-expansion-plus) | 08b2f86, 3769c5a, 6701618, 209a8f1 | Marcogn + Claude Code | unstated (public repo, no license) |
