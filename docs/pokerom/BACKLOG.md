@@ -74,7 +74,7 @@ P4 deep redesigns + content. Nothing deep lands before P2 (it multiplies merge c
 | SG-06 | Signature moves: each species has a group of 2–4 and picks one at the relearner (swappable, like an ability); some transfer through a third-type match or a stone | M | per-species tables + relearner | design (the per-species groups) |
 | SG-07 | More abilities, more moves | M each | RHH new-move/ability docs | design (list needed) |
 | SG-08 | Held items boost move families (Punching Glove, Leek → slash, opt. Grass) | S each | move flags punching/slicing/… | todo |
-| SG-09 | ~60 custom items on ~6 effect templates (grant ability, boost move family, add third type, evolve/form, crafting ingredient, stat/misc); each item is a data row | M + C | build the template hooks once (ability-from-item hook first), then items as data + icons | design (assign each item a template) |
+| SG-09 | ~60 custom items on ~6 effect templates (grant ability, boost move family, add third type, evolve/form, crafting ingredient, stat/misc); each item is a data row | M + C | build the template hooks once (ability-from-item hook first), then items as data + icons | design: draft in [design/items.md](design/items.md) |
 | SG-10 | Any Pokémon uses other Pokémon's Mega stones / type stones | M | HnS+ `claude/mega-type-stones` branch; needs Megas on (space) | design |
 | SG-11 | Permanent Mega, optional revert | M | form-change revert rules | todo after SG-10 |
 | SG-12 | Albino variants + curated recolor/shiny palettes | M | 1 spare bit per variant; build-time palette gen | design ❓ space |
@@ -94,10 +94,10 @@ P4 deep redesigns + content. Nothing deep lands before P2 (it multiplies merge c
 
 | ID | Feature | Tier | Prior art / hook | Status |
 |---|---|---|---|---|
-| DP-01 | Type tree as a layer: the 18 types stay; each type maps to a root (Mana / Chi / Spirit / Vibration) that adds one matchup step on top of the chart; about 6 new subtypes (Air, Voice/Noise, Mist, Telekinesis, Spirit, Draco fire). Total stays ≤ 32 (fits SG-01's 5 bits) | L | `gTypeEffectivenessTable`, `GetTypeModifier`, AI, type icons; ruleset toggle | design (root chart + subtype list) |
-| DP-02 | Physical / special subcategories (blunt, slash, stab, wave / mana, chi, vibration, spirit) | L | move flags as head start | design |
+| DP-01 | Type tree as a layer: the 18 types stay; each type maps to a root (Mana / Chi / Spirit / Vibration) that adds one matchup step on top of the chart; about 6 new subtypes (Air, Voice/Noise, Mist, Telekinesis, Spirit, Draco fire). Total stays ≤ 32 (fits SG-01's 5 bits) | L | `gTypeEffectivenessTable`, `GetTypeModifier`, AI, type icons; ruleset toggle | design: draft in [design/type-roots.md](design/type-roots.md) |
+| DP-02 | Physical / special subcategories (blunt, slash, stab, wave / mana, chi, vibration, spirit) | L | move flags as head start | design: draft in [design/type-roots.md](design/type-roots.md) |
 | DP-03 | Move hierarchy (priority rules) | M | `GetBattleMovePriority` | design |
-| DP-04 | Status escalation: the same status again upgrades it (paralysis → prone, poison → septic, sleep → coma); bleed is a poison variant from slicing moves. One in-battle tier bit per battler, no save cost | L | status bits, battle scripts, AI | design (tier effects + numbers) |
+| DP-04 | Status escalation: the same status again upgrades it (paralysis → prone, poison → septic, sleep → coma); bleed is a poison variant from slicing moves. One in-battle tier bit per battler, no save cost | L | status bits, battle scripts, AI | design: draft in [design/statuses.md](design/statuses.md) |
 | DP-05 | Equip slots, second held item, permanent equips (Marowak bone club) | L | save struct + battle hooks | design ❓ save budget |
 | DP-06 | Item binding (Slowbro + Shellder, Girafarig) | L | with DP-05 | design |
 | DP-07 | Crafting / alchemy (combo items: Axe of Hax, Fortified Leaf Blade) | M | recipe table + menu | design |
