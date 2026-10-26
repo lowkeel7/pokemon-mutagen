@@ -27,15 +27,28 @@ mGBA core on a phone**. Desktop mGBA is the dev tool, not the target. So:
 ```sh
 make hns -j$(sysctl -n hw.ncpu)        # → pokehns.gba. Plain `make` builds Emerald, not HnS.
 make release BUILD=hns                 # → pokehns-release.gba. `make hns release` silently builds Emerald.
-make check BUILD=hns TESTS="Quick Claw"   # headless battle tests (needs `brew install coreutils`)
+make check BUILD=hns TESTS="Quick Claw"   # headless battle tests; without TESTS all 5,100+
+tools/make_patch.sh pokehns-release.gba   # → BPS against clean Emerald, rebuilt from pret and SHA-1 checked
+tools/playtest/playtest.py --rom pokehns.gba --session /tmp/pt --fresh @tools/playtest/smoke.txt
 ```
 
-No devkitPro? `tools/docker_build.sh <ref> [make args]` builds a committed ref in an Ubuntu
-container with CI's packages, writes `build/docker/<ref>/`, and prints the ROM fill.
-
+- **The toolchain goes on `PATH`.** Naming it only through `DEVKITARM` or `TOOLCHAIN=` fails on
+  macOS, whose make is GNU Make 3.81: its `$(shell)` calls don't see the Makefile's `export PATH`
+  and it has no `.SHELLSTATUS`, so `make generated` fails silently and the build dies later on
+  `data/battle_partners.h: No such file or directory`. No-sudo route: unpack ARM's
+  `arm-gnu-toolchain-13.2.rel1-darwin-arm64-arm-none-eabi.tar.xz` (the GCC that CI's Ubuntu
+  packages are built from) anywhere and put its `bin/` on `PATH`. No toolchain at all?
+  `tools/docker_build.sh <ref> [make args]` builds a committed ref in an Ubuntu container.
+- `make check` runs each test ROM under `stdbuf -oL`; on macOS that is coreutils'
+  (`brew install coreutils`, then `PATH=$(brew --prefix)/opt/coreutils/libexec/gnubin:$PATH`).
+  Many RHH tests fail at 2.0.6 (BACKLOG TS-01), so compare the failing set before and after your
+  change: a test that newly fails is yours.
 - The variant is `$(or $(BUILD),$(MAKECMDGOALS))` (Makefile:21-27). Combine goals only with `BUILD=hns`.
-- Test in mGBA (`mgba -g` for gdb). Look at the screen after every menu step, and verify the
-  feature you touched with a case that fails without your change.
+- **Play it headless.** `tools/playtest/playtest.py` runs the ROM in RetroArch's mGBA libretro core
+  (the core the phone target uses): scripted buttons, screenshots, `gMain.callback2` by name, and
+  save RAM that survives a power cycle. `smoke.txt` is boot → new game → save → power cycle →
+  continue. Look at the screen after every menu step, and verify the feature you touched with a
+  case that fails without your change. Desktop mGBA (`mgba -g` for gdb) works too.
 - An unbalanced `#if`/`#endif` shows up as "used but never defined" on unrelated functions.
 
 ## 2. The rule: every Pokerom mechanic is a toggle, and zero means HnS
