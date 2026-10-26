@@ -8,6 +8,9 @@ extern const bool8 gTestRunnerHeadless;
 #define gTestRunnerHeadless FALSE
 #endif
 extern const bool8 gTestRunnerSkipIsFail;
+#if TESTING
+extern const bool8 gTestRunnerSkipMessages;
+#endif
 
 #if TESTING
 

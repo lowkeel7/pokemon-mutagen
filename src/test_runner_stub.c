@@ -11,3 +11,8 @@ const bool8 gTestRunnerEnabled = FALSE;
 const bool8 gTestRunnerHeadless = FALSE;
 #endif
 const bool8 gTestRunnerSkipIsFail = FALSE;
+#if TESTING
+// `make check TEST_SKIP_MESSAGES=1` patches this: MESSAGE() expectations are dropped, because
+// HnS prints classic battle text where RHH's tests expect Gen 5+ lines (BACKLOG TS-01).
+const bool8 gTestRunnerSkipMessages = FALSE;
+#endif
