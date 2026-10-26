@@ -73,3 +73,4 @@ tools/mid2gbs/.venv
 .clean-room/
 .claude/settings.local.json
 .env*
+*.bps

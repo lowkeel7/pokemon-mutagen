@@ -3,19 +3,25 @@ name: CI
 on:
   push:
     branches:
-      - master
-      - upcoming
+      - main
+      - pokerom/dev
   pull_request:
 
 env:
   GAME_REVISION: 0
   GAME_LANGUAGE: ENGLISH
   COMPARE: 0
-  UNUSED_ERROR: 1
+  # 0, as in the build that produces the delivered ROM: HnS leaves ~40 unused
+  # functions and variables behind its IS_HNS switches (15 files), so 1 fails
+  # on code nobody calls rather than on anything a change broke.
+  UNUSED_ERROR: 0
   DEPRECATED_ERROR: 1
 
 jobs:
-  build-emerald:
+  # This fork ships one ROM, `make hns`. The inherited Emerald/FireRed/LeafGreen/
+  # release/test jobs never built it (HnS+ found them red on a clean HnS 2.0.6;
+  # recheck before reviving any).
+  build-hns:
     if: github.actor != 'allcontributors[bot]'
     runs-on: ubuntu-latest
     steps:
@@ -47,167 +53,36 @@ jobs:
             tools/wav2agb/wav2agb
           key: tools-${{ runner.os }}-${{ hashFiles('tools/*/Makefile', 'tools/**/*.c', 'tools/**/*.cpp', 'tools/**/*.h') }}
 
-      - name: ROM (Emerald)
-        env:
-          GAME_VERSION: EMERALD
-        run: make -j$(nproc) -O all
+      - name: ROM (HnS)
+        run: make hns -j$(nproc) -O
 
-  build-firered:
-    if: github.actor != 'allcontributors[bot]'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install binutils
+      - name: ROM size
         run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends binutils-arm-none-eabi gcc-arm-none-eabi libnewlib-arm-none-eabi libpng-dev python3
-
-      - name: Cache build tools
-        uses: actions/cache@v4
-        with:
-          path: |
-            tools/bin2c/bin2c
-            tools/gbafix/gbafix
-            tools/gbagfx/gbagfx
-            tools/jsonproc/jsonproc
-            tools/mapjson/mapjson
-            tools/mid2agb/mid2agb
-            tools/preproc/preproc
-            tools/ramscrgen/ramscrgen
-            tools/rsfont/rsfont
-            tools/scaninc/scaninc
-            tools/trainerproc/trainerproc
-            tools/compresSmol/compresSmol
-            tools/compresSmol/compresSmolTilemap
-            tools/wav2agb/wav2agb
-          key: tools-${{ runner.os }}-${{ hashFiles('tools/*/Makefile', 'tools/**/*.c', 'tools/**/*.cpp', 'tools/**/*.h') }}
-
-      - name: ROM (Firered)
-        run: make firered -j$(nproc) -O
-
-  build-leafgreen:
-    if: github.actor != 'allcontributors[bot]'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install binutils
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends binutils-arm-none-eabi gcc-arm-none-eabi libnewlib-arm-none-eabi libpng-dev python3
-
-      - name: Cache build tools
-        uses: actions/cache@v4
-        with:
-          path: |
-            tools/bin2c/bin2c
-            tools/gbafix/gbafix
-            tools/gbagfx/gbagfx
-            tools/jsonproc/jsonproc
-            tools/mapjson/mapjson
-            tools/mid2agb/mid2agb
-            tools/preproc/preproc
-            tools/ramscrgen/ramscrgen
-            tools/rsfont/rsfont
-            tools/scaninc/scaninc
-            tools/trainerproc/trainerproc
-            tools/compresSmol/compresSmol
-            tools/compresSmol/compresSmolTilemap
-            tools/wav2agb/wav2agb
-          key: tools-${{ runner.os }}-${{ hashFiles('tools/*/Makefile', 'tools/**/*.c', 'tools/**/*.cpp', 'tools/**/*.h') }}
-
-      - name: ROM (Leafgreen)
-        run: make leafgreen -j$(nproc) -O
-
-  release:
-    if: github.actor != 'allcontributors[bot]'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install binutils
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends binutils-arm-none-eabi gcc-arm-none-eabi libnewlib-arm-none-eabi libpng-dev python3
-
-      - name: Cache build tools
-        uses: actions/cache@v4
-        with:
-          path: |
-            tools/bin2c/bin2c
-            tools/gbafix/gbafix
-            tools/gbagfx/gbagfx
-            tools/jsonproc/jsonproc
-            tools/mapjson/mapjson
-            tools/mid2agb/mid2agb
-            tools/preproc/preproc
-            tools/ramscrgen/ramscrgen
-            tools/rsfont/rsfont
-            tools/scaninc/scaninc
-            tools/trainerproc/trainerproc
-            tools/compresSmol/compresSmol
-            tools/compresSmol/compresSmolTilemap
-            tools/wav2agb/wav2agb
-          key: tools-${{ runner.os }}-${{ hashFiles('tools/*/Makefile', 'tools/**/*.c', 'tools/**/*.cpp', 'tools/**/*.h') }}
-
-      - name: Release
-        env:
-          GAME_VERSION: EMERALD
-        run: make -j$(nproc) release
-
-  test:
-    if: github.actor != 'allcontributors[bot]'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install binutils
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends binutils-arm-none-eabi gcc-arm-none-eabi libnewlib-arm-none-eabi libpng-dev python3
-
-      - name: Cache build tools
-        uses: actions/cache@v4
-        with:
-          path: |
-            tools/bin2c/bin2c
-            tools/gbafix/gbafix
-            tools/gbagfx/gbagfx
-            tools/jsonproc/jsonproc
-            tools/mapjson/mapjson
-            tools/mid2agb/mid2agb
-            tools/preproc/preproc
-            tools/ramscrgen/ramscrgen
-            tools/rsfont/rsfont
-            tools/scaninc/scaninc
-            tools/trainerproc/trainerproc
-            tools/compresSmol/compresSmol
-            tools/compresSmol/compresSmolTilemap
-            tools/wav2agb/wav2agb
-            tools/patchelf/patchelf
-            tools/mgba-rom-test-hydra/mgba-rom-test-hydra
-          key: tools-check-${{ runner.os }}-${{ hashFiles('tools/*/Makefile', 'tools/**/*.c', 'tools/**/*.cpp', 'tools/**/*.h') }}
-
-      - name: Test
-        env:
-          GAME_VERSION: EMERALD
-          TEST: 1
-        run: make -j$(nproc) check
+          # The ROM is padded to 32 MiB, so measure the used part: everything
+          # before the trailing run of 0xFF padding. Warn from 98%, fail from
+          # 99.5%: Megas alone measured 99.46% in HnS+, which
+          # must be visible but is still a ROM that fits.
+          set -o pipefail  # or tee would hide python's exit code
+          python3 - <<'PY' | tee -a "$GITHUB_STEP_SUMMARY"
+          import sys
+          d = open('pokehns.gba', 'rb').read()
+          used = len(d.rstrip(b'\xff'))
+          pct = 100 * used / len(d)
+          msg = f'{used} of {len(d)} bytes used ({pct:.2f}%), {len(d) - used} free'
+          if pct >= 99.5:
+              print(f'::error::ROM almost full: {msg}')
+              sys.exit(1)
+          print(f'::warning::ROM above 98%: {msg}' if pct >= 98 else msg)
+          PY
 
   # Gate job: satisfies the "build" branch protection rule.
-  # Passes only when all parallel build/test jobs succeed.
   build:
     if: github.actor != 'allcontributors[bot]'
     runs-on: ubuntu-latest
-    needs: [build-emerald, build-firered, build-leafgreen, release, test]
+    needs: [build-hns]
     steps:
       - name: All builds passed
-        run: echo "All builds and tests passed."
+        run: echo "HnS build passed."
 
   docs_validate:
     if: github.actor != 'allcontributors[bot]'
