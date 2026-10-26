@@ -50,6 +50,7 @@ P4 deep redesigns + content. Nothing deep lands before P2 (it multiplies merge c
 | QW-24 | Every HnS+ feature, each behind a toggle (off = HnS): quest book, pause strip, box sort/search, DexNav, overworld wild Pokémon, level scaling, battle/OW speed-up, SwSh party menu, Dark UI, Candy Jar, Fast HMs, battle music theme, Frostbite, item description box, nickname/wild-battle toggles, Red's Path | exists | `hnsplus-pick` | todo |
 | QW-25 | Save profiles + version control (tree off a common ancestor) | S | outside the ROM: git repo of `.sav` files | todo |
 | HW-01 | Release gate on hardware + phone: RetroArch mGBA core on a phone and a flash cart; save type, RTC/fake RTC, 60 fps, 10-minute play (CLAUDE.md §0) | S | `make release BUILD=hns`, debug menus `DISABLED_ON_RELEASE`; desk pre-check: `tools/playtest` smoke on the release ROM (same libretro core as the phone) | todo (every release) |
+| TS-01 | RHH's battle tests as a pass/fail gate. At 2.0.6 + the engine fixes 1,924 of 5,130 fail: 1,738 `Unmatched MESSAGE` (HnS prints classic battle text, "restored HP using its Rain Dish!", where the tests expect Gen 5+ lines), 103 probability tolerances, 48 value mismatches (about 20 are givemon/daycare/Pokérus tests that get species 0), 11 "ball requires explicit party index", 10 animation, 3 AI moves. HnS's RECOMMENDED mode bits move only 38 results, so zeroed challenge settings aren't the cause | S | a test-only switch that skips `MESSAGE()` matching, then each remaining failure fixed or marked `KNOWN_FAILING` with its reason, so a new failure means a regression | todo |
 | QW-26 | Pokédex "set complete" | S | `dbg` Pokédex flags | todo (part of QW-16) |
 | QW-27 | Deoxys forms from the Meteorite (use it to cycle Normal → Attack → Defense → Speed) | exists | `form_change_tables.h:770-791`; Meteorite given on Birth Island (`BirthIsland_Exterior_hns/scripts.inc:118-122`). Verify in mGBA; QW-09 must open Birth Island without the event ticket. Story tie-in: DP-14 | todo (verify) |
 
@@ -130,7 +131,14 @@ GPU) can't run that. Routes, cheapest first:
 
 ## Space and save budgets
 
-Measure before any art lands (`make hns`, then the map file). ROM: about 1.8 MiB free of 32 MiB
-(Megas alone measured at 99.46% full in HnS+). Save: 22 spare bits per stored Pokémon. The space
-plan (keep or cut the Gen 4–9 randomizer art) is open and blocks SG-10, SG-12, SG-23, DP-11, DP-12,
-DP-20.
+Measure before any art lands: the bytes before the trailing 0xFF pad (CI's ROM-size step does
+this). Measured 2026-10-26 on `pokerom/dev` (2.0.6 + QW-01 + the engine fixes):
+
+| Build | Used of 33,554,432 | Free |
+|---|---|---|
+| `make hns` | 31,708,260 (94.50%) | 1,846,172 |
+| `make release BUILD=hns` (LTO, no debug menus): what ships | 31,260,004 (93.16%) | 2,294,428 |
+
+Unmodified 2.0.6 measured 31,706,804 with `make hns`. Megas alone measured 99.46% full in HnS+.
+Save: 22 spare bits per stored Pokémon. The space plan (keep or cut the Gen 4–9 randomizer art)
+is open and blocks SG-10, SG-12, SG-23, DP-11, DP-12, DP-20.
