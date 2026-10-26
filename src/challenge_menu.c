@@ -2343,7 +2343,7 @@ bool32 HMsOverwriteOptionActive(void)
             || cs->tx_Challenges_Mirror
             || cs->tx_Random_Moves
             || cs->tx_Challenges_PartyLimit != 0
-            || cs->tx_Challenges_OneTypeChallenge != ONE_TYPE_OFF);
+            || IsOneTypeChallengeActive());
 }
 
 u8 GetMaxPartySize(void)
@@ -2432,7 +2432,12 @@ bool8 IsPokecenterChallengeActivated(void)
 
 bool8 IsOneTypeChallengeActive(void)
 {
-    return gSaveBlock3Ptr->challengeSettings.tx_Challenges_OneTypeChallenge != ONE_TYPE_OFF;
+    // Off is ONE_TYPE_OFF (31), but a zeroed ChallengeSettings holds TYPE_NONE, and reading that
+    // as "only typeless Pokemon" sent every gift and catch to the PC. Treat every value the
+    // challenge menu shows as OFF (see where it loads the setting) as off.
+    u32 type = gSaveBlock3Ptr->challengeSettings.tx_Challenges_OneTypeChallenge;
+
+    return !(type >= ONE_TYPE_OFF || type == TYPE_NONE || type == TYPE_MYSTERY || type == TYPE_STELLAR);
 }
 
 // Returns TRUE if the species has the given type, or if any species it can
