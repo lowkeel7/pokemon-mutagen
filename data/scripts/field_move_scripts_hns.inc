@@ -125,7 +125,7 @@ EventScript_HeadbuttTree:: @ fallthrough
 	playse SE_M_HEADBUTT
 	waitmovement 0
 	special RockSmashWildEncounter
-	goto EventScript_EndHeadbutt
+	goto_if_eq VAR_RESULT, FALSE, EventScript_EndHeadbutt
 	waitstate
 	releaseall
 	end
