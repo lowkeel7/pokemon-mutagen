@@ -10,3 +10,4 @@ pret pokeemerald → rh-hideout pokeemerald-expansion → Modern Emerald (resete
 ## Imported work
 | What | From | Commit / version | Author(s) | Terms |
 |---|---|---|---|---|
+| Battle type icons: final `src/type_icons.c` + `include/type_icons.h` (positioning, retract fix, Soulgold-style behaviour) | HnS+ | 3c72554, 79def04 (type-icon half), a58e9cc, 5f6b65b, 9b137be, 1449251; behaviour after Soulgold (Eemeliri) | Marcogn + Claude Code | unstated |

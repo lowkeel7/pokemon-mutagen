@@ -24,7 +24,7 @@ P4 deep redesigns + content. Nothing deep lands before P2 (it multiplies merge c
 
 | ID | Feature | Tier | Prior art / hook | Status |
 |---|---|---|---|---|
-| QW-01 | Type icons in battle (own + foe), move type + live effectiveness | exists | HnS+ `src/type_icons.c` wiring, `B_SHOW_TYPES` | todo |
+| QW-01 | Type icons in battle (own + foe), move type + live effectiveness | exists | HnS+ `src/type_icons.c`; option BATTLE → TYPE ICONS (OFF/SEEN/CAUGHT/ALWAYS), `challengeSettings.typeIcons` | wip: branch `feat/qw-01-type-icons`, not built yet |
 | QW-02 | Exp multiplier, Exp to whole party | exists | HnS gamemode options; Gen 6 Exp. Share | todo (verify) |
 | QW-03 | Mints | exists | HnS challenge `MINTS` toggle | todo (verify) |
 | QW-04 | Random modes: moves / types / abilities / evos / starters | exists | HnS randomizer menu | todo (verify) |

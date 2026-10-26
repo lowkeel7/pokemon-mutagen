@@ -9,6 +9,7 @@
 #include "sprite.h"
 #include "type_icons.h"
 
+static u32 GetShowTypesMode(void);
 static void LoadTypeSpritesAndPalettes(void);
 static void LoadTypeIconsPerBattler(enum BattlerId, u32);
 
@@ -24,15 +25,15 @@ static void CreateSpriteFromType(u32, bool32, enum Type[], u32, enum BattlerId);
 static bool32 ShouldSkipSecondType(enum Type[], u32);
 static void SetTypeIconXY(s32*, s32*, u32, bool32, u32);
 
-static void CreateSpriteAndSetTypeSpriteAttributes(enum Type, u32 x, u32 y, u32, enum BattlerId, bool32);
-static bool32 ShouldFlipTypeIcon(bool32, u32, enum Type);
+static void CreateSpriteAndSetTypeSpriteAttributes(enum Type, u32 x, u32 y, u32, enum BattlerId);
+static bool32 ShouldFlipTypeIcon(u32, enum Type);
 
 static void SpriteCB_TypeIcon(struct Sprite*);
 static void DestroyTypeIcon(struct Sprite*);
 static void FreeAllTypeIconResources(void);
 static bool32 ShouldHideTypeIcon(enum BattlerId);
 static s32 GetTypeIconHideMovement(bool32, u32);
-static s32 GetTypeIconSlideMovement(bool32, u32, s32);
+static s32 GetTypeIconSlideMovement(bool32, u32, s32, s32);
 static s32 GetTypeIconBounceMovement(s32, u32);
 
 const struct Coords16 sTypeIconPositions[][2] =
@@ -44,16 +45,41 @@ const struct Coords16 sTypeIconPositions[][2] =
     },
     [B_POSITION_OPPONENT_LEFT] =
     {
-        [FALSE] = {20, 26},
-        [TRUE] = {97, 14},
+        // Measured, not derived. The healthbox is created with subpriority 1
+        // and these icons with 255, so anything overlapping the box is drawn
+        // behind it and simply never appears. Sampling a real frame of this
+        // repo's Gen 4 opponent healthbox puts its right edge at x 106
+        // (x 103 is still its white outline, x 110 is already background).
+        // Singles: the icon sits to the LEFT of the healthbox, which is where
+        // upstream expansion put it and where the entry animation makes sense -
+        // it emerges from under the box and retracts back under it. Soulgold
+        // puts it on the right instead, but its healthbox art is much narrower.
+        //
+        // Measured off a real frame (mGBA, 1:1 sample of the framebuffer): the
+        // box's left outline is a vertical edge at x 12 on every row, so the
+        // free strip is x 0..11, twelve pixels. The sprite is 8 wide and its
+        // stored x is the centre, so the resting x of 7 lands it on x 3..10:
+        // three pixels off the screen edge, one clear of the box.
+        //
+        // The slide below walks the sprite 10px left of the value stored here,
+        // hence 17. It starts at x 13..20, i.e. behind the box, which is what
+        // makes it look like it slides out of the healthbox.
+        [FALSE] = {17, 26},  // was {20, 26}, the upstream expansion default
+        // Doubles keeps Soulgold's placement, to the right of the box: at this
+        // size there is no room on the left. Offset from the healthbox origin
+        // is +66 on both sides here and in Soulgold.
+        [TRUE] = {100, 14},  // was {97, 14}
     },
+    // Dead entries: LoadTypeIconsPerBattler() returns before it reaches the
+    // player's side, exactly as Soulgold's does. Left at the upstream values
+    // rather than guessed at, so nothing untested can reach the screen.
     [B_POSITION_PLAYER_RIGHT] =
     {
         [TRUE] = {156, 96},
     },
     [B_POSITION_OPPONENT_RIGHT] =
     {
-        [TRUE] = {85, 39},
+        [TRUE] = {88, 39},   // was {85, 39}
     },
 };
 
@@ -232,6 +258,15 @@ const struct SpriteTemplate sSpriteTemplate_TypeIcons2 =
     .callback = SpriteCB_TypeIcon
 };
 
+// The in-game TYPE ICONS option stands in for the B_SHOW_TYPES build switch. Its index 0 is OFF,
+// so a save from before the option existed shows no icons, as HnS did.
+static u32 GetShowTypesMode(void)
+{
+    static const u8 sModes[] = {SHOW_TYPES_NEVER, SHOW_TYPES_SEEN, SHOW_TYPES_CAUGHT, SHOW_TYPES_ALWAYS};
+
+    return sModes[gSaveBlock3Ptr->challengeSettings.typeIcons];
+}
+
 void LoadTypeIcons(enum BattlerId battler)
 {
     u32 position;
@@ -239,8 +274,8 @@ void LoadTypeIcons(enum BattlerId battler)
     struct Pokemon* mon = GetBattlerMon(battler);
     u32 species = GetMonData(mon, MON_DATA_SPECIES);
 
-    if (B_SHOW_TYPES == SHOW_TYPES_NEVER
-        || (B_SHOW_TYPES == SHOW_TYPES_SEEN && !GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_SEEN)))
+    if (GetShowTypesMode() == SHOW_TYPES_NEVER
+        || (GetShowTypesMode() == SHOW_TYPES_SEEN && !GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_SEEN)))
         return;
 
     LoadTypeSpritesAndPalettes();
@@ -267,7 +302,10 @@ static void LoadTypeIconsPerBattler(enum BattlerId battler, u32 position)
     enum BattlerId battlerId = GetBattlerAtPosition(position);
     bool32 useDoubleBattleCoords = UseDoubleBattleCoords(battlerId);
 
-    if (!IsBattlerAlive(battlerId))
+    // Only the opposing side gets icons, as in Soulgold. Your own Pokemon's
+    // types are never a question, and the player-side coordinates below are
+    // the untested upstream defaults.
+    if (IsOnPlayerSide(battlerId) || !IsBattlerAlive(battlerId))
         return;
 
     for (typeNum = 0; typeNum < 2; ++typeNum)
@@ -302,7 +340,10 @@ static enum Type GetMonPublicType(enum BattlerId battlerId, u32 typeNum)
         return TYPE_MYSTERY;
 
     monIllusion = GetIllusionMonPtr(battlerId);
-    illusionSpecies = GetMonData(monIllusion,MON_DATA_SPECIES,NULL);
+    // GetIllusionMonPtr() returns NULL whenever no Illusion is up, which is the
+    // common case. Both helpers below already guard for it; this read did not.
+    // Ported from Soulgold.
+    illusionSpecies = monIllusion != NULL ? GetMonData(monIllusion, MON_DATA_SPECIES) : SPECIES_NONE;
 
     if (GetActiveGimmick(battlerId) == GIMMICK_TERA)
         return GetMonDefensiveTeraType(mon,monIllusion,battlerId,typeNum,illusionSpecies,monSpecies);
@@ -315,7 +356,7 @@ static enum Type GetMonPublicType(enum BattlerId battlerId, u32 typeNum)
 
 static bool32 ShouldHideUncaughtType(u32 species)
 {
-    if (B_SHOW_TYPES != SHOW_TYPES_CAUGHT)
+    if (GetShowTypesMode() != SHOW_TYPES_CAUGHT)
         return FALSE;
 
     if (GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_CAUGHT))
@@ -326,7 +367,7 @@ static bool32 ShouldHideUncaughtType(u32 species)
 
 static bool32 ShouldHideUnseenType(u32 species)
 {
-    if (B_SHOW_TYPES != SHOW_TYPES_SEEN)
+    if (GetShowTypesMode() != SHOW_TYPES_SEEN)
         return FALSE;
 
     if (GetSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_GET_SEEN))
@@ -371,7 +412,7 @@ static void CreateSpriteFromType(u32 position, bool32 useDoubleBattleCoords, enu
 
     SetTypeIconXY(&x, &y, position, useDoubleBattleCoords, typeNum);
 
-    CreateSpriteAndSetTypeSpriteAttributes(types[typeNum], x, y, position, battler, useDoubleBattleCoords);
+    CreateSpriteAndSetTypeSpriteAttributes(types[typeNum], x, y, position, battler);
 }
 
 static bool32 ShouldSkipSecondType(enum Type types[], u32 typeNum)
@@ -389,9 +430,19 @@ static void SetTypeIconXY(s32* x, s32* y, u32 position, bool32 useDoubleBattleCo
 {
     *x = sTypeIconPositions[position][useDoubleBattleCoords].x;
     *y = sTypeIconPositions[position][useDoubleBattleCoords].y + (11 * typeNum);
+
+    // The two icons of a dual type are stacked 11px apart; Soulgold also steps
+    // the lower one 4px right, which is the HGSS look. That only works where
+    // the pair sits to the right of the healthbox, so it is kept for doubles
+    // and dropped in singles: there the icons are in the 12px strip left of the
+    // box, and 4px either way would clip the screen edge or hide half the glyph
+    // behind the box.
+    if (typeNum != 0 && useDoubleBattleCoords
+     && GetBattlerSide(GetBattlerAtPosition(position)) == B_SIDE_OPPONENT)
+        *x += 4;
 }
 
-static void CreateSpriteAndSetTypeSpriteAttributes(enum Type type, u32 x, u32 y, u32 position, enum BattlerId battler, bool32 useDoubleBattleCoords)
+static void CreateSpriteAndSetTypeSpriteAttributes(enum Type type, u32 x, u32 y, u32 position, enum BattlerId battler)
 {
     struct Sprite* sprite;
     const struct SpriteTemplate* spriteTemplate = gTypesInfo[type].useSecondTypeIconPalette ? &sSpriteTemplate_TypeIcons2 : &sSpriteTemplate_TypeIcons1;
@@ -404,17 +455,38 @@ static void CreateSpriteAndSetTypeSpriteAttributes(enum Type type, u32 x, u32 y,
     sprite->tMonPosition = position;
     sprite->tBattlerId = battler;
     sprite->tVerticalPosition = y;
+    // Each icon remembers its own resting x. The slide animation used to clamp
+    // against the shared table entry, which is only correct while both icons of
+    // a dual type sit at the same x - it stops being true with the indent in
+    // SetTypeIconXY below. Ported from Soulgold.
+    sprite->tHorizontalPosition = x;
 
-    sprite->hFlip = ShouldFlipTypeIcon(useDoubleBattleCoords, position, type);
+    sprite->hFlip = ShouldFlipTypeIcon(position, type);
 
     StartSpriteAnim(sprite, type);
 }
 
-static bool32 ShouldFlipTypeIcon(bool32 useDoubleBattleCoords, u32 position, enum Type typeId)
+// The glyphs in graphics/types/battle_icons*.png are strongly asymmetric, and
+// which way they should face depends on which side of the healthbox the icon
+// sits on - not on how many battlers there are. Upstream expansion picked the
+// player side in singles and the opposing side in doubles, which cannot both be
+// right; the effect here was that the opposing icons came out mirrored in
+// singles and not in doubles. Soulgold flips on the opposing side in both,
+// because it always draws the icons to the RIGHT of the box.
+//
+// Singles here does not: this repo's Gen 4 healthbox is much wider, so the icon
+// goes to the LEFT of the box instead, in the 12 free pixels measured there
+// (see sTypeIconPositions). With Soulgold's rule the asymmetric glyph then
+// faced away from the box; unflipped it faces it. Doubles keeps Soulgold's
+// layout, to the right of the box, so it keeps Soulgold's flip.
+static bool32 ShouldFlipTypeIcon(u32 position, enum Type typeId)
 {
-    enum BattleSide side = (useDoubleBattleCoords) ? B_SIDE_OPPONENT : B_SIDE_PLAYER;
+    u32 battlerId = GetBattlerAtPosition(position);
 
-    if (GetBattlerSide(GetBattlerAtPosition(position)) != side)
+    if (GetBattlerSide(battlerId) != B_SIDE_OPPONENT)
+        return FALSE;
+
+    if (!UseDoubleBattleCoords(battlerId))
         return FALSE;
 
     return !gTypesInfo[typeId].isSpecialCaseType;
@@ -439,7 +511,18 @@ static void SpriteCB_TypeIcon(struct Sprite *sprite)
         return;
     }
 
-    sprite->x += GetTypeIconSlideMovement(useDoubleBattleCoords,position, sprite->x);
+    // tHideIconTimer is the frame counter of the retract animation, so it has
+    // to start over every time the icon is visible again. Upstream only ever
+    // increments it: any frame on which gBattlerControllerFuncs briefly holds
+    // something outside sShowTypesControllerFuncs is banked, and after ten such
+    // frames - spread over as long as it takes - the icon drifts back into the
+    // healthbox and destroys itself in the middle of move selection. Resetting
+    // it makes the retract need ten consecutive frames, which is what the
+    // animation was written for; the slide below then pulls the icon back to
+    // its resting x on its own.
+    sprite->tHideIconTimer = 0;
+
+    sprite->x += GetTypeIconSlideMovement(useDoubleBattleCoords, position, sprite->x, sprite->tHorizontalPosition);
     sprite->y = GetTypeIconBounceMovement(sprite->tVerticalPosition,position);
 }
 
@@ -517,13 +600,15 @@ static s32 GetTypeIconHideMovement(bool32 useDoubleBattleCoords, u32 position)
             return -1;
     }
 
+    // Singles is the mirror of Soulgold's because the icon is on the other side
+    // of the box here: it retracts to the right, back under the healthbox.
     if (position == B_POSITION_PLAYER_LEFT)
         return -1;
     else
         return 1;
 }
 
-static s32 GetTypeIconSlideMovement(bool32 useDoubleBattleCoords, u32 position, s32 xPos)
+static s32 GetTypeIconSlideMovement(bool32 useDoubleBattleCoords, u32 position, s32 xPos, s32 originalX)
 {
     if (useDoubleBattleCoords)
     {
@@ -531,27 +616,30 @@ static s32 GetTypeIconSlideMovement(bool32 useDoubleBattleCoords, u32 position, 
         {
         case B_POSITION_PLAYER_LEFT:
         case B_POSITION_PLAYER_RIGHT:
-            if (xPos > sTypeIconPositions[position][useDoubleBattleCoords].x - 10)
+            if (xPos > originalX - 10)
                 return -1;
             break;
         default:
         case B_POSITION_OPPONENT_LEFT:
         case B_POSITION_OPPONENT_RIGHT:
-            if (xPos < sTypeIconPositions[position][useDoubleBattleCoords].x + 10)
+            if (xPos < originalX + 10)
                 return 1;
             break;
         }
         return 0;
     }
 
+    // Same mirror as in GetTypeIconHideMovement: in singles the opposing icon
+    // slides out to the LEFT of its stored x, away from the healthbox, so the
+    // resting position is stored x - 10 and the retract above walks it back.
     if (position == B_POSITION_PLAYER_LEFT)
     {
-        if (xPos < sTypeIconPositions[position][useDoubleBattleCoords].x + 10)
+        if (xPos < originalX + 10)
             return 1;
     }
     else
     {
-        if (xPos > sTypeIconPositions[position][useDoubleBattleCoords].x - 10)
+        if (xPos > originalX - 10)
             return -1;
     }
     return 0;
