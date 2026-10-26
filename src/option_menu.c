@@ -251,11 +251,12 @@ static const u8 *const sChoices_RunType[] = {
 };
 
 // Index 0 is OFF so that old saves keep HnS's behaviour (see GetShowTypesMode in type_icons.c).
+// DrawChoices_Four shows three labels at a time in 94px: "ALWAYS" ran into "CAUGHT".
 static const u8 *const sChoices_TypeIcons[] = {
     COMPOUND_STRING("OFF"),
     COMPOUND_STRING("SEEN"),
     COMPOUND_STRING("CAUGHT"),
-    COMPOUND_STRING("ALWAYS"),
+    COMPOUND_STRING("ALL"),
 };
 
 static const u8 sText_TopBar_Left[]  = _("{L_BUTTON}");
