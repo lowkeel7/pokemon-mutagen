@@ -7301,6 +7301,10 @@ void BS_CourtChangeSwapSideStatuses(void)
         gBattleStruct->hazardsQueue[B_SIDE_PLAYER][i] = gBattleStruct->hazardsQueue[B_SIDE_OPPONENT][i];
     for (u32 i = 0; i < HAZARDS_MAX_COUNT; i++)
         gBattleStruct->hazardsQueue[B_SIDE_OPPONENT][i] = tempQueue[i];
+    // The queues moved sides, so their lengths must too: AreAnyHazardsOnSide and
+    // the removal code read numHazards, not the queue. Upstream expansion and
+    // Soulgold (1.1.4) both swap it.
+    SWAP(gBattleStruct->numHazards[B_SIDE_PLAYER], gBattleStruct->numHazards[B_SIDE_OPPONENT], temp);
     SWAP(sideTimerPlayer->spikesAmount, sideTimerOpp->spikesAmount, temp);
     SWAP(sideTimerPlayer->toxicSpikesAmount, sideTimerOpp->toxicSpikesAmount, temp);
 
@@ -12045,13 +12049,14 @@ void BS_ItemRestoreHP(void)
             healAmount = maxHP;
             break;
         case ITEM6_HEAL_HP_HALF:
-            healAmount = maxHP / 2;
+            // Shedinja has 1 max HP: maxHP / 2 would revive it with 0 HP.
+            healAmount = max(1, maxHP / 2);
             break;
         case ITEM6_HEAL_HP_QUARTER:
             if (gLastUsedItem == ITEM_SITRUS_BERRY && gSaveBlock3Ptr->challengeSettings.tx_Mode_New_Citrus == 0)
                 healAmount = 30;
             else
-                healAmount = maxHP / 4;
+                healAmount = max(1, maxHP / 4);
             break;
         default:
             healAmount = healParam;

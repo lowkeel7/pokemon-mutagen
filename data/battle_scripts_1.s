@@ -2505,8 +2505,11 @@ BattleScript_MirrorArmorDoesntAffect:
 	return
 
 BattleScript_MirrorArmorReflectWontFall:
+	savetarget
 	copybyte gBattlerTarget, gBattlerAttacker   @ STRINGID_STATSWONTDECREASE uses target
-	goto BattleScript_MirrorArmorReflectPrintString
+	call BattleScript_MirrorArmorReflectPrintString
+	restoretarget
+	return
 
 @ gBattlerTarget is battler with Mirror Armor
 BattleScript_MirrorArmorReflectStickyWeb:
@@ -6478,6 +6481,7 @@ BattleScript_BadDreamsIncrement:
 	jumpifbytenotequal gBattlerTarget, gBattlersCount, BattleScript_BadDreamsLoop
 	jumpifbyteequal sFIXED_ABILITY_POPUP, sZero, BattleScript_BadDreamsEnd
 	destroyabilitypopup
+	setbyte sFIXED_ABILITY_POPUP, FALSE
 	pause 15
 BattleScript_BadDreamsEnd:
 	end2

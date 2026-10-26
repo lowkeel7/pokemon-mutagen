@@ -5400,7 +5400,9 @@ u8 GiveCapturedMonToPlayer(struct Pokemon *mon)
         return CopyMonToPC(mon);
 
     CopyMon(&gPlayerParty[i], mon, sizeof(*mon));
-    gPlayerPartyCount = i + 1;
+    // The swap-into-party prompt can empty a middle slot of a full party,
+    // so i + 1 would undercount it.
+    CalculatePlayerPartyCount();
     return MON_GIVEN_TO_PARTY;
 }
 
