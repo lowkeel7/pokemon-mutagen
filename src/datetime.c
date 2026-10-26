@@ -14,6 +14,37 @@ const struct DateTime gGen3Epoch =
     .second = 0,
 };
 
+static void DateTime_SubtractDays(struct DateTime *dateTime, u32 days)
+{
+    u32 weekdayDelta = days % WEEKDAY_COUNT;
+
+    dateTime->dayOfWeek = (dateTime->dayOfWeek + WEEKDAY_COUNT - weekdayDelta) % WEEKDAY_COUNT;
+
+    while (days > 0)
+    {
+        if (days >= dateTime->day)
+        {
+            days -= dateTime->day;
+            if (dateTime->month == MONTH_JAN)
+            {
+                dateTime->month = MONTH_DEC;
+                dateTime->year--;
+            }
+            else
+            {
+                dateTime->month--;
+            }
+            dateTime->day = sNumDaysInMonths[dateTime->month - 1]
+                          + (dateTime->month == MONTH_FEB && IsLeapYear(dateTime->year));
+        }
+        else
+        {
+            dateTime->day -= days;
+            days = 0;
+        }
+    }
+}
+
 void DateTime_AddDays(struct DateTime *dateTime, u32 days)
 {
     while (days > 0)
@@ -109,12 +140,33 @@ void ConvertTimeToDateTime(struct DateTime *result, struct Time *timeSinceEpoch)
 {
     // RtcCalcTimeDifference can produce a negative field (most often days == -1,
     // when the borrow out of a negative hour difference underflows an otherwise
-    // zero day difference). The DateTime_Add* helpers take u32 and count down one
-    // unit at a time, so a negative value becomes ~4 billion and hangs the game.
-    // Clamp to the epoch instead of locking up.
+    // zero day difference). The DateTime_Add* helpers take u32, so a negative
+    // value used to hang the game; HnS clamped each field to zero, which kept
+    // the hour but could land on the wrong day (and weekday). Normalise the
+    // whole difference instead and walk backwards when it is negative.
+    // Ported from Soulgold (a4f12d543).
+    s32 seconds = timeSinceEpoch->seconds
+                + SECONDS_PER_MINUTE * timeSinceEpoch->minutes
+                + MINUTES_PER_HOUR * SECONDS_PER_MINUTE * timeSinceEpoch->hours;
+    s32 days = timeSinceEpoch->days;
+
     result = memcpy(result, &gGen3Epoch, sizeof(struct DateTime));
-    DateTime_AddSeconds(result, timeSinceEpoch->seconds > 0 ? timeSinceEpoch->seconds : 0);
-    DateTime_AddMinutes(result, timeSinceEpoch->minutes > 0 ? timeSinceEpoch->minutes : 0);
-    DateTime_AddHours(result, timeSinceEpoch->hours > 0 ? timeSinceEpoch->hours : 0);
-    DateTime_AddDays(result, timeSinceEpoch->days > 0 ? timeSinceEpoch->days : 0);
+
+    days += seconds / (HOURS_PER_DAY * MINUTES_PER_HOUR * SECONDS_PER_MINUTE);
+    seconds %= HOURS_PER_DAY * MINUTES_PER_HOUR * SECONDS_PER_MINUTE;
+    if (seconds < 0)
+    {
+        seconds += HOURS_PER_DAY * MINUTES_PER_HOUR * SECONDS_PER_MINUTE;
+        days--;
+    }
+
+    result->hour = seconds / (MINUTES_PER_HOUR * SECONDS_PER_MINUTE);
+    seconds %= MINUTES_PER_HOUR * SECONDS_PER_MINUTE;
+    result->minute = seconds / SECONDS_PER_MINUTE;
+    result->second = seconds % SECONDS_PER_MINUTE;
+
+    if (days < 0)
+        DateTime_SubtractDays(result, -days);
+    else
+        DateTime_AddDays(result, days);
 }
