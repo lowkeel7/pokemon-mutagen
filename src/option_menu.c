@@ -63,6 +63,7 @@ enum {
     ITEM_BATTLE_BALL_PROMPT,
     ITEM_BATTLE_RUN_TYPE,
     ITEM_BATTLE_LR_RUN,
+    ITEM_BATTLE_TYPE_ICONS,
     ITEM_BATTLE_COUNT,
 };
 
@@ -249,6 +250,15 @@ static const u8 *const sChoices_RunType[] = {
     COMPOUND_STRING("B"),
 };
 
+// Index 0 is OFF so that old saves keep HnS's behaviour (see GetShowTypesMode in type_icons.c).
+// DrawChoices_Four shows three labels at a time in 94px: "ALWAYS" ran into "CAUGHT".
+static const u8 *const sChoices_TypeIcons[] = {
+    COMPOUND_STRING("OFF"),
+    COMPOUND_STRING("SEEN"),
+    COMPOUND_STRING("CAUGHT"),
+    COMPOUND_STRING("ALL"),
+};
+
 static const u8 sText_TopBar_Left[]  = _("{L_BUTTON}");
 static const u8 sText_TopBar_Right[] = _("{R_BUTTON}");
 
@@ -347,6 +357,12 @@ static const u8 *const sDesc_RunType[] = {
 static const u8 *const sDesc_LRRun[] = {
     COMPOUND_STRING("Enables a prompt to show that you\ncan run away from battles."),
     COMPOUND_STRING("Disables said prompt to flee.\nButton combo still works."),
+};
+static const u8 *const sDesc_TypeIcons[] = {
+    COMPOUND_STRING("No type icons next to the health\nbars in battle."),
+    COMPOUND_STRING("Show the types of Pokémon you\nhave seen while choosing a move."),
+    COMPOUND_STRING("Show the types of Pokémon you\nhave caught while choosing a move."),
+    COMPOUND_STRING("Always show the types of every\nPokémon while choosing a move."),
 };
 static const u8 *const sDesc_Sound[] = {
     COMPOUND_STRING("Sound is the same in all speakers.\nRecommended for original hardware."),
@@ -492,6 +508,12 @@ static const struct OptionMenuItem sTabItems_Battle[] = {
         .descriptions = sDesc_LRRun,
         .numChoices   = 2,
         .choiceNames  = sChoices_OnOff,
+    },
+    [ITEM_BATTLE_TYPE_ICONS] = {
+        .name         = COMPOUND_STRING("TYPE ICONS"),
+        .descriptions = sDesc_TypeIcons,
+        .numChoices   = 4,
+        .choiceNames  = sChoices_TypeIcons,
     },
 };
 
@@ -1092,6 +1114,7 @@ static void Task_Save(u8 taskId)
     cs->ballPrompt         = *GetSelectionPtr(TAB_BATTLE, ITEM_BATTLE_BALL_PROMPT);
     cs->lrToRun            = *GetSelectionPtr(TAB_BATTLE, ITEM_BATTLE_LR_RUN);
     cs->runType            = *GetSelectionPtr(TAB_BATTLE, ITEM_BATTLE_RUN_TYPE);
+    cs->typeIcons          = *GetSelectionPtr(TAB_BATTLE, ITEM_BATTLE_TYPE_ICONS);
 
     cs->musicOnOff         = *GetSelectionPtr(TAB_SOUND, ITEM_SOUND_MUSIC);
     cs->bikeMusic          = *GetSelectionPtr(TAB_SOUND, ITEM_SOUND_BIKE_MUSIC);
@@ -1200,6 +1223,7 @@ void CB2_InitOptionMenu(void)
         *GetSelectionPtr(TAB_BATTLE, ITEM_BATTLE_BALL_PROMPT)     = cs->ballPrompt;
         *GetSelectionPtr(TAB_BATTLE, ITEM_BATTLE_LR_RUN)          = cs->lrToRun;
         *GetSelectionPtr(TAB_BATTLE, ITEM_BATTLE_RUN_TYPE)        = cs->runType;
+        *GetSelectionPtr(TAB_BATTLE, ITEM_BATTLE_TYPE_ICONS)      = cs->typeIcons;
 
         *GetSelectionPtr(TAB_SOUND, ITEM_SOUND_MUSIC)      = cs->musicOnOff;
         *GetSelectionPtr(TAB_SOUND, ITEM_SOUND_BIKE_MUSIC) = cs->bikeMusic;

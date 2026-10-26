@@ -11,3 +11,4 @@ pret pokeemerald → rh-hideout pokeemerald-expansion → Modern Emerald (resete
 | What | From | Commit / version | Author(s) | Terms |
 |---|---|---|---|---|
 | CI that builds only `hns` and reports ROM fill; BPS patch script (adapted: macOS-portable, renamed cache) | HnS+ (Marcogn/pokehns-expansion-plus) | 08b2f86, 3769c5a, 6701618, 209a8f1 | Marcogn + Claude Code | unstated (public repo, no license) |
+| Battle type icons: final `src/type_icons.c` + `include/type_icons.h` (positioning, retract fix, Soulgold-style behaviour) | HnS+ | 3c72554, 79def04 (type-icon half), a58e9cc, 5f6b65b, 9b137be, 1449251; behaviour after Soulgold (Eemeliri) | Marcogn + Claude Code | unstated |

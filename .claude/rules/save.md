@@ -25,6 +25,18 @@ Anchors at HnS 2.0.6 (`167aa6d`). None of the `unused_*` fields below are refere
 Total about 22 bits. Planned claims: third type (5 bits), variant flags (1 each), equipment index.
 Claim them in BACKLOG before writing code, so two features don't take the same bits.
 
+## Option bits (`struct ChallengeSettings`)
+Pinned to exactly 32 bytes (`STATIC_ASSERT`, `src/save.c:94`): never grow it. At 2.0.6 the fields
+use 236 of 256 bits (u8 bitfields don't straddle bytes), leaving **20 free bits at the tail**.
+Pokerom options go there, appended after `tx_Features_ShinyChance`, under the "Pokerom options"
+comment. Claimed so far:
+
+| Field | Bits | Backlog |
+|---|---|---|
+| `typeIcons` | 2 | QW-01 |
+
+When the tail runs out, move Pokerom options to a new field at the end of SaveBlock3.
+
 ## SaveBlocks
 | Block | Struct | Compile-time limit |
 |---|---|---|
