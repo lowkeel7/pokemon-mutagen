@@ -10917,6 +10917,11 @@ static u32 ComputeCaptureOdds(u32 wildMonBattler, u32 playerBattler)
         for (u32 i = badgeCount; i < ARRAY_COUNT(sBadgeLevel) && battleMon->level > sBadgeLevel[i]; i++)
             odds = odds * 4 / 5;
     }
+    // Each malus step truncates, so small odds reached 0 and the Pokemon could not be caught at
+    // all (a catch-rate-3 legendary at full HP has odds 1). The malus makes a catch harder, never
+    // impossible.
+    if (odds == 0)
+        odds = 1;
 
     if (GetConfig(B_LOW_LEVEL_CATCH_BONUS) == GEN_8 && battleMon->level <= 20)
          odds = odds * (30 - battleMon->level) / 10;

@@ -209,6 +209,25 @@ WILD_BATTLE_TEST("Capture: when CRITICAL_CAPTURE_IF_OWNED is enabled, failed cap
     }
 }
 
+WILD_BATTLE_TEST("Capture: Missing badge malus never takes the catch odds to 0")
+{
+    u32 recordedOdds;
+
+    GIVEN {
+        for (u32 j = 0; j < 8; j++)
+            FlagClear(FLAG_BADGE01_GET + j);
+        WITH_CONFIG(B_MISSING_BADGE_CATCH_MALUS, GEN_9);
+        PLAYER(SPECIES_WOBBUFFET);
+        OPPONENT(SPECIES_MEWTWO) { Level(100); }
+    } WHEN {
+        TURN { USE_ITEM(player, ITEM_POKE_BALL); }
+    } SCENE {
+        CATCHING_CHANCE(&recordedOdds);
+    } THEN {
+        EXPECT_GT(recordedOdds, 0);
+    }
+}
+
 WILD_BATTLE_TEST("Capture: ball data is properly set in captured pokemon")
 {
     u32 item = ITEM_NONE;
