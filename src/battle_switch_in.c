@@ -72,16 +72,14 @@ bool32 DoSwitchInEvents(void)
         {
             battler = gBattlersBySpeed[gBattleStruct->switchInBattlerCounter];
 
-            if (!IsBattlerAlive(battler) && gBattleStruct->eventState.battlerSwitchIn != FIRST_EVENT_BLOCK_HAZARDS)
-            {
-                gBattleStruct->switchInBattlerCounter++;
-                gBattleStruct->eventState.battlerSwitchIn = 0;
-                continue;
-            }
-
             calcValues.battlerAtk = battler;
             while (gBattleStruct->eventState.battlerSwitchIn < FIRST_EVENT_BLOCK_COUNT)
             {
+                // Checked per event, not once per battler: a battler that faints to
+                // hazards must not go on to e.g. Imposter-transform afterwards.
+                if (!IsBattlerAlive(battler) && gBattleStruct->eventState.battlerSwitchIn != FIRST_EVENT_BLOCK_HAZARDS)
+                    break;
+
                 if (FirstEventBlockEvents(&calcValues))
                     return TRUE;
             }
