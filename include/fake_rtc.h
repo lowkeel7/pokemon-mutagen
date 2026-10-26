@@ -1,6 +1,9 @@
 #ifndef GUARD_FAKE_RTC_UTIL_H
 #define GUARD_FAKE_RTC_UTIL_H
 
+// global.h defines struct SaveBlock3, which UseFakeRtc reads. A block-scope extern here would
+// declare a different, incomplete struct wherever this header comes first (test/test_runner.c).
+#include "global.h"
 #include "siirtc.h"
 #include "config/overworld.h"
 
@@ -8,7 +11,6 @@ static inline bool32 UseFakeRtc(void)
 {
     if (OW_USE_FAKE_RTC)
         return TRUE;
-    extern struct SaveBlock3 *gSaveBlock3Ptr;
     if (gSaveBlock3Ptr != NULL)
         return gSaveBlock3Ptr->challengeSettings.tx_Features_RTCType;
     return FALSE;
