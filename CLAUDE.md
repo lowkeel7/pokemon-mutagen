@@ -30,6 +30,9 @@ make release BUILD=hns                 # → pokehns-release.gba. `make hns rele
 make check BUILD=hns TESTS="Quick Claw"   # headless battle tests (needs `brew install coreutils`)
 ```
 
+No devkitPro? `tools/docker_build.sh <ref> [make args]` builds a committed ref in an Ubuntu
+container with CI's packages, writes `build/docker/<ref>/`, and prints the ROM fill.
+
 - The variant is `$(or $(BUILD),$(MAKECMDGOALS))` (Makefile:21-27). Combine goals only with `BUILD=hns`.
 - Test in mGBA (`mgba -g` for gdb). Look at the screen after every menu step, and verify the
   feature you touched with a case that fails without your change.
