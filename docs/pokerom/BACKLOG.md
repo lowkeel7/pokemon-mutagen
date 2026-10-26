@@ -49,9 +49,9 @@ P4 deep redesigns + content. Nothing deep lands before P2 (it multiplies merge c
 | QW-23 | Catch trainers' Pokémon: HnS+ TcloneR as the engine, plus Thief + held ball (the Pokémon throws it, reuse allowed) | exists+S | HnS+ TcloneR (key item) | todo |
 | QW-24 | Every HnS+ feature, each behind a toggle (off = HnS): quest book, pause strip, box sort/search, DexNav, overworld wild Pokémon, level scaling, battle/OW speed-up, SwSh party menu, Dark UI, Candy Jar, Fast HMs, battle music theme, Frostbite, item description box, nickname/wild-battle toggles, Red's Path | exists | `hnsplus-pick` | todo |
 | QW-25 | Save profiles + version control (tree off a common ancestor) | S | outside the ROM: git repo of `.sav` files | todo |
-| HW-01 | Release gate on hardware + phone: RetroArch mGBA core on a phone and a flash cart; save type, RTC/fake RTC, 60 fps, 10-minute play (CLAUDE.md §0) | S | `make release BUILD=hns`, debug menu off | todo (every release) |
+| HW-01 | Release gate on hardware + phone: RetroArch mGBA core on a phone and a flash cart; save type, RTC/fake RTC, 60 fps, 10-minute play (CLAUDE.md §0) | S | `make release BUILD=hns`, debug menus `DISABLED_ON_RELEASE`; desk pre-check: `tools/playtest` smoke on the release ROM (same libretro core as the phone) | todo (every release) |
 | QW-26 | Pokédex "set complete" | S | `dbg` Pokédex flags | todo (part of QW-16) |
-| QW-27 | Deoxys forms from the Meteorite (use it to cycle Normal → Attack → Defense → Speed) | exists | `form_change_tables.h:770-791`; Meteorite given on Birth Island (`BirthIsland_Exterior_hns/scripts.inc:116-122`). Verify in mGBA; QW-09 must open Birth Island without the event ticket. Story tie-in: DP-14 | todo (verify) |
+| QW-27 | Deoxys forms from the Meteorite (use it to cycle Normal → Attack → Defense → Speed) | exists | `form_change_tables.h:770-791`; Meteorite given on Birth Island (`BirthIsland_Exterior_hns/scripts.inc:118-122`). Verify in mGBA; QW-09 must open Birth Island without the event ticket. Story tie-in: DP-14 | todo (verify) |
 
 ## P2 — engine upgrade
 
