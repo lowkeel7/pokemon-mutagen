@@ -47,7 +47,8 @@ static u8 GetMewObjectEventId(void)
 
 // When the player enters Faraway Island interior it begins a "hide and seek" minigame where Mew disappears into the grass
 // This function returns the direction Mew will take a step, and is run every time the player takes a step
-enum Direction GetMewMoveDirection(void)
+// u32 as declared in faraway_island.h: with enum Direction here, LTO warned of a type mismatch.
+u32 GetMewMoveDirection(void)
 {
     u8 i;
     int mewSafeFromTrap;
