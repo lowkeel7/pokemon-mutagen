@@ -10,6 +10,7 @@
 #include "cable_club.h"
 #include "credits_frlg.h"
 #include "clock.h"
+#include "debug.h"
 #include "dexnav.h"
 #include "event_data.h"
 #include "event_object_movement.h"
@@ -1930,6 +1931,9 @@ void CB2_Overworld(void)
         SetFieldVBlankCallback();
         return;
     }
+#if DEBUG_OVERWORLD_MENU
+    Debug_TryWarpRequest();
+#endif
 }
 
 void SetMainCallback1(MainCallback cb)

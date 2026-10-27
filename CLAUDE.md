@@ -50,8 +50,10 @@ tools/playtest/playtest.py --rom pokehns.gba --session /tmp/pt --fresh @tools/pl
 - **Play it headless.** `tools/playtest/playtest.py` runs the ROM in RetroArch's mGBA libretro core
   (the core the phone target uses): scripted buttons, screenshots, `gMain.callback2` by name, and
   save RAM that survives a power cycle. `smoke.txt` is boot → new game → save → power cycle →
-  continue. Look at the screen after every menu step, and verify the feature you touched with a
-  case that fails without your change. Desktop mGBA (`mgba -g` for gdb) works too.
+  continue; `mapsweep.py` warps to every map and files the ones that don't load (rerun after map
+  or script changes; 931 Emerald maps never load here, BACKLOG TS-03). Look at the screen after
+  every menu step, and verify the feature you touched with a case that fails without your change.
+  Desktop mGBA (`mgba -g` for gdb) works too.
 - An unbalanced `#if`/`#endif` shows up as "used but never defined" on unrelated functions.
 
 ## 2. The rule: every Pokerom mechanic is a toggle, and zero means HnS

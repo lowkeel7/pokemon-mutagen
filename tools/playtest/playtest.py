@@ -187,11 +187,17 @@ class Core:
         if not self.lib.retro_unserialize(buf, len(data)):
             sys.exit("retro_unserialize failed: was the state made from another build of the ROM?")
 
-    def read(self, address, length):
+    def _ptr(self, address, length):
         for start, size, ptr in self.regions:
             if start <= address and address + length <= start + size:
-                return C.string_at(ptr + address - start, length)
+                return ptr + address - start
         raise ValueError(f"0x{address:08x} is not in a mapped RAM region")
+
+    def read(self, address, length):
+        return C.string_at(self._ptr(address, length), length)
+
+    def write(self, address, data):
+        C.memmove(self._ptr(address, len(data)), data, len(data))
 
     def screen_rgb(self):
         if not self.frame:

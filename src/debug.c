@@ -792,6 +792,36 @@ static bool32 Debug_SaveCallbackMenu(struct DebugMenuOption *callbackItems);
 
 // *******************************
 // Functions universal
+// tools/playtest/mapsweep.py writes ((group << 8) | num) + 1 here; the next overworld frame with
+// free controls warps to that map's first warp, as Utilities -> Warp does, or to
+// gDebugWarpRequestPos ((y << 8) | x) + 1 when that is set. Dev builds only: the one caller, in
+// CB2_Overworld, is compiled with DEBUG_OVERWORLD_MENU.
+EWRAM_DATA u16 gDebugWarpRequest = 0;
+EWRAM_DATA u16 gDebugWarpRequestPos = 0;
+
+void Debug_TryWarpRequest(void)
+{
+    u32 map;
+
+    if (gDebugWarpRequest == 0 || ArePlayerFieldControlsLocked() || gPaletteFade.active)
+        return;
+    map = gDebugWarpRequest - 1;
+    gDebugWarpRequest = 0;
+    if (gDebugWarpRequestPos != 0)
+    {
+        u32 pos = gDebugWarpRequestPos - 1;
+
+        gDebugWarpRequestPos = 0;
+        SetWarpDestination(map >> 8, map & 0xFF, WARP_ID_NONE, pos & 0xFF, pos >> 8);
+    }
+    else
+    {
+        SetWarpDestinationToMapWarp(map >> 8, map & 0xFF, 0);
+    }
+    DoWarp();
+    ResetInitialPlayerAvatarState();
+}
+
 void Debug_ShowMainMenu(void)
 {
     sDebugMenuListData = AllocZeroed(sizeof(*sDebugMenuListData));
