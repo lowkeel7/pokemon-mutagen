@@ -7,6 +7,7 @@
 #include "pokemon_sprite_visualizer.h"
 #include "text.h"
 #include "menu.h"
+#include "species_gfx_style.h"
 
 //  === WARNING === WARNING === WARNING ===
 //  === No user serviceable code before ===
@@ -1149,27 +1150,11 @@ void LoadSpecialPokePicIsEgg(void *dest, s32 species, u32 personality, bool8 isF
     }
     else if (isFrontPic)
     {
-    #if P_GENDER_DIFFERENCES
-        if (gSpeciesInfo[species].frontPicFemale != NULL && IsPersonalityFemale(species, personality))
-            DecompressDataWithHeaderWram(gSpeciesInfo[species].frontPicFemale, dest);
-        else
-    #endif
-        if (gSpeciesInfo[species].frontPic != NULL)
-            DecompressDataWithHeaderWram(gSpeciesInfo[species].frontPic, dest);
-        else
-            DecompressDataWithHeaderWram(gSpeciesInfo[SPECIES_NONE].frontPic, dest);
+        DecompressDataWithHeaderWram(GetSpeciesFrontPic(species, IsPersonalityFemale(species, personality)), dest);
     }
     else
     {
-    #if P_GENDER_DIFFERENCES
-        if (gSpeciesInfo[species].backPicFemale != NULL && IsPersonalityFemale(species, personality))
-            DecompressDataWithHeaderWram(gSpeciesInfo[species].backPicFemale, dest);
-        else
-    #endif
-        if (gSpeciesInfo[species].backPic != NULL)
-            DecompressDataWithHeaderWram(gSpeciesInfo[species].backPic, dest);
-        else
-            DecompressDataWithHeaderWram(gSpeciesInfo[SPECIES_NONE].backPic, dest);
+        DecompressDataWithHeaderWram(GetSpeciesBackPic(species, IsPersonalityFemale(species, personality)), dest);
     }
 
     if (species == SPECIES_SPINDA && isFrontPic)

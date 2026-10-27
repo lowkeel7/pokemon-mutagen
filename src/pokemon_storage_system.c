@@ -1,4 +1,5 @@
 #include "global.h"
+#include "species_gfx_style.h"
 #include "malloc.h"
 #include "bg.h"
 #include "data.h"
@@ -5277,7 +5278,7 @@ static u16 GetMonIconListKey(u16 species, u32 personality, bool32 isEgg)
 {
 #if P_GENDER_DIFFERENCES
     // Treat female mons as a seperate species as they may have a different icon than males
-    if (gSpeciesInfo[species].iconSpriteFemale != NULL && IsPersonalityFemale(species, personality))
+    if (GetSpeciesIconFemale(species) != NULL && IsPersonalityFemale(species, personality))
         species |= (1 << 15);
 #endif
 
@@ -5356,9 +5357,9 @@ static struct Sprite *CreateMonIconSprite(u16 species, u32 personality, s16 x, s
             template.paletteTag = PALTAG_MON_ICON_0 + gSpeciesInfo[SPECIES_EGG].iconPalIndex;
     }
 #if P_GENDER_DIFFERENCES
-    else if (gSpeciesInfo[species].iconSpriteFemale != NULL && IsPersonalityFemale(species, personality))
+    else if (GetSpeciesIconFemale(species) != NULL && IsPersonalityFemale(species, personality))
     {
-        template.paletteTag = PALTAG_MON_ICON_0 + gSpeciesInfo[species].iconPalIndexFemale;
+        template.paletteTag = PALTAG_MON_ICON_0 + GetSpeciesIconPalIndexFemale(species);
     }
 #endif
     else

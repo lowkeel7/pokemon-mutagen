@@ -1,4 +1,5 @@
 #include "global.h"
+#include "species_gfx_style.h"
 #include "battle.h"
 #include "battle_controllers.h"
 #include "battle_ai_main.h"
@@ -1097,11 +1098,11 @@ void BattleLoadSubstituteOrMonSpriteGfx(enum BattlerId battler, bool8 loadMonSpr
             position = GetBattlerPosition(battler);
 
         if (IsContest())
-            DecompressDataWithHeaderVram(gBattleAnimSpriteGfx_SubstituteBack, gMonSpritesGfxPtr->spritesGfx[position]);
+            DecompressDataWithHeaderVram(GetSubstitutePic(TRUE), gMonSpritesGfxPtr->spritesGfx[position]);
         else if (!IsOnPlayerSide(battler))
-            DecompressDataWithHeaderVram(gBattleAnimSpriteGfx_Substitute, gMonSpritesGfxPtr->spritesGfx[position]);
+            DecompressDataWithHeaderVram(GetSubstitutePic(FALSE), gMonSpritesGfxPtr->spritesGfx[position]);
         else
-            DecompressDataWithHeaderVram(gBattleAnimSpriteGfx_SubstituteBack, gMonSpritesGfxPtr->spritesGfx[position]);
+            DecompressDataWithHeaderVram(GetSubstitutePic(TRUE), gMonSpritesGfxPtr->spritesGfx[position]);
 
         for (i = 1; i < 4; i++)
         {
@@ -1109,7 +1110,7 @@ void BattleLoadSubstituteOrMonSpriteGfx(enum BattlerId battler, bool8 loadMonSpr
         }
 
         palOffset = OBJ_PLTT_ID(battler);
-        LoadPalette(gBattleAnimSpritePal_Substitute, palOffset, PLTT_SIZE_4BPP);
+        LoadPalette(GetSubstitutePalette(), palOffset, PLTT_SIZE_4BPP);
     }
     else
     {
@@ -1235,7 +1236,7 @@ void SetBattlerSpriteAffineMode(u8 affineMode)
 
 void CreateEnemyShadowSprite(enum BattlerId battler)
 {
-    if (B_ENEMY_MON_SHADOW_STYLE >= GEN_4 && P_GBA_STYLE_SPECIES_GFX == FALSE)
+    if (UseGen4EnemyShadows())
     {
         u16 species = GetBattlerVisualSpecies(battler);
         u8 size = gSpeciesInfo[species].enemyShadowSize;
@@ -1289,7 +1290,7 @@ void LoadAndCreateEnemyShadowSprites(void)
     enum BattlerId battler;
     enum BattlerId i;
 
-    if (B_ENEMY_MON_SHADOW_STYLE >= GEN_4 && P_GBA_STYLE_SPECIES_GFX == FALSE)
+    if (UseGen4EnemyShadows())
     {
         {
             struct CompressedSpriteSheet sizedSheet = GetEnemyShadowsSizedSheet();
@@ -1353,18 +1354,20 @@ void SpriteCB_EnemyShadow(struct Sprite *shadowSprite)
     }
     else if (transformSpecies != SPECIES_NONE)
     {
-        xOffset = gSpeciesInfo[transformSpecies].enemyShadowXOffset;
-        yOffset = gSpeciesInfo[transformSpecies].enemyShadowYOffset + 16;
-        size = gSpeciesInfo[transformSpecies].enemyShadowSize;
-
-        if (B_ENEMY_MON_SHADOW_STYLE >= GEN_4)
-            xOffset += (shadowSprite->tSpriteSide == SPRITE_SIDE_LEFT ? -16 : 16);
-
-        invisible = (B_ENEMY_MON_SHADOW_STYLE >= GEN_4 && P_GBA_STYLE_SPECIES_GFX == FALSE)
-                  ? gSpeciesInfo[transformSpecies].suppressEnemyShadow
-                  : gSpeciesInfo[transformSpecies].enemyMonElevation == 0;
+        // The Gen 4 offsets belong to the Gen 4 shadow; the Gen 3 one sits under the battler.
+        if (UseGen4EnemyShadows())
+        {
+            xOffset = gSpeciesInfo[transformSpecies].enemyShadowXOffset + (shadowSprite->tSpriteSide == SPRITE_SIDE_LEFT ? -16 : 16);
+            yOffset = gSpeciesInfo[transformSpecies].enemyShadowYOffset + 16;
+            size = gSpeciesInfo[transformSpecies].enemyShadowSize;
+            invisible = gSpeciesInfo[transformSpecies].suppressEnemyShadow;
+        }
+        else
+        {
+            invisible = GetSpeciesEnemyMonElevation(transformSpecies) == 0;
+        }
     }
-    else if (B_ENEMY_MON_SHADOW_STYLE >= GEN_4 && P_GBA_STYLE_SPECIES_GFX == FALSE)
+    else if (UseGen4EnemyShadows())
     {
         u16 species = GetBattlerVisualSpecies(battler);
         xOffset = gSpeciesInfo[species].enemyShadowXOffset + (shadowSprite->tSpriteSide == SPRITE_SIDE_LEFT ? -16 : 16);
@@ -1379,7 +1382,7 @@ void SpriteCB_EnemyShadow(struct Sprite *shadowSprite)
     shadowSprite->x2 = battlerSprite->x2;
     shadowSprite->invisible = invisible;
 
-    if (B_ENEMY_MON_SHADOW_STYLE >= GEN_4 && P_GBA_STYLE_SPECIES_GFX == FALSE)
+    if (UseGen4EnemyShadows())
     {
         shadowSprite->oam.tileNum = shadowSprite->tBaseTileNum + (8 * size);
         shadowSprite->y = battlerSprite->y + yOffset;
@@ -1395,7 +1398,7 @@ void SpriteCB_SetInvisible(struct Sprite *sprite)
 
 void SetBattlerShadowSpriteCallback(enum BattlerId battler, u16 species)
 {
-    if (B_ENEMY_MON_SHADOW_STYLE >= GEN_4 && P_GBA_STYLE_SPECIES_GFX == FALSE)
+    if (UseGen4EnemyShadows())
     {
         if (IsOnPlayerSide(battler) || gBattleScripting.monCaught)
         {
@@ -1436,7 +1439,7 @@ void SetBattlerShadowSpriteCallback(enum BattlerId battler, u16 species)
         if (gBattleSpritesDataPtr->battlerData[battler].transformSpecies != SPECIES_NONE)
             species = gBattleSpritesDataPtr->battlerData[battler].transformSpecies;
 
-        if (gSpeciesInfo[SanitizeSpeciesId(species)].enemyMonElevation != 0)
+        if (GetSpeciesEnemyMonElevation(SanitizeSpeciesId(species)) != 0)
             gSprites[gBattleSpritesDataPtr->healthBoxesData[battler].shadowSpriteIdPrimary].callback = SpriteCB_EnemyShadow;
         else
             gSprites[gBattleSpritesDataPtr->healthBoxesData[battler].shadowSpriteIdPrimary].callback = SpriteCB_SetInvisible;
@@ -1446,7 +1449,7 @@ void SetBattlerShadowSpriteCallback(enum BattlerId battler, u16 species)
 void HideBattlerShadowSprite(enum BattlerId battler)
 {
     gSprites[gBattleSpritesDataPtr->healthBoxesData[battler].shadowSpriteIdPrimary].callback = SpriteCB_SetInvisible;
-    if (B_ENEMY_MON_SHADOW_STYLE >= GEN_4 && P_GBA_STYLE_SPECIES_GFX == FALSE)
+    if (UseGen4EnemyShadows())
         gSprites[gBattleSpritesDataPtr->healthBoxesData[battler].shadowSpriteIdSecondary].callback = SpriteCB_SetInvisible;
 }
 

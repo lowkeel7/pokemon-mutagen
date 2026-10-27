@@ -1,4 +1,5 @@
 #include "global.h"
+#include "species_gfx_style.h"
 #include "malloc.h"
 #include "battle_anim.h"
 #include "battle_anim_internal.h"
@@ -6557,7 +6558,7 @@ static void ReloadBattlerSprites(enum BattlerId battler, struct Pokemon *party)
     UpdateIndicatorVisibilityAndType(gHealthboxSpriteIds[battler], TRUE);
 
     // Try to recreate shadow sprite
-    if (B_ENEMY_MON_SHADOW_STYLE >= GEN_4 && P_GBA_STYLE_SPECIES_GFX == FALSE)
+    if (UseGen4EnemyShadows())
     {
         // Both of these *should* be true, but use an OR just to be certain
         if (gBattleSpritesDataPtr->healthBoxesData[battler].shadowSpriteIdPrimary < MAX_SPRITES

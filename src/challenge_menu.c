@@ -67,6 +67,7 @@ enum {
     ITEM_FEATURES_RTC_TYPE,
     ITEM_FEATURES_SHINY_CHANCE,
     ITEM_FEATURES_SHINY_COLOR,
+    ITEM_FEATURES_SPRITE_STYLE,
     ITEM_FEATURES_ITEM_DROP,
     ITEM_FEATURES_FRONTIER_BANS,
     ITEM_FEATURES_NEXT,
@@ -540,6 +541,11 @@ static const u8 *const sChoices_RtcFake[] = {
     COMPOUND_STRING("FAKE RTC"),
 };
 
+static const u8 *const sChoices_SpriteStyle[] = {
+    COMPOUND_STRING("GBA"),
+    COMPOUND_STRING("DS"),
+};
+
 static const u8 *const sChoices_ShinyChance[] = {
     COMPOUND_STRING("8192"),
     COMPOUND_STRING("4096"),
@@ -653,6 +659,10 @@ static const u8 *const sDesc_ShinyColor[] = {
     COMPOUND_STRING("Original shiny color palette for\nall {PKMN}. Default."),
     COMPOUND_STRING("Some shiny {PKMN} have brand new\ncolor palettes."),
 };
+static const u8 *const sDesc_SpriteStyle[] = {
+    COMPOUND_STRING("Gen 1-3 {PKMN} keep their GBA\nsprites. Default."),
+    COMPOUND_STRING("All {PKMN} use DS-style sprites,\nwith shadows and female forms."),
+};
 static const u8 *const sDesc_FeaturesNext[] = {
     COMPOUND_STRING("Continue to Randomizer options."),
 };
@@ -675,6 +685,12 @@ static const struct ChallengeMenuItem sTabItems_Features[] = {
         .descriptions = sDesc_ShinyColor,
         .numChoices   = 2,
         .choiceNames  = sChoices_OffOn,
+    },
+    [ITEM_FEATURES_SPRITE_STYLE] = {
+        .name         = COMPOUND_STRING("SPRITES"),
+        .descriptions = sDesc_SpriteStyle,
+        .numChoices   = 2,
+        .choiceNames  = sChoices_SpriteStyle,
     },
     [ITEM_FEATURES_ITEM_DROP] = {
         .name         = COMPOUND_STRING("ITEM DROP"),
@@ -1979,6 +1995,7 @@ static void Task_ConfirmSaveYes(u8 taskId)
     cs->tx_Features_WildMonDropItems = *GetSelectionPtr(TAB_FEATURES, ITEM_FEATURES_ITEM_DROP);
     cs->tx_Features_FrontierBans   = *GetSelectionPtr(TAB_FEATURES, ITEM_FEATURES_FRONTIER_BANS);
     cs->tx_Features_ShinyColors    = *GetSelectionPtr(TAB_FEATURES, ITEM_FEATURES_SHINY_COLOR);
+    cs->tx_Features_SpriteStyle    = *GetSelectionPtr(TAB_FEATURES, ITEM_FEATURES_SPRITE_STYLE);
 
     // Randomizer tab — if master toggle is OFF, clear all sub-fields
     if (*GetSelectionPtr(TAB_RANDOMIZER, ITEM_RANDOM_OFF_ON) == 0)
@@ -2218,6 +2235,7 @@ void CB2_InitChallengeMenu(void)
             *GetSelectionPtr(TAB_FEATURES, ITEM_FEATURES_ITEM_DROP)    = cs->tx_Features_WildMonDropItems;
             *GetSelectionPtr(TAB_FEATURES, ITEM_FEATURES_FRONTIER_BANS)= cs->tx_Features_FrontierBans;
             *GetSelectionPtr(TAB_FEATURES, ITEM_FEATURES_SHINY_COLOR)  = cs->tx_Features_ShinyColors;
+            *GetSelectionPtr(TAB_FEATURES, ITEM_FEATURES_SPRITE_STYLE) = cs->tx_Features_SpriteStyle;
 
             // Randomizer tab — derive master toggle from whether any sub-field is active
             *GetSelectionPtr(TAB_RANDOMIZER, ITEM_RANDOM_OFF_ON) =

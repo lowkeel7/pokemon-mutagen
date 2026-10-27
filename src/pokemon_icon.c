@@ -1,4 +1,5 @@
 #include "global.h"
+#include "species_gfx_style.h"
 #include "graphics.h"
 #include "mail.h"
 #include "palette.h"
@@ -165,9 +166,9 @@ u8 CreateMonIconIsEgg(u16 species, void (*callback)(struct Sprite *), s16 x, s16
         iconTemplate.paletteTag = POKE_ICON_BASE_PAL_TAG;
     }
 #if P_GENDER_DIFFERENCES
-    else if (gSpeciesInfo[species].iconSpriteFemale != NULL && IsPersonalityFemale(species, personality))
+    else if (GetSpeciesIconFemale(species) != NULL && IsPersonalityFemale(species, personality))
     {
-        iconTemplate.paletteTag = POKE_ICON_BASE_PAL_TAG + gSpeciesInfo[species].iconPalIndexFemale;
+        iconTemplate.paletteTag = POKE_ICON_BASE_PAL_TAG + GetSpeciesIconPalIndexFemale(species);
     }
 #endif
 
@@ -272,8 +273,8 @@ void LoadMonIconPalettePersonality(u16 species, u32 personality)
     u8 palIndex;
     species = SanitizeSpeciesId(species);
 #if P_GENDER_DIFFERENCES
-    if (gSpeciesInfo[species].iconSpriteFemale != NULL && IsPersonalityFemale(species, personality))
-        palIndex = gSpeciesInfo[species].iconPalIndexFemale;
+    if (GetSpeciesIconFemale(species) != NULL && IsPersonalityFemale(species, personality))
+        palIndex = GetSpeciesIconPalIndexFemale(species);
     else
 #endif
         palIndex = gSpeciesInfo[species].iconPalIndex;
@@ -330,8 +331,8 @@ const u8 *GetMonIconTilesIsEgg(u16 species, u32 personality, bool32 isEgg)
     else
     {
 #if P_GENDER_DIFFERENCES
-        if (gSpeciesInfo[species].iconSpriteFemale != NULL && IsPersonalityFemale(species, personality))
-            iconSprite = gSpeciesInfo[species].iconSpriteFemale;
+        if (GetSpeciesIconFemale(species) != NULL && IsPersonalityFemale(species, personality))
+            iconSprite = GetSpeciesIconFemale(species);
         else
 #endif
         if (gSpeciesInfo[species].iconSprite != NULL)

@@ -1,4 +1,5 @@
 #include "global.h"
+#include "species_gfx_style.h"
 #include "sprite.h"
 #include "window.h"
 #include "malloc.h"
@@ -223,8 +224,8 @@ u16 CreateMonPicSprite_Affine(u16 species, bool8 isShiny, u32 personality, u8 fl
         images[j].size = MON_PIC_SIZE;
     }
     sCreatingSpriteTemplate.tileTag = TAG_NONE;
-    if (gSpeciesInfo[species].frontAnimFrames != NULL)
-        sCreatingSpriteTemplate.anims = gSpeciesInfo[species].frontAnimFrames;
+    if (GetSpeciesFrontAnimFrames(species) != NULL)
+        sCreatingSpriteTemplate.anims = GetSpeciesFrontAnimFrames(species);
     else
         sCreatingSpriteTemplate.anims = gSpeciesInfo[SPECIES_NONE].frontAnimFrames;
     sCreatingSpriteTemplate.images = images;
