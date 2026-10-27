@@ -3,7 +3,8 @@
 Public name: **Pokémon Mutagen** (`pokerom` stays the internal codename for paths and branches).
 
 **Pillars**, in order, to break ties between designs:
-1. Maximum configurability: every system is an in-game option, and off means plain HnS.
+1. Maximum configurability: every system is an in-game option, and off means plain HnS. This is
+   the main value prop: when in doubt, make it an option.
 2. A delight to play: no friction, no grind walls, no bottlenecks.
 3. A GBA feel, completely revamped: it should feel like the GBA games you remember, made modern.
 
@@ -93,7 +94,7 @@ P4 deep redesigns + content. Nothing deep lands before P2 (it multiplies merge c
 | SG-20 | Make everything configurable in game (config menu) | M | one options screen over HnS options + ruleset | todo |
 | SG-21 | Weight classes (5), more egg groups and crosses | S | species data | todo |
 | SG-22 | Different Pokédex views | M | HGSS dex already in HnS | design |
-| SG-23 | Better / alternate sprite sets | C | `P_GBA_STYLE_SPECIES_GFX`: FALSE gives Gen 1-3 the DS-style art Gen 4-9 already use, Gen 4 enemy shadows and every female sprite, for -2 KB (measured 2026-10-26; spritecheck: 5 small offsets to fix). An in-game GBA/DS option keeps both sets: +690 KB | design ❓ style |
+| SG-23 | Better / alternate sprite sets | C | `P_GBA_STYLE_SPECIES_GFX`: FALSE gives Gen 1-3 the DS-style art Gen 4-9 already use, Gen 4 enemy shadows and every female sprite, for -2 KB (measured 2026-10-26; spritecheck: 5 small offsets to fix). An in-game GBA/DS option keeps both sets: +690 KB | wip (decided 2026-10-26): an in-game option, zero = GBA style (today's look) |
 
 ## P4 — deep redesigns and content
 

@@ -4,6 +4,7 @@
 - [FEATURES](./FEATURES.md)
 - [Pokémon Mutagen]()
     - [Backlog](./pokerom/BACKLOG.md)
+    - [Contributing and Steak](./pokerom/CONTRIBUTING.md)
     - [Provenance](./pokerom/PROVENANCE.md)
     - [Design: type roots](./pokerom/design/type-roots.md)
     - [Design: status escalation](./pokerom/design/statuses.md)
