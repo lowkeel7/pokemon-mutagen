@@ -3185,7 +3185,12 @@ void OpenQueueGroup(u32 sourceLine, enum QueueGroupType type)
      && DATA.queuedEvents[DATA.queueGroupStart].groupSize == DATA.queuedEventsCount - DATA.queueGroupStart
      && type == QUEUE_GROUP_NONE_OF)
     {
-        INVALID("'NOT x; NOT y;', did you mean 'NONE_OF { x; y; }'?");
+        // With MESSAGEs skipped, NOTs that a MESSAGE kept apart become adjacent: merge them into
+        // the previous group, as NONE_OF { x; y; } would be (queueGroupStart stays where it is).
+        if (gTestRunnerSkipMessages)
+            DATA.queueGroupType = type;
+        else
+            INVALID("'NOT x; NOT y;', did you mean 'NONE_OF { x; y; }'?");
     }
     else
     {

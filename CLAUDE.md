@@ -27,7 +27,7 @@ mGBA core on a phone**. Desktop mGBA is the dev tool, not the target. So:
 ```sh
 make hns -j$(sysctl -n hw.ncpu)        # → pokehns.gba. Plain `make` builds Emerald, not HnS.
 make release BUILD=hns                 # → pokehns-release.gba. `make hns release` silently builds Emerald.
-make check BUILD=hns TESTS="Quick Claw"   # headless battle tests; without TESTS all 5,100+
+tools/testgate/testgate.py                # battle tests; exit 1 on a failure not in its baseline
 tools/make_patch.sh pokehns-release.gba   # → BPS against clean Emerald, rebuilt from pret and SHA-1 checked
 tools/playtest/playtest.py --rom pokehns.gba --session /tmp/pt --fresh @tools/playtest/smoke.txt
 ```
@@ -39,10 +39,13 @@ tools/playtest/playtest.py --rom pokehns.gba --session /tmp/pt --fresh @tools/pl
   `arm-gnu-toolchain-13.2.rel1-darwin-arm64-arm-none-eabi.tar.xz` (the GCC that CI's Ubuntu
   packages are built from) anywhere and put its `bin/` on `PATH`. No toolchain at all?
   `tools/docker_build.sh <ref> [make args]` builds a committed ref in an Ubuntu container.
-- `make check` runs each test ROM under `stdbuf -oL`; on macOS that is coreutils'
-  (`brew install coreutils`, then `PATH=$(brew --prefix)/opt/coreutils/libexec/gnubin:$PATH`).
-  Many RHH tests fail at 2.0.6 (BACKLOG TS-01), so compare the failing set before and after your
-  change: a test that newly fails is yours.
+- **Battle tests go through `tools/testgate/testgate.py`.** It runs `make check BUILD=hns` with
+  `TEST_SKIP_MESSAGES=1` (HnS prints classic battle text, so `MESSAGE()` checks are skipped; HP,
+  animations, abilities and `EXPECT_*` still run) and exits 1 on any failure not listed in
+  `tools/testgate/baseline.txt`. Run it before merging engine, battle or item code; `--tests "X"`
+  for one area. Use `--update` only when a listed test now passes or a change is meant to alter
+  one, and say which in the commit. `--strict` keeps the message checks, report only. On macOS
+  `make check` needs coreutils' `stdbuf` (`brew install coreutils`); the script finds it.
 - The variant is `$(or $(BUILD),$(MAKECMDGOALS))` (Makefile:21-27). Combine goals only with `BUILD=hns`.
 - **Play it headless.** `tools/playtest/playtest.py` runs the ROM in RetroArch's mGBA libretro core
   (the core the phone target uses): scripted buttons, screenshots, `gMain.callback2` by name, and

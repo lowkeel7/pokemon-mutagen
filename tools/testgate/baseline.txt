@@ -1,0 +1,130 @@
+# Known failures of `make check BUILD=hns TEST_SKIP_MESSAGES=1`: RESULT<TAB>test<TAB>reason.
+# Written by tools/testgate/testgate.py --update. Remove a line when its test passes.
+FAIL	(Daycare) Pokémon with regional forms give the correct offspring	test/daycare.c:166: EXPECT_EQ(965, 52) failed
+FAIL	(Gulp Missile) Cramorant in Gorging damages an electric type without paralysing	test/battle/ability/gulp_missile.c:249: Matched ANIMATION
+FAIL	(Z-MOVE) 10,000,000 Volt Thunderbolt has an increased critical hit ratio 2/9 (2/2)	test/battle/gimmick/zmove.c:525: Expected 0.25 passes/successes, observed 1.0
+FAIL	(Z-MOVE) Z-Nature Power transforms into different Z-Moves based on the current terrain 4/4	test/battle/gimmick/zmove.c:331: Unmatched ANIMATION
+FAIL	(Z-MOVE) Z_EFFECT_BOOST_CRITS raises a battler's critical hit ratio by 2 stages 1/9 (2/2)	test/battle/gimmick/zmove.c:117: Expected 0.25 passes/successes, observed 1.0
+FAIL	A spread move will do correct damage to the second mon if the first target faints from first hit of the spread move (1v2)	test/battle/damage_formula.c:253: EXPECT_MUL_EQ(136, 0.75, 67) failed: 102 not in [66..68]
+FAIL	A spread move will do correct damage to the second mon if the first target faints from first hit of the spread move (2v1)	test/battle/damage_formula.c:219: EXPECT_MUL_EQ(136, 0.75, 67) failed: 102 not in [66..68]
+FAIL	A spread move will do correct damage to the second mon if the first target faints from first hit of the spread move (double battle)	test/battle/damage_formula.c:151: EXPECT_MUL_EQ(136, 0.75, 67) failed: 102 not in [66..68]
+FAIL	A spread move will do correct damage to the second mon if the first target faints from first hit of the spread move (multibattle)	test/battle/damage_formula.c:185: EXPECT_MUL_EQ(136, 0.75, 67) failed: 102 not in [66..68]
+FAIL	AI can use all moves, 201-300 60/68	test/battle/ai/can_use_all_moves.c:274: Unmatched EXPECT_MOVE SKILL SWAP, got SPLASH
+FAIL	AI can use all moves, 401-500 77/82	test/battle/ai/can_use_all_moves.c:418: Unmatched EXPECT_MOVE ENTRAINMENT, got SPLASH
+FAIL	AI recognizes Volt Absorb received from Trace	test/battle/ai/ai_doubles.c:738: Unmatched NOT_EXPECT_MOVES THUNDER WAVE
+FAIL	AI_FLAG_ATTACKS_PARTNER is willing to kill either the partner or the player 3/6	test/battle/ai/ai_flag_attacks_partner.c:47: Unmatched EXPECT_MOVE OVERDRIVE, got BRUTAL SWING
+FAIL	AI_FLAG_SEQUENCE_SWITCHING: Roar and Dragon Tail still force switch to random party member 1/2 (2/2)	test/battle/ai/ai_flag_sequence_switching.c:42: Expected 0.5 passes/successes, observed 1.0
+FAIL	AI_FLAG_SMART_TERA: AI might tera if it gets saved from a ko (2/2)	test/battle/ai/ai_smart_tera.c:56: Expected 0.89: passes/successes, observed 0.99:
+FAIL	Assurance doubles in power if the target has been damaged in the same turn - Life Orb	test/battle/move_effect/assurance.c:54: EXPECT_MUL_EQ(52, 2.0, 49) failed: 104 not in [47..51]
+FAIL	Aura Break inverts Fairy Aura's effect	test/battle/ability/aura_break.c:30: EXPECT_MUL_EQ(39, 1.330, 39) failed: 51 not in [38..40]
+FAIL	Capture: Missing badge malus apply correcly in gen 9 1/9	test/battle/capture.c:137: EXPECT_EQ(250, 200) failed
+FAIL	Costar copies an ally's Dragon Cheer critical hit boost (2/2)	test/battle/ability/costar.c:28: Expected 0.125 passes/successes, observed 1.0
+FAIL	Costar copies an ally's Dragon Cheer critical hit boost (2/2)	test/battle/ability/costar.c:28: Expected 0.125 passes/successes, observed 1.0
+FAIL	Costar copies an ally's Focus Energy critical hit boost (2/2)	test/battle/ability/costar.c:72: Expected 0.5 passes/successes, observed 1.0
+FAIL	CreateNPCTrainerPartyForTrainer generates customized Pokémon	test/battle/trainer_control.c:81: EXPECT failed
+FAIL	Crit Chance: Raising critical hit rate to 3 guarantees a critical hit (Gen 6+) 2/9 (2/2)	test/battle/crit_chance.c:27: Expected 0.332 passes/successes, observed 1.0
+FAIL	Critical hits without modifiers occur at different rates by generation 1/9 (2/2)	test/battle/crit_chance.c:4: Expected 0.063 passes/successes, observed 1.0
+INVALID	Dazzling, Queenly Majesty and Armor Tail do not block a move's Z-Status effect	test/battle/ability/dazzling.c:194: Cannot turn BABY�DOLL EYES into a Z-Move with FAIRIUM Z
+FAIL	Defog removes Stealth Rock and Sticky Web from target's side 2/2	test/battle/move_effect/defog.c:315: Matched ANIMATION
+FAIL	Destiny Bond does not fail if used after failing (Gen7+)	test/battle/move_effect/destiny_bond.c:99: Matched ANIMATION
+FAIL	Dire Hit increases a battler's critical hit chance by 2 stages 1/9 (2/2)	test/battle/item_effect/dire_hit.c:4: Expected 0.25 passes/successes, observed 1.0
+FAIL	Download doesn't activate if target hasn't been sent out yet 2/2	test/battle/ability/download.c:78: Matched ABILITY_POPUP
+FAIL	Dragon Cheer increases critical hit ratio by 1 on non-Dragon types 1/18 (2/2)	test/battle/move_effect/dragon_cheer.c:21: Expected 0.063 passes/successes, observed 1.0
+FAIL	Dragon Cheer increases critical hit ratio by 2 on Dragon types 1/18 (2/2)	test/battle/move_effect/dragon_cheer.c:53: Expected 0.098 passes/successes, observed 1.0
+FAIL	Dragon Tail switches the target after Rocky Helmet and Iron Barbs (2/2)	test/battle/move_effect/hit_switch_target.c:73: Expected 0.5 passes/successes, observed 1.0
+FAIL	Dragon Tail switches the target with a random non-battler, non-fainted replacement (2/2)	test/battle/move_effect/hit_switch_target.c:27: Expected 0.5 passes/successes, observed 1.0
+FAIL	Dragon Tail switches the target with a random non-fainted replacement (2/2)	test/battle/move_effect/hit_switch_target.c:10: Expected 0.5 passes/successes, observed 1.0
+FAIL	Dynamax: G-Max Finale heals allies by 1/6 of their health	test/battle/gimmick/dynamax.c:1376: Unmatched ANIMATION
+FAIL	Dynamax: G-Max Finale heals allies by 1/6 of their health, even if it faints the foe	test/battle/gimmick/dynamax.c:1735: Unmatched ANIMATION
+FAIL	Dynamax: G-Max Replenish recycles allies' berries 50% of the time (2/2)	test/battle/gimmick/dynamax.c:1308: Expected 0.5 passes/successes, observed 1.0
+FAIL	Dynamax: G-Max Replenish recycles allies' berries 50% of the time, even if it faints the foe (2/2)	test/battle/gimmick/dynamax.c:1743: Expected 0.5 passes/successes, observed 1.0
+FAIL	Dynamax: G-Max Smite confuses both opponents	test/battle/gimmick/dynamax.c:1162: Unmatched ANIMATION
+FAIL	Dynamax: G-Max Wildfire sets a field effect that damages non-Fire types	test/battle/gimmick/dynamax.c:1304: EXPECT_EQ(178, 100) failed
+FAIL	Encore forces the last move used while asleep	test/battle/move_effect/encore.c:134: Unmatched ANIMATION
+FAIL	Fairy Aura increases the power of all Fairy-type attacks by 33%	test/battle/ability/fairy_aura.c:54: EXPECT_MUL_EQ(111, 1.330, 111) failed: 147 not in [110..112]
+FAIL	Filter reduces damage to Super Effective moves by 0.75 2/2	test/battle/ability/filter.c:23: EXPECT_MUL_EQ(31, 0.75, 31) failed: 23 not in [30..32]
+FAIL	Focus Energy increases the user's critical hit ratio by 1 stage (Gen 1-2) or 2 stages (Gen 3+) 1/18 (2/2)	test/battle/move_effect/focus_energy.c:9: Expected 0.063 passes/successes, observed 1.0
+FAIL	Focus Energy multiplies crit chance by 4 with gen 1 crit chance 1/18 (2/2)	test/battle/move_effect/focus_energy.c:43: Expected 0.063 passes/successes, observed 1.0
+FAIL	Focus Punch does not activate when Focus Band/Focus Sash/Sturdy prevent getting one-shot by an attack 1/3	test/battle/move_effect/focus_punch.c:165: EXPECT_EQ(0, 1) failed
+FAIL	Forewarn randomly chooses between opponents with same-power moves (4/4)	test/battle/ability/forewarn.c:35: Expected 0.25 passes/successes, observed 1.0
+FAIL	Forewarn randomly chooses between same-power moves on one opponent (3/3)	test/battle/ability/forewarn.c:19: Expected 0.333 passes/successes, observed 0.99:
+FAIL	Form species ID tables are shared between all forms: (283/283) ID:957 - RATICATE�A	test/species.c:24: EXPECT_EQ(143121064, 143121052) failed
+FAIL	Grudge's effect disappears if the user takes a new turn - Flinching (2/2)	test/battle/move_effect/grudge.c:191: Expected 0.09: passes/successes, observed 0.99:
+FAIL	Grudge's effect disappears if the user takes a new turn - Paralysis (2/2)	test/battle/move_effect/grudge.c:158: Expected 0.25 passes/successes, observed 1.0
+FAIL	Harvest can only restore the newest berry consumed that was transferred from another Pokémon instead of its original Berry	test/battle/ability/harvest.c:261: EXPECT_GT(160, 250) failed
+FAIL	Harvest can restore a Berry that was transferred from another Pokémon	test/battle/ability/harvest.c:241: EXPECT_GT(160, 250) failed
+FAIL	Headbutt flinches 30% of the time (2/2)	test/battle/move_effect_secondary/flinch.c:73: Expected 0.29: passes/successes, observed 0.99:
+FAIL	Healer cures adjacent ally's status condition 30% of the time 1/6 (2/2)	test/battle/ability/healer.c:4: Expected 0.29: passes/successes, observed 0.99:
+FAIL	Healer cures status condition before burn or poison damage is dealt 1/4 (2/2)	test/battle/ability/healer.c:27: Expected 0.29: passes/successes, observed 0.99:
+FAIL	Intimidate doesn't activate on an empty field in a double battle	test/battle/ability/intimidate.c:82: Matched ABILITY_POPUP
+FAIL	Item descriptions fit on Bag and Shop Screen: (20/20) Good for fast� FIRE� ELECTRIC� and FIGHTING POK�MON�	test/text.c:234: EXPECT_LE(104, 102) failed
+FAIL	Item names fit on PC Storage (list): (777/777) ELECTRIC TERA SHARD	test/text.c:146: EXPECT_LE(74, 73) failed
+FAIL	Item names fit on Pokemon Storage System: (727/727) FRESH�START MOCHI	test/text.c:186: EXPECT_LE(67, 66) failed
+FAIL	Item names fit on Pokemon Summary Screen: (692/692) ELECTRIC TERA SHARD	test/text.c:208: EXPECT_LE(74, 72) failed
+FAIL	Items can restore a battler's HP by a percentage 2/2	test/battle/item_effect/restore_hp.c:205: Unmatched HP_BAR
+FAIL	Kings Rock does not increase flinch chance of a move that has the flinch effect (2/2)	test/battle/hold_effect/flinch.c:23: Expected 0.29: passes/successes, observed 0.99:
+FAIL	Kings Rock holder will flinch the target 10% of the time (2/2)	test/battle/hold_effect/flinch.c:9: Expected 0.09: passes/successes, observed 0.99:
+FAIL	Lansat Berry raises the holder's critical-hit-ratio by 2 stages 1/9 (2/2)	test/battle/hold_effect/critical_up.c:51: Expected 0.25 passes/successes, observed 1.0
+FAIL	Leech Seed doesn't affect Grass-type Pokémon (2/2)	test/battle/move_effect/leech_seed.c:9: Expected 0.89: passes/successes, observed 0.99:
+FAIL	Leek increases critical hit ratio by 2 stages for the Farfetch'd Family 1/27 (2/2)	test/battle/hold_effect/leek.c:4: Expected 0.938 passes/successes, observed 1.0
+FAIL	Levitate does not cause single remaining target to take higher damage	test/battle/ability/levitate.c:86: EXPECT_EQ(122, 61) failed
+FAIL	Lightning Rod forces single-target Electric-type moves to target the Pokémon with this Ability. 1/2	test/battle/ability/lightning_rod.c:85: Unmatched ANIMATION
+FAIL	Lucky Punch increases critical hit ratio by 2 stages for Chansey 1/9 (2/2)	test/battle/hold_effect/lucky_punch.c:4: Expected 0.781 passes/successes, observed 1.0
+FAIL	Misty Terrain protects grounded battlers from non-volatile status conditions	test/battle/move_effect/misty_terrain.c:16: Matched STATUS_ICON
+FAIL	Mold Breaker does not prevent Own Tempo from curing confusion right after	test/battle/ability/own_tempo.c:103: Matched ANIMATION
+INVALID	Moody randomly lowers the user's Attack, Defense, Sp. Atk, Sp. Def, or Speed by one stage 1/2 (4/4)	test/battle/ability/moody.c:29: PASSES_RANDOMLY specified but no Random* call with that tag executed
+INVALID	Moody randomly raises the user's Attack, Defense, Sp. Atk, Sp. Def, or Speed by two stages 1/2 (5/5)	test/battle/ability/moody.c:4: PASSES_RANDOMLY specified but no Random* call with that tag executed
+FAIL	Move names fit on Contest Screen: (570/570) PARABOLIC CHARGE	test/text.c:63: EXPECT_LE(63, 59) failed
+FAIL	Multi hit Moves hit at least four times with Loaded Dice (2/2)	test/battle/move_effect/multi_hit.c:114: Expected 0.5 passes/successes, observed 1.0
+FAIL	Multi hit Moves hit four times 12.5/15% of the time 1/2 (6/6)	test/battle/move_effect/multi_hit.c:69: Expected 0.125 passes/successes, observed 0.25
+FAIL	Multi hit Moves hit thrice 37.5/35% of the time 1/2 (6/6)	test/battle/move_effect/multi_hit.c:48: Expected 0.375 passes/successes, observed 0.625
+FAIL	Multi hit Moves hit twice 37.5/35% of the time 1/2 (6/6)	test/battle/move_effect/multi_hit.c:28: Expected 0.375 passes/successes, observed 1.0
+FAIL	Neutralizing Gas is active until the last Dragon Darts hit even if Neutralizing Gas is no longer on the field	test/battle/ability/neutralizing_gas.c:396: Unmatched ABILITY_POPUP
+FAIL	Paralysis has a 25% chance of skipping the turn (2/2)	test/battle/status1/paralysis.c:35: Expected 0.25 passes/successes, observed 1.0
+FAIL	Parental Bond has no affect on multi hit moves and they still hit four times 12.5/15% of the time 1/2 (6/6)	test/battle/ability/parental_bond.c:197: Expected 0.125 passes/successes, observed 0.25
+FAIL	Parental Bond has no affect on multi hit moves and they still hit thrice 37.5/35% of the time 1/2 (6/6)	test/battle/ability/parental_bond.c:167: Expected 0.375 passes/successes, observed 0.625
+FAIL	Parental Bond has no affect on multi hit moves and they still hit twice 37.5/35% of the time 1/2 (6/6)	test/battle/ability/parental_bond.c:138: Expected 0.375 passes/successes, observed 1.0
+INVALID	Pokémon level up learnsets fit within MAX_LEVEL_UP_MOVES and MAX_RELEARNER_MOVES 1436/1573	
+FAIL	Psychic Terrain doesn't block priority moves against semi-invulnerable targets 2/2	test/battle/move_effect/psychic_terrain.c:134: Unmatched ANIMATION
+FAIL	Pursuit attacks the second switching foe if the first faints from pursuit	test/battle/move_effect/pursuit.c:281: Matched ANIMATION
+FAIL	Pursuit doesn't attack a foe using Teleport / Baton Pass to switch out 1/2	test/battle/move_effect/pursuit.c:68: Matched ANIMATION
+FAIL	Pursuit only attacks a switching foe if foe is alive	test/battle/move_effect/pursuit.c:257: Matched ANIMATION
+FAIL	Quick Claw activates 20% of the time (2/2)	test/battle/hold_effect/quick_claw.c:10: Expected 0.19: passes/successes, observed 0.99:
+FAIL	Rainbow doubles the chance of secondary move effects (2/2)	test/battle/move_effect/pledge.c:37: Expected 0.19: passes/successes, observed 0.99:
+FAIL	Rainbow flinch chance does not stack with Serene Grace (2/2)	test/battle/move_effect/pledge.c:58: Expected 0.59: passes/successes, observed 0.99:
+FAIL	Red Card switches the attacker with a random non-fainted replacement (2/2)	test/battle/hold_effect/red_card.c:9: Expected 0.5 passes/successes, observed 1.0
+FAIL	Red Card switches the target with a random non-battler, non-fainted replacement (2/2)	test/battle/hold_effect/red_card.c:30: Expected 0.5 passes/successes, observed 1.0
+FAIL	Refresh does not cure the user of Freeze (2/2)	test/battle/move_effect/refresh.c:28: Expected 0.19: passes/successes, observed 0.79:
+FAIL	Roar switches the target with a random non-battler, non-fainted replacement (2/2)	test/battle/move_effect/roar.c:28: Expected 0.5 passes/successes, observed 1.0
+FAIL	Roar switches the target with a random non-fainted replacement (2/2)	test/battle/move_effect/roar.c:9: Expected 0.5 passes/successes, observed 1.0
+FAIL	SaveBlock1 is backwards compatible	test/save.c:14: EXPECT_EQ(15760, 15568) failed
+FAIL	SaveBlock2 is backwards compatible	test/save.c:19: EXPECT_EQ(3892, 3884) failed
+FAIL	SaveBlock3 is backwards compatible	test/save.c:24: EXPECT_EQ(52, 4) failed
+FAIL	Scale Shot decreases defense and increases speed after the 4th hit of Loaded Dice (2/2)	test/battle/move_effect/multi_hit.c:215: Expected 0.5 passes/successes, observed 1.0
+FAIL	Scope Lens increases the critical hit ratio by 1 stage 1/9 (2/2)	test/battle/hold_effect/scope_lens.c:4: Expected 0.25 passes/successes, observed 1.0
+FAIL	Sheer Force only boosts the damage of moves it's supposed to boost (Gen1) 80/109	test/battle/ability/sheer_force.c:701: EXPECT_EQ(103, 207) failed
+FAIL	Sheer Force only boosts the damage of moves it's supposed to boost (Gen8) 26/65	test/battle/ability/sheer_force.c:1317: EXPECT_EQ(34, 68) failed
+FAIL	Sleep Clause: Moves with sleep effect chance will activate sleep clause (2/2)	test/battle/sleep_clause.c:413: Expected 0.09: passes/successes, observed 0.89:
+FAIL	Sleep Talk calls move and that move may be redirected by Lightning Rod (2/2)	test/battle/move_effect/sleep_talk.c:112: Expected 0.5 passes/successes, observed 1.0
+FAIL	Sleep Talk calls move and that move may be redirected by Storm Drain (2/2)	test/battle/move_effect/sleep_talk.c:132: Expected 0.5 passes/successes, observed 1.0
+FAIL	Spicy Extract against Clear Amulet and Contrary raises Defense only	test/battle/move_effect/spicy_extract.c:154: Matched ANIMATION
+FAIL	Spread Move: Heals the correct amount from all Pokemon	test/battle/move_effect/absorb.c:180: EXPECT_MUL_EQ(194, 0.5, -35) failed: -97 not in [-36..-34]
+FAIL	Stench does not stack with King's Rock (2/2)	test/battle/ability/stench.c:18: Expected 0.09: passes/successes, observed 0.99:
+FAIL	Stench has a 10% chance to flinch (2/2)	test/battle/ability/stench.c:4: Expected 0.09: passes/successes, observed 0.99:
+FAIL	Sticky Syrup speed reduction is prevented by Clear Amulet	test/battle/move_effect_secondary/syrup_bomb.c:139: Matched ANIMATION
+FAIL	Strength Sap fails if target is at -6 Atk	test/battle/move_effect/strength_sap.c:135: Matched ANIMATION
+FAIL	Sturdy prevents OHKOs (Gen5+) 2/2	test/battle/ability/sturdy.c:21: TURN 1 incomplete
+FAIL	Super Luck increases the critical hit ratio by 1 stage 1/9 (2/2)	test/battle/ability/super_luck.c:4: Expected 0.156 passes/successes, observed 1.0
+FAIL	Taunt lasts for 3-5 turns (Gen 4) 1/3 (3/3)	test/battle/move_effect/taunt.c:23: Expected 0.333 passes/successes, observed 0.99:
+FAIL	Teraform Zero shouldn't cause Neutralizing Gas to show it's popup when trying to activate	test/battle/ability/teraform_zero.c:99: Matched ABILITY_POPUP
+CRASH	Tests resume after CRASH	
+FAIL	Toxic cannot miss if used by a Poison-type (Gen6+) 4/4	test/battle/move_effect/toxic.c:63: Unmatched ANIMATION
+FAIL	Trace copies opponents ability randomly 1/2 (2/2)	test/battle/ability/trace.c:47: Expected 0.5 passes/successes, observed 1.0
+FAIL	Trainer Slide: Multi: Last Switchin	test/battle/trainer_slides.c:697: Expected target playerRight, got opponentRight
+FAIL	Transistor Damage calculation 1/32	test/battle/damage_formula.c:412: Unmatched ANIMATION
+FAIL	Triple Arrows has an increased critical hit ratio 1/9 (2/2)	test/battle/move_effects_combined/triple_arrows.c:47: Expected 0.5 passes/successes, observed 1.0
+FAIL	Triple Arrows makes the foe flinch 30% of the time 1/2 (2/2)	test/battle/move_effects_combined/triple_arrows.c:29: Expected 0.29: passes/successes, observed 0.99:
+FAIL	Type-enhancing items increase the base power of moves by 20% 36/36	test/battle/hold_effect/type_power.c:52: EXPECT_MUL_EQ(17, 1.19:, 17) failed: 20 not in [16..18]
+FAIL	Weak Armor still boosts Speed if Defense can't go any lower 1/2	test/battle/ability/weak_armor.c:99: Matched ANIMATION
+FAIL	X Accuracy sharply raises battler's Accuracy stat (2/2)	test/battle/item_effect/increase_stat.c:136: Expected 0.90: passes/successes, observed 0.99:
+FAIL	criticalHitStage set to 1 increases critical hits occur at a 1/8 rate (Gen 2+) or x8 times more likely (Gen 1) 1/9 (2/2)	test/battle/move_flags/critical_hit_stage.c:4: Expected 0.5 passes/successes, observed 1.0
