@@ -5262,7 +5262,16 @@ void Debug_TryBattleRequest(void)
     gDebugAiVsAi = TRUE;
     gBattleTypeFlags = BATTLE_TYPE_TRAINER;
     if (GetTrainerBattleType(trainerId) == TRAINER_BATTLE_TYPE_DOUBLES)
+    {
+        // The debug party has one Pokemon, and a double battle needs two (the game's own double
+        // battle scripts refuse with fewer): bring a copy.
         gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
+        if (gPlayerPartyCount < 2)
+        {
+            CopyMon(&gPlayerParty[1], &gPlayerParty[0], sizeof(gPlayerParty[0]));
+            CalculatePlayerPartyCount();
+        }
+    }
     TRAINER_BATTLE_PARAM.opponentA = trainerId;
     TRAINER_BATTLE_PARAM.opponentB = 0xFFFF;
     gBattleEnvironment = BattleSetup_GetEnvironmentId();
