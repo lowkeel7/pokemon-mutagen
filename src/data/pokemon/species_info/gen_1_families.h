@@ -2491,7 +2491,11 @@ const struct SpeciesInfo gSpeciesInfoGen1[] =
         .perfectIVCount = LEGENDARY_PERFECT_IV_COUNT,
         .levelUpLearnset = sRaticateAlolaLevelUpLearnset,
         .teachableLearnset = sRaticateAlolaTeachableLearnset,
+#if P_SEPARATE_REGIONAL_FORMS
+        .formSpeciesIdTable = sRaticateAlolaFormSpeciesIdTable,
+#else
         .formSpeciesIdTable = sRaticateFormSpeciesIdTable,
+#endif
         .randomizerMode = MON_RANDOMIZER_INVALID,
     },
 #endif //P_ALOLAN_FORMS
