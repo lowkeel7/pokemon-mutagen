@@ -21,7 +21,11 @@ next one is checked against it.
 The release link prints a few warnings that aren't ours to fix: newlib's `_close`, `_lseek`, `_read`
 and `_write` stubs (ARM's toolchain; devkitARM supplies them), a LOAD segment with RWX permissions
 (binutils 2.39 and later), and `mystery_gift_client.c` copying 1,024 bytes from a 16-byte script
-(pret's and RHH's code too; it only reads ROM). Anything else is new and needs a look.
+(pret's and RHH's code too; it only reads ROM). A build from scratch adds about 420 compile
+warnings from Heart & Soul's and RHH's code: unused functions and variables, `-Woverride-init` in
+data tables, `bKGD: invalid index` from PNGs, and a Primeape follower `setvar` in Ula'Ula Forest
+whose value only looks like a variable. None is in a file Mutagen changed; anything else is new
+and needs a look.
 
 ## 2. Build the release
 
