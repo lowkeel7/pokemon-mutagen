@@ -225,7 +225,9 @@ TEST("Item names fit on Shop Screen")
 TEST("Item descriptions fit on Bag and Shop Screen")
 {
     u32 i;
-    const u32 fontId = FONT_NORMAL, widthPx = 102;
+    // Heart & Soul's bag and shop description windows are 14 tiles wide with the text at x 3
+    // (item_menu.c WIN_DESCRIPTION, shop.c WIN_ITEM_DESCRIPTION): 109 px, not RHH's 102.
+    const u32 fontId = FONT_NORMAL, widthPx = 109;
     enum Item item = ITEM_NONE;
     for (i = 1; i < ITEMS_COUNT; i++)
     {

@@ -16227,9 +16227,9 @@ const struct ItemInfo gItemsInfo[] =
         .name = ITEM_NAME("PASS"),
         .price = 0,
         .description = COMPOUND_STRING(
-            "A pass for the\n"
-            "Magnet Train between\n"
-            "Goldenrod and Saffron."),
+            "A Magnet Train pass\n"
+            "between Goldenrod\n"
+            "and Saffron."),
         .importance = 1,
         .pocket = POCKET_KEY_ITEMS,
         .type = ITEM_USE_BAG_MENU,
