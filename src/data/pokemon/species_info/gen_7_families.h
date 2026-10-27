@@ -2354,7 +2354,7 @@ const struct SpeciesInfo gSpeciesInfoGen7[] =
         .trainerOffset = 0,
         .frontPic = gMonFrontPic_LycanrocDusk,
         .frontPicSize = MON_COORDS_SIZE(57, 58),
-        .frontPicYOffset = 6,
+        .frontPicYOffset = 5,
         .frontAnimFrames = ANIM_FRAMES(
             ANIMCMD_FRAME(1, 40),
             ANIMCMD_FRAME(0, 5),
@@ -4661,7 +4661,7 @@ const struct SpeciesInfo gSpeciesInfoGen7[] =
         .palette = gMonPalette_MiniorMeteor,                \
         .shinyPalette = gMonShinyPalette_MiniorMeteor,      \
         .iconSprite = gMonIcon_MiniorMeteor,                \
-        .iconPalIndex = 0,                                  \
+        .iconPalIndex = 2,                                  \
         .pokemonJumpType = PKMN_JUMP_TYPE_NONE,             \
         SHADOW(0, 14, SHADOW_SIZE_S)                        \
         OVERWORLD(                                          \
