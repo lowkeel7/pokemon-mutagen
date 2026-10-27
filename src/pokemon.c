@@ -8249,7 +8249,7 @@ const u16 *GetMonSpritePalFromSpeciesIsEgg(u16 species, bool32 isShiny, bool32 i
             && gSaveBlock3Ptr->challengeSettings.tx_Features_ShinyColors
             && gSpeciesInfo[species].shinyPaletteModern != NULL)
             return gSpeciesInfo[species].shinyPaletteModern;
-    #if P_GENDER_DIFFERENCES && !P_GBA_STYLE_SPECIES_GFX
+    #if P_GENDER_DIFFERENCES
         if (gSpeciesInfo[species].shinyPaletteFemale != NULL && isFemale)
             return gSpeciesInfo[species].shinyPaletteFemale;
         else
@@ -8261,7 +8261,7 @@ const u16 *GetMonSpritePalFromSpeciesIsEgg(u16 species, bool32 isShiny, bool32 i
     }
     else
     {
-    #if P_GENDER_DIFFERENCES && !P_GBA_STYLE_SPECIES_GFX
+    #if P_GENDER_DIFFERENCES
         if (gSpeciesInfo[species].paletteFemale != NULL && isFemale)
             return gSpeciesInfo[species].paletteFemale;
         else

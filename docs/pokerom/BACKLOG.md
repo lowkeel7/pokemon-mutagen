@@ -3,7 +3,8 @@
 Public name: **Pokémon Mutagen** (`pokerom` stays the internal codename for paths and branches).
 
 **Pillars**, in order, to break ties between designs:
-1. Maximum configurability: every system is an in-game option, and off means plain HnS.
+1. Maximum configurability: every system is an in-game option, and off means plain HnS. This is
+   the main value prop: when in doubt, make it an option.
 2. A delight to play: no friction, no grind walls, no bottlenecks.
 3. A GBA feel, completely revamped: it should feel like the GBA games you remember, made modern.
 
@@ -57,6 +58,7 @@ P4 deep redesigns + content. Nothing deep lands before P2 (it multiplies merge c
 | TS-05 | Battle sweep: every trainer fought to the end, AI on both sides | S | `tools/playtest/battlesweep.py` + `gDebugBattleRequest`/`gDebugAiVsAi` (dev builds only) | done 2026-10-26: all 651 trainers start and end (2.6M frames); the only stalls were the sweep's own one-Pokémon party in double battles, fixed |
 | QW-26 | Pokédex "set complete" | S | `dbg` Pokédex flags | todo (part of QW-16) |
 | QW-27 | Deoxys forms from the Meteorite (use it to cycle Normal → Attack → Defense → Speed) | exists | `form_change_tables.h:770-791`; Meteorite given on Birth Island (`BirthIsland_Exterior_hns/scripts.inc:118-122`). Verify in mGBA; QW-09 must open Birth Island without the event ticket. Story tie-in: DP-14 | todo (verify) |
+| QW-28 | Sprite pass: every species' battle sprites, icons and followers checked against their data, and what was wrong fixed | S | `tools/spritecheck/spritecheck.py` (the ROM as built; `--strict` exits 1 on a finding not in `known.txt`), `sheet.py` (review page) | done (2026-10-26, played): Gen 4+ female sprites show in battle, summary and Pokédex (HnS 806c6f2/a52f3e8 hid them along with the Gen 1-3 DS ones); Y offsets of 44 forms (24 species, 21 of them Unown letters) measured from the art (Unown and Chimecho back to Emerald's); Minior icon palette; Keldeo Resolute follows as Ordinary, not the substitute doll. Open: the art style (SG-23); 7 follower shiny palettes need art |
 
 ## P2 — engine upgrade
 
@@ -93,7 +95,7 @@ P4 deep redesigns + content. Nothing deep lands before P2 (it multiplies merge c
 | SG-20 | Make everything configurable in game (config menu) | M | one options screen over HnS options + ruleset | todo |
 | SG-21 | Weight classes (5), more egg groups and crosses | S | species data | todo |
 | SG-22 | Different Pokédex views | M | HGSS dex already in HnS | design |
-| SG-23 | Better / alternate sprite sets | C | per-species sprite option | design ❓ space |
+| SG-23 | Better / alternate sprite sets | C | `P_GBA_STYLE_SPECIES_GFX`: FALSE gives Gen 1-3 the DS-style art Gen 4-9 already use, Gen 4 enemy shadows and every female sprite, for -2 KB (measured 2026-10-26; spritecheck: 5 small offsets to fix). An in-game GBA/DS option keeps both sets: +690 KB | wip (decided 2026-10-26): an in-game option, zero = GBA style (today's look) |
 
 ## P4 — deep redesigns and content
 
