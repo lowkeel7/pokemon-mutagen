@@ -101,6 +101,7 @@ the relearner shipped switched off) → `hnsplus/master` (`git log hnsplus/maste
 | `items-moves-abilities.md` | recipes: new item, hold effect, move, ability, species form |
 | `debug-cheats.md` | debug menu, cheat entries, release gating |
 | `scripts.md` | map scripts, NPCs, trainers, marts, Elite Four, legendaries, trains |
+| `sprites.md` | the SPRITES option (GBA/DS), reading battle art, regenerating the DS table, sprite checks |
 
 Repo skills (`.claude/skills/`): `feature` (backlog row → shipped toggle), `hnsplus-pick` (port
 one HnS+ feature), `rhh-upgrade` (the P2 engine merge).
