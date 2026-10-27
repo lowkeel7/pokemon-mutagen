@@ -48,7 +48,6 @@ FAIL	Focus Energy multiplies crit chance by 4 with gen 1 crit chance 1/18 (2/2)	
 FAIL	Focus Punch does not activate when Focus Band/Focus Sash/Sturdy prevent getting one-shot by an attack 1/3	test/battle/move_effect/focus_punch.c:165: EXPECT_EQ(0, 1) failed
 FAIL	Forewarn randomly chooses between opponents with same-power moves (4/4)	test/battle/ability/forewarn.c:35: Expected 0.25 passes/successes, observed 1.0
 FAIL	Forewarn randomly chooses between same-power moves on one opponent (3/3)	test/battle/ability/forewarn.c:19: Expected 0.333 passes/successes, observed 0.99:
-FAIL	Form species ID tables are shared between all forms: (283/283) ID:957 - RATICATE�A	test/species.c:24: EXPECT_EQ(143121064, 143121052) failed
 FAIL	Grudge's effect disappears if the user takes a new turn - Flinching (2/2)	test/battle/move_effect/grudge.c:191: Expected 0.09: passes/successes, observed 0.99:
 FAIL	Grudge's effect disappears if the user takes a new turn - Paralysis (2/2)	test/battle/move_effect/grudge.c:158: Expected 0.25 passes/successes, observed 1.0
 FAIL	Harvest can only restore the newest berry consumed that was transferred from another Pokémon instead of its original Berry	test/battle/ability/harvest.c:261: EXPECT_GT(160, 250) failed
@@ -57,7 +56,6 @@ FAIL	Headbutt flinches 30% of the time (2/2)	test/battle/move_effect_secondary/f
 FAIL	Healer cures adjacent ally's status condition 30% of the time 1/6 (2/2)	test/battle/ability/healer.c:4: Expected 0.29: passes/successes, observed 0.99:
 FAIL	Healer cures status condition before burn or poison damage is dealt 1/4 (2/2)	test/battle/ability/healer.c:27: Expected 0.29: passes/successes, observed 0.99:
 FAIL	Intimidate doesn't activate on an empty field in a double battle	test/battle/ability/intimidate.c:82: Matched ABILITY_POPUP
-FAIL	Item descriptions fit on Bag and Shop Screen: (20/20) Good for fast� FIRE� ELECTRIC� and FIGHTING POK�MON�	test/text.c:234: EXPECT_LE(104, 102) failed
 FAIL	Item names fit on PC Storage (list): (777/777) ELECTRIC TERA SHARD	test/text.c:146: EXPECT_LE(74, 73) failed
 FAIL	Item names fit on Pokemon Storage System: (727/727) FRESH�START MOCHI	test/text.c:186: EXPECT_LE(67, 66) failed
 FAIL	Item names fit on Pokemon Summary Screen: (692/692) ELECTRIC TERA SHARD	test/text.c:208: EXPECT_LE(74, 72) failed
@@ -97,9 +95,6 @@ FAIL	Red Card switches the target with a random non-battler, non-fainted replace
 FAIL	Refresh does not cure the user of Freeze (2/2)	test/battle/move_effect/refresh.c:28: Expected 0.19: passes/successes, observed 0.79:
 FAIL	Roar switches the target with a random non-battler, non-fainted replacement (2/2)	test/battle/move_effect/roar.c:28: Expected 0.5 passes/successes, observed 1.0
 FAIL	Roar switches the target with a random non-fainted replacement (2/2)	test/battle/move_effect/roar.c:9: Expected 0.5 passes/successes, observed 1.0
-FAIL	SaveBlock1 is backwards compatible	test/save.c:14: EXPECT_EQ(15760, 15568) failed
-FAIL	SaveBlock2 is backwards compatible	test/save.c:19: EXPECT_EQ(3892, 3884) failed
-FAIL	SaveBlock3 is backwards compatible	test/save.c:24: EXPECT_EQ(52, 4) failed
 FAIL	Scale Shot decreases defense and increases speed after the 4th hit of Loaded Dice (2/2)	test/battle/move_effect/multi_hit.c:215: Expected 0.5 passes/successes, observed 1.0
 FAIL	Scope Lens increases the critical hit ratio by 1 stage 1/9 (2/2)	test/battle/hold_effect/scope_lens.c:4: Expected 0.25 passes/successes, observed 1.0
 FAIL	Sheer Force only boosts the damage of moves it's supposed to boost (Gen1) 80/109	test/battle/ability/sheer_force.c:701: EXPECT_EQ(103, 207) failed
