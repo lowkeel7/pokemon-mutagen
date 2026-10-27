@@ -4,9 +4,11 @@
 
 // If you would like to ensure save compatibility, update the values below with those for your hack. You can find these through the debug menu.
 // Please note that this simple check is not 100% foolproof, but should be able to catch most unintended shifts.
-#define T_SAVEBLOCK1_SIZE 15568
-#define T_SAVEBLOCK2_SIZE 3884
-#define T_SAVEBLOCK3_SIZE 4
+// Pokemon Mutagen: Heart & Soul 2.0.6's sizes, so that its saves keep loading. A change here is a
+// save break: it needs SAVE_VERSION and a migration in save.c, and a line in the changelog.
+#define T_SAVEBLOCK1_SIZE 15760
+#define T_SAVEBLOCK2_SIZE 3892
+#define T_SAVEBLOCK3_SIZE 52
 #define T_POKEMONSTORAGE_SIZE 34144
 
 TEST("SaveBlock1 is backwards compatible")
