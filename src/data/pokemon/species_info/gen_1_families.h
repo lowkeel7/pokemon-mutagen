@@ -4156,7 +4156,7 @@ const struct SpeciesInfo gSpeciesInfoGen1[] =
         .trainerScale = 256,
         .trainerOffset = 0,
         .frontPic = gMonFrontPic_Pikachu,
-        .frontPicSize = MON_COORDS_SIZE(48, 48),
+        .frontPicSize = P_GBA_STYLE_SPECIES_GFX ? MON_COORDS_SIZE(48, 56) : MON_COORDS_SIZE(48, 48),
         .frontPicYOffset = 9,
         .frontAnimFrames = ANIM_FRAMES(
             ANIMCMD_FRAME(0, 15),
@@ -4167,23 +4167,23 @@ const struct SpeciesInfo gSpeciesInfoGen1[] =
         .frontAnimId = ANIM_FLASH_YELLOW,
         .frontAnimDelay = 25,
         .backPic = gMonBackPic_Pikachu,
-        .backPicSize = MON_COORDS_SIZE(64, 56),
-        .backPicYOffset = 4,
+        .backPicSize = P_GBA_STYLE_SPECIES_GFX ? MON_COORDS_SIZE(56, 56) : MON_COORDS_SIZE(64, 56),
+        .backPicYOffset = P_GBA_STYLE_SPECIES_GFX ? 7 : 4,
         .backAnimId = BACK_ANIM_SHAKE_FLASH_YELLOW,
         .palette = gMonPalette_Pikachu,
         .shinyPalette = gMonShinyPalette_Pikachu,
         .iconSprite = gMonIcon_PikachuStarter,
         .iconPalIndex = 2,
-#if P_GENDER_DIFFERENCES
+#if P_GENDER_DIFFERENCES && !P_GBA_STYLE_SPECIES_GFX
         .frontPicFemale = gMonFrontPic_PikachuF,
         .frontPicSizeFemale = MON_COORDS_SIZE(48, 48),
         .backPicFemale = gMonBackPic_PikachuF,
         .backPicSizeFemale = MON_COORDS_SIZE(64, 56),
-    #if P_CUSTOM_GENDER_DIFF_ICONS == TRUE
+#endif //P_GENDER_DIFFERENCES && !P_GBA_STYLE_SPECIES_GFX
+#if P_GENDER_DIFFERENCES && P_CUSTOM_GENDER_DIFF_ICONS == TRUE
         .iconSpriteFemale = gMonIcon_PikachuStarterF,
         .iconPalIndexFemale = 2,
-    #endif
-#endif //P_GENDER_DIFFERENCES
+#endif
         .pokemonJumpType = PKMN_JUMP_TYPE_NORMAL,
         SHADOW(-3, 5, SHADOW_SIZE_M)
         FOOTPRINT(Pikachu)
@@ -4269,10 +4269,10 @@ const struct SpeciesInfo gSpeciesInfoGen1[] =
         .shinyPaletteModern = gMonShinyPaletteModern_Raichu,
         .iconSprite = gMonIcon_Raichu,
         .iconPalIndex = 0,
-#if P_GENDER_DIFFERENCES
+#if P_GENDER_DIFFERENCES && !P_GBA_STYLE_SPECIES_GFX
         .frontPicFemale = gMonFrontPic_RaichuF,
         .frontPicSizeFemale = MON_COORDS_SIZE(64, 64),
-#endif //P_GENDER_DIFFERENCES
+#endif //P_GENDER_DIFFERENCES && !P_GBA_STYLE_SPECIES_GFX
         .pokemonJumpType = PKMN_JUMP_TYPE_NONE,
         SHADOW(2, 10, SHADOW_SIZE_M)
         FOOTPRINT(Raichu)
@@ -16951,10 +16951,10 @@ const struct SpeciesInfo gSpeciesInfoGen1[] =
         .shinyPaletteModern = gMonShinyPaletteModern_Scyther,
         .iconSprite = gMonIcon_Scyther,
         .iconPalIndex = 1,
-#if P_GENDER_DIFFERENCES
+#if P_GENDER_DIFFERENCES && !P_GBA_STYLE_SPECIES_GFX
         .frontPicFemale = gMonFrontPic_ScytherF,
         .frontPicSizeFemale = MON_COORDS_SIZE(56, 64),
-#endif //P_GENDER_DIFFERENCES
+#endif //P_GENDER_DIFFERENCES && !P_GBA_STYLE_SPECIES_GFX
         .pokemonJumpType = PKMN_JUMP_TYPE_NONE,
         SHADOW(0, 7, SHADOW_SIZE_L)
         FOOTPRINT(Scyther)
@@ -17050,10 +17050,10 @@ const struct SpeciesInfo gSpeciesInfoGen1[] =
         .shinyPalette = gMonShinyPalette_Scizor,
         .iconSprite = gMonIcon_Scizor,
         .iconPalIndex = 0,
-#if P_GENDER_DIFFERENCES
+#if P_GENDER_DIFFERENCES && !P_GBA_STYLE_SPECIES_GFX
         .frontPicFemale = gMonFrontPic_ScizorF,
         .frontPicSizeFemale = MON_COORDS_SIZE(64, 64),
-#endif //P_GENDER_DIFFERENCES
+#endif //P_GENDER_DIFFERENCES && !P_GBA_STYLE_SPECIES_GFX
         .pokemonJumpType = PKMN_JUMP_TYPE_NONE,
         SHADOW(3, 9, SHADOW_SIZE_XL_BATTLE_ONLY)
         FOOTPRINT(Scizor)
@@ -18964,14 +18964,14 @@ const struct SpeciesInfo gSpeciesInfoGen1[] =
         .trainerOffset = 0,
         .frontPic = gMonFrontPic_Eevee,
         .frontPicSize = MON_COORDS_SIZE(40, 48),
-        .frontPicYOffset = 11,
+        .frontPicYOffset = P_GBA_STYLE_SPECIES_GFX ? 9 : 11,
         .frontAnimFrames = ANIM_FRAMES(
             ANIMCMD_FRAME(1, 33),
             ANIMCMD_FRAME(0, 5),
         ),
         .frontAnimId = ANIM_V_STRETCH,
         .backPic = gMonBackPic_Eevee,
-        .backPicSize = MON_COORDS_SIZE(56, 48),
+        .backPicSize = P_GBA_STYLE_SPECIES_GFX ? MON_COORDS_SIZE(48, 48) : MON_COORDS_SIZE(56, 48),
         .backPicYOffset = 10,
         .backAnimId = BACK_ANIM_CONCAVE_ARC_SMALL,
         .palette = gMonPalette_Eevee,

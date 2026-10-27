@@ -3123,7 +3123,7 @@ const struct SpeciesInfo gSpeciesInfoGen6[] =
         .trainerOffset = 0,
         .frontPic = gMonFrontPic_Honedge,
         .frontPicSize = MON_COORDS_SIZE(64, 56),
-        .frontPicYOffset = 4,
+        .frontPicYOffset = 3,
         .frontAnimFrames = ANIM_FRAMES(
             ANIMCMD_FRAME(1, 50),
             ANIMCMD_FRAME(1, 40),

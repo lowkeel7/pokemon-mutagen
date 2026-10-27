@@ -8429,7 +8429,7 @@ const struct SpeciesInfo gSpeciesInfoGen5[] =
         .trainerOffset = 4,
         .frontPic = gMonFrontPic_SawsbuckSummer,
         .frontPicSize = MON_COORDS_SIZE(64, 64),
-        .frontPicYOffset = 0,
+        .frontPicYOffset = 1,
         .frontAnimFrames = sAnims_Sawsbuck,
         .frontAnimId = ANIM_V_SQUISH_AND_BOUNCE,
         .backPic = gMonBackPic_SawsbuckSummer,
@@ -8559,7 +8559,7 @@ const struct SpeciesInfo gSpeciesInfoGen5[] =
         .trainerOffset = 4,
         .frontPic = gMonFrontPic_SawsbuckWinter,
         .frontPicSize = MON_COORDS_SIZE(56, 64),
-        .frontPicYOffset = 0,
+        .frontPicYOffset = 1,
         .frontAnimFrames = sAnims_Sawsbuck,
         .frontAnimId = ANIM_V_SQUISH_AND_BOUNCE,
         .backPic = gMonBackPic_SawsbuckWinter,
@@ -13927,7 +13927,7 @@ const struct SpeciesInfo gSpeciesInfoGen5[] =
         .trainerOffset = 0,
         .frontPic = gMonFrontPic_KeldeoResolute,
         .frontPicSize = MON_COORDS_SIZE(64, 64),
-        .frontPicYOffset = 2,
+        .frontPicYOffset = 1,
         .frontAnimFrames = ANIM_FRAMES(
             ANIMCMD_FRAME(0, 1),
             ANIMCMD_FRAME(1, 36),
@@ -13945,6 +13945,16 @@ const struct SpeciesInfo gSpeciesInfoGen5[] =
         .pokemonJumpType = PKMN_JUMP_TYPE_NONE,
         SHADOW(0, 12, SHADOW_SIZE_M)
         FOOTPRINT(Keldeo)
+        // Resolute lasts outside battle and has no follower art; Ordinary's beats the substitute doll.
+        OVERWORLD(
+            sPicTable_KeldeoOrdinary,
+            SIZE_32x32,
+            SHADOW_SIZE_M,
+            TRACKS_FOOT,
+            sAnimTable_Following,
+            gOverworldPalette_KeldeoOrdinary,
+            gShinyOverworldPalette_KeldeoOrdinary
+        )
         .isMythical = TRUE,
         .isFrontierBanned = TRUE,
         .perfectIVCount = LEGENDARY_PERFECT_IV_COUNT,
@@ -14079,7 +14089,7 @@ const struct SpeciesInfo gSpeciesInfoGen5[] =
         .trainerOffset = 0,
         .frontPic = gMonFrontPic_MeloettaPirouette,
         .frontPicSize = MON_COORDS_SIZE(64, 64),
-        .frontPicYOffset = 2,
+        .frontPicYOffset = 0,
         .frontAnimFrames = ANIM_FRAMES(
             ANIMCMD_FRAME(1, 15),
             ANIMCMD_FRAME(0, 15),

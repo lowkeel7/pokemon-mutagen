@@ -1,0 +1,56 @@
+# spritecheck.py: findings that are right as they are, or that only new art can fix.
+# One per line: <check> <SPECIES_X[/female]> <reason>. "Emerald" = read from the original Emerald ROM.
+# spritecheck.py counts these apart and --strict ignores them.
+
+back-y SPECIES_NINJASK Emerald's own back offset (8): Ninjask hovers over the text box, as in Emerald
+front-y SPECIES_PYROAR/female the female art ends 1 px lower than the male's; one Y offset serves both
+back-y SPECIES_FINNEON/female the female art ends 1 px lower than the male's; one Y offset serves both
+
+shiny-same SPECIES_CASTFORM_SUNNY Emerald's weather forms have no shiny colours of their own
+shiny-same SPECIES_CASTFORM_RAINY Emerald's weather forms have no shiny colours of their own
+shiny-same SPECIES_CASTFORM_SNOWY Emerald's weather forms have no shiny colours of their own
+shiny-same SPECIES_MINIOR Meteor Minior looks the same when shiny in the official games; its core shows it
+shiny-same SPECIES_MINIOR_ORANGE Meteor Minior looks the same when shiny in the official games; its core shows it
+shiny-same SPECIES_MINIOR_YELLOW Meteor Minior looks the same when shiny in the official games; its core shows it
+shiny-same SPECIES_MINIOR_GREEN Meteor Minior looks the same when shiny in the official games; its core shows it
+shiny-same SPECIES_MINIOR_BLUE Meteor Minior looks the same when shiny in the official games; its core shows it
+shiny-same SPECIES_MINIOR_INDIGO Meteor Minior looks the same when shiny in the official games; its core shows it
+shiny-same SPECIES_MINIOR_VIOLET Meteor Minior looks the same when shiny in the official games; its core shows it
+shiny-same SPECIES_EGG eggs aren't shiny
+
+ow-shiny-same SPECIES_MINIOR Meteor Minior looks the same when shiny in the official games
+ow-shiny-same SPECIES_MINIOR_ORANGE Meteor Minior looks the same when shiny in the official games
+ow-shiny-same SPECIES_MINIOR_YELLOW Meteor Minior looks the same when shiny in the official games
+ow-shiny-same SPECIES_MINIOR_GREEN Meteor Minior looks the same when shiny in the official games
+ow-shiny-same SPECIES_MINIOR_BLUE Meteor Minior looks the same when shiny in the official games
+ow-shiny-same SPECIES_MINIOR_INDIGO Meteor Minior looks the same when shiny in the official games
+ow-shiny-same SPECIES_MINIOR_VIOLET Meteor Minior looks the same when shiny in the official games
+ow-shiny-same SPECIES_XERNEAS art needed: upstream has no shiny follower palette either (no AI art)
+ow-shiny-same SPECIES_XERNEAS_ACTIVE art needed: upstream has no shiny follower palette either (no AI art)
+ow-shiny-same SPECIES_MEOWTH_GALAR art needed: upstream has no shiny follower palette either (no AI art)
+ow-shiny-same SPECIES_OGERPON art needed: upstream has no shiny follower palette either (no AI art)
+ow-shiny-same SPECIES_OGERPON_WELLSPRING art needed: upstream has no shiny follower palette either (no AI art)
+ow-shiny-same SPECIES_OGERPON_HEARTHFLAME art needed: upstream has no shiny follower palette either (no AI art)
+ow-shiny-same SPECIES_OGERPON_CORNERSTONE art needed: upstream has no shiny follower palette either (no AI art)
+
+ow-missing SPECIES_DARMANITAN_ZEN battle-only form: back to its usual form before it can follow
+ow-missing SPECIES_DARMANITAN_GALAR_ZEN battle-only form: back to its usual form before it can follow
+ow-missing SPECIES_AEGISLASH_BLADE battle-only form: back to its usual form before it can follow
+ow-missing SPECIES_WISHIWASHI_SCHOOL battle-only form: back to its usual form before it can follow
+ow-missing SPECIES_MINIOR_CORE battle-only form: back to its usual form before it can follow
+ow-missing SPECIES_MINIOR_CORE_ORANGE battle-only form: back to its usual form before it can follow
+ow-missing SPECIES_MINIOR_CORE_YELLOW battle-only form: back to its usual form before it can follow
+ow-missing SPECIES_MINIOR_CORE_GREEN battle-only form: back to its usual form before it can follow
+ow-missing SPECIES_MINIOR_CORE_BLUE battle-only form: back to its usual form before it can follow
+ow-missing SPECIES_MINIOR_CORE_INDIGO battle-only form: back to its usual form before it can follow
+ow-missing SPECIES_MINIOR_CORE_VIOLET battle-only form: back to its usual form before it can follow
+ow-missing SPECIES_MIMIKYU_BUSTED battle-only form: back to its usual form before it can follow
+ow-missing SPECIES_MIMIKYU_BUSTED_TOTEM battle-only form: back to its usual form before it can follow
+ow-missing SPECIES_CRAMORANT_GULPING battle-only form: back to its usual form before it can follow
+ow-missing SPECIES_CRAMORANT_GORGING battle-only form: back to its usual form before it can follow
+ow-missing SPECIES_EISCUE_NOICE battle-only form: back to its usual form before it can follow
+ow-missing SPECIES_MORPEKO_HANGRY battle-only form: back to its usual form before it can follow
+ow-missing SPECIES_TERAPAGOS_STELLAR battle-only form: back to its usual form before it can follow
+ow-missing SPECIES_ETERNATUS_ETERNAMAX never in the player's party
+ow-missing SPECIES_GIMMIGHOUL_ROAMING never in the player's party
+ow-missing SPECIES_EGG eggs don't follow

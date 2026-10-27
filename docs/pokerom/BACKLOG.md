@@ -56,6 +56,7 @@ P4 deep redesigns + content. Nothing deep lands before P2 (it multiplies merge c
 | TS-04 | Link features (trade, link battle, Union Room, record mixing): `cable_club.inc` warps to Emerald's `MAP_TRADE_CENTER`/`MAP_UNION_ROOM`, which don't load without a partner, so the sweep can't tell. Needs two linked emulators | S | mGBA multiplayer, or two libretro cores linked | todo (unverified) |
 | QW-26 | Pokédex "set complete" | S | `dbg` Pokédex flags | todo (part of QW-16) |
 | QW-27 | Deoxys forms from the Meteorite (use it to cycle Normal → Attack → Defense → Speed) | exists | `form_change_tables.h:770-791`; Meteorite given on Birth Island (`BirthIsland_Exterior_hns/scripts.inc:118-122`). Verify in mGBA; QW-09 must open Birth Island without the event ticket. Story tie-in: DP-14 | todo (verify) |
+| QW-28 | Sprite pass: every species' battle sprites, icons and followers checked against their data, and what was wrong fixed | S | `tools/spritecheck/spritecheck.py` (the ROM as built; `--strict` exits 1 on a finding not in `known.txt`), `sheet.py` (review page) | done (2026-10-26, played): Gen 4+ female sprites show in battle, summary and Pokédex (HnS 806c6f2/a52f3e8 hid them along with the Gen 1-3 DS ones); Y offsets of 44 forms (24 species, 21 of them Unown letters) measured from the art (Unown and Chimecho back to Emerald's); Minior icon palette; Keldeo Resolute follows as Ordinary, not the substitute doll. Open: the art style (SG-23); 7 follower shiny palettes need art |
 
 ## P2 — engine upgrade
 
@@ -92,7 +93,7 @@ P4 deep redesigns + content. Nothing deep lands before P2 (it multiplies merge c
 | SG-20 | Make everything configurable in game (config menu) | M | one options screen over HnS options + ruleset | todo |
 | SG-21 | Weight classes (5), more egg groups and crosses | S | species data | todo |
 | SG-22 | Different Pokédex views | M | HGSS dex already in HnS | design |
-| SG-23 | Better / alternate sprite sets | C | per-species sprite option | design ❓ space |
+| SG-23 | Better / alternate sprite sets | C | `P_GBA_STYLE_SPECIES_GFX`: FALSE gives Gen 1-3 the DS-style art Gen 4-9 already use, Gen 4 enemy shadows and every female sprite, for -2 KB (measured 2026-10-26; spritecheck: 5 small offsets to fix). An in-game GBA/DS option keeps both sets: +690 KB | design ❓ style |
 
 ## P4 — deep redesigns and content
 

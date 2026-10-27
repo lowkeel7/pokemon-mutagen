@@ -28,6 +28,7 @@ mGBA core on a phone**. Desktop mGBA is the dev tool, not the target. So:
 make hns -j$(sysctl -n hw.ncpu)        # → pokehns.gba. Plain `make` builds Emerald, not HnS.
 make release BUILD=hns                 # → pokehns-release.gba. `make hns release` silently builds Emerald.
 tools/testgate/testgate.py                # battle tests; exit 1 on a failure not in its baseline
+tools/spritecheck/spritecheck.py --strict # sprites vs their data; exit 1 on a finding not in known.txt
 tools/make_patch.sh pokehns-release.gba   # → BPS against clean Emerald, rebuilt from pret and SHA-1 checked
 tools/playtest/playtest.py --rom pokehns.gba --session /tmp/pt --fresh @tools/playtest/smoke.txt
 ```
