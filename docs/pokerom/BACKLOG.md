@@ -140,12 +140,12 @@ GPU) can't run that. Routes, cheapest first:
 ## Space and save budgets
 
 Measure before any art lands: the bytes before the trailing 0xFF pad (CI's ROM-size step does
-this). Measured 2026-10-26 on `pokerom/dev` (2.0.6 + QW-01 + the engine fixes):
+this). Measured 2026-10-26 on 0.1.0 (2.0.6 + QW-01, the engine fixes and the sprite pass):
 
 | Build | Used of 33,554,432 | Free |
 |---|---|---|
-| `make hns` | 31,708,260 (94.50%) | 1,846,172 |
-| `make release BUILD=hns` (LTO, no debug menus): what ships | 31,260,004 (93.16%) | 2,294,428 |
+| `make hns` | 31,708,740 (94.50%) | 1,845,692 |
+| `make release BUILD=hns` (LTO, no debug menus): what ships | 31,255,220 (93.15%) | 2,299,212 |
 
 Unmodified 2.0.6 measured 31,706,804 with `make hns`. Megas alone measured 99.46% full in HnS+.
 Lead, unmeasured: 931 Emerald (Hoenn) map entries don't load in this build and nothing in HnS leads to them (TS-03), but their scripts and events are still linked in. Measure them before cutting art.
