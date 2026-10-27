@@ -20,7 +20,9 @@ ifeq (leafgreen, $(or $(BUILD), $(MAKECMDGOALS)))
 else
 ifeq (hns, $(or $(BUILD), $(MAKECMDGOALS)))
 	GAME_VERSION 	:= POKEMON_HNS
-	TITLE       	:= POKEMON HNS
+	# Header title only (12 chars, nothing reads it). Keep GAME_CODE: emulators and flash carts
+	# pick the save type and the RTC by BPEE.
+	TITLE       	:= MUTAGEN
 	GAME_CODE   	:= BPEE
 	BUILD_NAME  	:= hns
 	MAP_VERSION 	:= hns
