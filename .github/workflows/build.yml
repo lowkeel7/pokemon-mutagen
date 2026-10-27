@@ -75,14 +75,47 @@ jobs:
           print(f'::warning::ROM above 98%: {msg}' if pct >= 98 else msg)
           PY
 
+  # What players get: the LTO release build, without the debug menus.
+  release-hns:
+    if: github.actor != 'allcontributors[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install binutils
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends binutils-arm-none-eabi gcc-arm-none-eabi libnewlib-arm-none-eabi libpng-dev python3
+
+      - name: ROM (HnS release)
+        run: make release BUILD=hns -j$(nproc) -O
+
+  # RHH's battle tests, with MESSAGE() checks skipped (HnS's battle text differs); fails on any
+  # failure not listed in tools/testgate/baseline.txt.
+  test-gate:
+    if: github.actor != 'allcontributors[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install binutils
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends binutils-arm-none-eabi gcc-arm-none-eabi libnewlib-arm-none-eabi libpng-dev python3
+
+      - name: Battle tests against the baseline
+        run: python3 tools/testgate/testgate.py -j$(nproc)
+
   # Gate job: satisfies the "build" branch protection rule.
   build:
     if: github.actor != 'allcontributors[bot]'
     runs-on: ubuntu-latest
-    needs: [build-hns]
+    needs: [build-hns, release-hns, test-gate]
     steps:
       - name: All builds passed
-        run: echo "HnS build passed."
+        run: echo "HnS builds and the battle-test gate passed."
 
   docs_validate:
     if: github.actor != 'allcontributors[bot]'
