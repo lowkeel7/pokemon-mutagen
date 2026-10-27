@@ -822,6 +822,12 @@ void Debug_TryWarpRequest(void)
     ResetInitialPlayerAvatarState();
 }
 
+// tools/playtest/battlesweep.py writes trainerId + 1 here; the next overworld frame with free
+// controls starts that trainer's battle, single or double as the trainer is, against the debug
+// player party with the AI playing both sides (gDebugAiVsAi), as Trainers -> Try Battle would.
+EWRAM_DATA u16 gDebugBattleRequest = 0;
+EWRAM_DATA bool8 gDebugAiVsAi = FALSE;
+
 void Debug_ShowMainMenu(void)
 {
     sDebugMenuListData = AllocZeroed(sizeof(*sDebugMenuListData));
@@ -5240,4 +5246,26 @@ void CheckEWRAMCounters(struct ScriptContext *ctx)
 {
     ConvertIntToDecimalStringN(gStringVar1, gFollowerSteps, STR_CONV_MODE_LEFT_ALIGN, 5);
     ConvertIntToDecimalStringN(gStringVar2, gChainFishingDexNavStreak, STR_CONV_MODE_LEFT_ALIGN, 5);
+}
+
+void Debug_TryBattleRequest(void)
+{
+    u32 trainerId;
+
+    if (gDebugBattleRequest == 0 || ArePlayerFieldControlsLocked() || gPaletteFade.active)
+        return;
+    trainerId = gDebugBattleRequest - 1;
+    gDebugBattleRequest = 0;
+    ZeroPlayerPartyMons();
+    CreateNPCTrainerPartyFromTrainer(gPlayerParty, &sDebugTrainers[DIFFICULTY_NORMAL][DEBUG_TRAINER_PLAYER], TRUE, BATTLE_TYPE_TRAINER);
+    CalculatePlayerPartyCount();
+    gDebugAiVsAi = TRUE;
+    gBattleTypeFlags = BATTLE_TYPE_TRAINER;
+    if (GetTrainerBattleType(trainerId) == TRAINER_BATTLE_TYPE_DOUBLES)
+        gBattleTypeFlags |= BATTLE_TYPE_DOUBLE;
+    TRAINER_BATTLE_PARAM.opponentA = trainerId;
+    TRAINER_BATTLE_PARAM.opponentB = 0xFFFF;
+    gBattleEnvironment = BattleSetup_GetEnvironmentId();
+    CalculateEnemyPartyCount();
+    BattleSetup_StartTrainerBattle_Debug();
 }

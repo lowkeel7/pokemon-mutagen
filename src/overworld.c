@@ -1933,6 +1933,7 @@ void CB2_Overworld(void)
     }
 #if DEBUG_OVERWORLD_MENU
     Debug_TryWarpRequest();
+    Debug_TryBattleRequest();
 #endif
 }
 

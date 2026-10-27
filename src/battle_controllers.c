@@ -9,6 +9,7 @@
 #include "battle_interface.h"
 #include "battle_message.h"
 #include "battle_setup.h"
+#include "debug.h"
 #include "battle_tv.h"
 #include "cable_club.h"
 #include "event_data.h"
@@ -59,6 +60,10 @@ static void AnimateMonAfterKnockout(enum BattlerId battler);
 
 bool32 IsAiVsAiBattle(void)
 {
+#if DEBUG_OVERWORLD_MENU
+    if (gDebugAiVsAi) // tools/playtest/battlesweep.py; dev builds only
+        return TRUE;
+#endif
     return (B_FLAG_AI_VS_AI_BATTLE && FlagGet(B_FLAG_AI_VS_AI_BATTLE));
 }
 
