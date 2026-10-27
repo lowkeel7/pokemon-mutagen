@@ -54,3 +54,5 @@ ow-missing SPECIES_TERAPAGOS_STELLAR battle-only form: back to its usual form be
 ow-missing SPECIES_ETERNATUS_ETERNAMAX never in the player's party
 ow-missing SPECIES_GIMMIGHOUL_ROAMING never in the player's party
 ow-missing SPECIES_EGG eggs don't follow
+front-y SPECIES_GLIGAR/ds/female the female art ends 2 px higher than the male's; one Y offset serves both
+front-y SPECIES_RELICANTH/ds/female the female art ends 2 px higher than the male's; one Y offset serves both

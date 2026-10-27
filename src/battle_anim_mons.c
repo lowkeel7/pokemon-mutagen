@@ -1,4 +1,5 @@
 #include "global.h"
+#include "species_gfx_style.h"
 #include "battle.h"
 #include "battle_anim.h"
 #include "battle_interface.h"
@@ -162,9 +163,9 @@ u8 GetBattlerYDelta(enum BattlerId battler, u16 species)
     }
 
     if (IsOnPlayerSide(battler) || IsContest())
-        ret = gSpeciesInfo[species].backPicYOffset;
+        ret = GetSpeciesBackPicYOffset(species);
     else
-        ret = gSpeciesInfo[species].frontPicYOffset;
+        ret = GetSpeciesFrontPicYOffset(species);
     return ret;
 }
 
@@ -176,7 +177,7 @@ u8 GetBattlerElevation(enum BattlerId battler, u16 species)
         if (!IsContest())
         {
             species = SanitizeSpeciesId(species);
-            ret = gSpeciesInfo[species].enemyMonElevation;
+            ret = GetSpeciesEnemyMonElevation(species);
         }
     }
     return ret;
@@ -1873,7 +1874,7 @@ static u16 GetBattlerYDeltaFromSpriteId(u8 spriteId)
             if (IsContest())
             {
                 species = gContestResources->moveAnim->species;
-                return gSpeciesInfo[species].backPicYOffset;
+                return GetSpeciesBackPicYOffset(species);
             }
             else
             {
@@ -1884,9 +1885,9 @@ static u16 GetBattlerYDeltaFromSpriteId(u8 spriteId)
                     species = spriteInfo[battler].transformSpecies;
 
                 if (IsOnPlayerSide(i))
-                    return gSpeciesInfo[species].backPicYOffset;
+                    return GetSpeciesBackPicYOffset(species);
                 else
-                    return gSpeciesInfo[species].frontPicYOffset;
+                    return GetSpeciesFrontPicYOffset(species);
             }
         }
     }
@@ -2062,9 +2063,9 @@ u8 CreateAdditionalMonSpriteForMoveAnim(u16 species, bool8 isBackpic, u8 id, s16
     FREE_AND_SET_NULL(gMonSpritesGfxPtr->buffer);
 
     if (!isBackpic)
-        spriteId = CreateSprite(&sSpriteTemplates_MoveEffectMons[id], x, y + gSpeciesInfo[species].frontPicYOffset, subpriority);
+        spriteId = CreateSprite(&sSpriteTemplates_MoveEffectMons[id], x, y + GetSpeciesFrontPicYOffset(species), subpriority);
     else
-        spriteId = CreateSprite(&sSpriteTemplates_MoveEffectMons[id], x, y + gSpeciesInfo[species].backPicYOffset, subpriority);
+        spriteId = CreateSprite(&sSpriteTemplates_MoveEffectMons[id], x, y + GetSpeciesBackPicYOffset(species), subpriority);
 
     if (IsContest())
     {
@@ -2103,8 +2104,8 @@ s16 GetBattlerSpriteCoordAttr(enum BattlerId battler, u8 attr)
         species = SanitizeSpeciesId(species);
         if (species == SPECIES_UNOWN)
             species = GetUnownSpeciesId(personality);
-        size = gSpeciesInfo[species].backPicSize;
-        y_offset = gSpeciesInfo[species].backPicYOffset;
+        size = GetSpeciesBackPicSize(species, FALSE);
+        y_offset = GetSpeciesBackPicYOffset(species);
     }
     else
     {
@@ -2128,25 +2129,13 @@ s16 GetBattlerSpriteCoordAttr(enum BattlerId battler, u8 attr)
 
         if (IsOnPlayerSide(battler))
         {
-        #if P_GENDER_DIFFERENCES
-            if (gSpeciesInfo[species].backPicFemale != NULL && IsPersonalityFemale(species, personality))
-                size = gSpeciesInfo[species].backPicSizeFemale;
-            else
-        #endif
-                size = gSpeciesInfo[species].backPicSize;
-
-            y_offset = gSpeciesInfo[species].backPicYOffset;
+            size = GetSpeciesBackPicSize(species, IsPersonalityFemale(species, personality));
+            y_offset = GetSpeciesBackPicYOffset(species);
         }
         else
         {
-        #if P_GENDER_DIFFERENCES
-            if (gSpeciesInfo[species].frontPicFemale != NULL && IsPersonalityFemale(species, personality))
-                size = gSpeciesInfo[species].frontPicSizeFemale;
-            else
-        #endif
-                size = gSpeciesInfo[species].frontPicSize;
-
-            y_offset = gSpeciesInfo[species].frontPicYOffset;
+            size = GetSpeciesFrontPicSize(species, IsPersonalityFemale(species, personality));
+            y_offset = GetSpeciesFrontPicYOffset(species);
         }
     }
 

@@ -5233,7 +5233,7 @@ const struct SpeciesInfo gSpeciesInfoGen1[] =
         .trainerOffset = 0,
         .frontPic = gMonFrontPic_Nidoking,
         .frontPicSize = P_GBA_STYLE_SPECIES_GFX ? MON_COORDS_SIZE(56, 64) : MON_COORDS_SIZE(64, 64),
-        .frontPicYOffset = 2,
+        .frontPicYOffset = P_GBA_STYLE_SPECIES_GFX ? 2 : 3,
         .frontAnimFrames = ANIM_FRAMES(
             ANIMCMD_FRAME(1, 10),
             ANIMCMD_FRAME(0, 15),
@@ -5244,7 +5244,7 @@ const struct SpeciesInfo gSpeciesInfoGen1[] =
         .frontAnimDelay = 25,
         .backPic = gMonBackPic_Nidoking,
         .backPicSize = MON_COORDS_SIZE(64, 64),
-        .backPicYOffset = 3,
+        .backPicYOffset = P_GBA_STYLE_SPECIES_GFX ? 3 : 2,
         .backAnimId = BACK_ANIM_V_SHAKE,
         .palette = gMonPalette_Nidoking,
         .shinyPalette = gMonShinyPalette_Nidoking,

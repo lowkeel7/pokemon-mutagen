@@ -70,16 +70,16 @@ def run(args):
 LAYOUT_LINE = re.compile(r"^/\*\s*(\d+)(?::\s*(\d+))?\s*\|\s*(\d+)\s*\*/\s*(.*)$")
 
 
-def struct_layout(tmp):
-    """Field -> (offset, bit, size, bits, signed) of struct SpeciesInfo, and its size, from gdb's
-    `ptype /o` of a -g probe object. Nested struct fields come back as "outer.inner"."""
-    probe = os.path.join(tmp, "probe.c")
+def struct_layout(tmp, name="SpeciesInfo", header="pokemon.h"):
+    """Field -> (offset, bit, size, bits, signed) of a struct, and its size, from gdb's `ptype /o`
+    of a -g probe object. Nested struct fields come back as "outer.inner"."""
+    probe = os.path.join(tmp, f"probe_{name}.c")
     with open(probe, "w") as f:
-        f.write('#include "global.h"\n#include "pokemon.h"\nstruct SpeciesInfo probeSpeciesInfo;\n')
-    obj = os.path.join(tmp, "probe.o")
+        f.write(f'#include "global.h"\n#include "pokemon.h"\n#include "{header}"\nstruct {name} probe{name};\n')
+    obj = os.path.join(tmp, f"probe_{name}.o")
     run([tool("gcc")] + CPPFLAGS + CFLAGS + ["-g", "-c", probe, "-o", obj])
     fields, nested, total = {}, None, None
-    for line in run([tool("gdb"), "-batch", "-ex", "ptype /o struct SpeciesInfo", obj]).splitlines():
+    for line in run([tool("gdb"), "-batch", "-ex", f"ptype /o struct {name}", obj]).splitlines():
         m = LAYOUT_LINE.match(line.strip())
         if m:
             off, bit, size, decl = int(m[1]), int(m[2] or 0), int(m[3]), m[4].strip()
@@ -121,11 +121,14 @@ def symbols(elf):
 
 
 def asset_paths(tmp):
-    """Symbol -> source file, from the INCBINs cpp leaves in place (preproc expands them later)."""
-    out = os.path.join(tmp, "pokemon.i")
-    run([tool("cpp")] + CPPFLAGS + ["src/pokemon.c", "-o", out])
-    with open(out, errors="replace") as f:
-        return dict(re.findall(r"\b(\w+)\[\]\s*=\s*INCBIN_\w+\(\"([^\"]+)\"\)", f.read()))
+    """Symbol -> source file, from the INCBINs cpp leaves in place (preproc expands them later):
+    the species art in src/pokemon.c and the DS-style art in src/species_gfx_style.c."""
+    paths = {}
+    for src in ("src/pokemon.c", "src/species_gfx_style.c"):
+        if os.path.exists(os.path.join(ROOT, src)):
+            text = run([tool("cpp")] + CPPFLAGS + [src])
+            paths.update(re.findall(r"\b(\w+)\[\]\s*=\s*INCBIN_\w+\(\"([^\"]+)\"\)", text))
+    return paths
 
 
 def constants(tmp, header, prefix):
@@ -325,6 +328,52 @@ def audit(args):
                  f"palette {best} by {cost[best]:.1f} [{png}]")
         return [round(c, 1) for c in cost]
 
+    def check_battle(sp, row, gba=True):
+        """Every check on one style's battle art: placement, frames, palettes, female art, icons."""
+        img = load_png(row["front"])
+        if img is None:
+            find("ERROR", "front-missing", sp, f"no PNG for {row['front']}")
+            return
+        nframes = img.size[1] // FRAME
+        f0, w = frame_pixels(img, 0)
+        row["frontMeasuredY"], measured = check_y(sp, "front-y", row["front"], 0, row["frontY"])
+        if measured is not None and row["frontSize"] != measured:
+            find("INFO", "front-size", sp, f"frontPicSize {size_str(row['frontSize'])}, drawing {size_str(measured)}")
+        if nframes >= 2 and f0 == frame_pixels(img, 1)[0]:
+            find("INFO", "static-front", sp, f"frames 1 and 2 are the same: no idle motion [{row['front']}]")
+        bad = sorted({fr for fr, _ in row["frames"] if fr >= nframes})
+        if bad:
+            find("ERROR", "frame-range", sp, f"the animation shows frame {bad}, the sheet has {nframes} [{row['front']}]")
+        specks = strays(f0, w, FRAME)
+        if specks:
+            find("INFO", "stray", sp, f"{len(specks)} detached speck(s) of 1-2 px at {specks[:4]} [{row['front']}]")
+
+        if row["back"]:
+            row["backMeasuredY"], measured = check_y(sp, "back-y", row["back"], 0, row["backY"])
+            if measured is not None and row["backSize"] != measured:
+                find("INFO", "back-size", sp, f"backPicSize {size_str(row['backSize'])}, drawing {size_str(measured)}")
+        for key, check, data_y in (("frontFemale", "front-y", row["frontY"]), ("backFemale", "back-y", row["backY"])):
+            if row.get(key):
+                check_y(sp + "/female", check, row[key], 0, data_y)
+                if gba and "_gba" in (row["front"] or "") and "_gba" not in row[key]:
+                    find("WARN", "female-style", sp, f"GBA-style sprite, DS-style female [{row[key]}]")
+
+        normal, shiny = load_pal(row["palette"]), load_pal(row["shiny"])
+        if normal and shiny and normal[1:] == shiny[1:]:
+            find("ERROR", "shiny-same", sp, f"{row['shiny']} is the same as {row['palette']}")
+        if normal and os.path.dirname(row["palette"]) == os.path.dirname(row["front"]) \
+                and os.path.basename(row["palette"]).startswith("normal"):  # not a recolour form's palette
+            used, pngc = sorted({p for p in f0 if p}), png_colors(img)
+            off = [i for i in used if i < min(len(pngc), len(normal)) and color_distance(pngc[i], normal[i]) > 6]
+            if off:
+                find("INFO", "pal-drift", sp, f"{len(off)} of {len(used)} colours in {row['front']} differ "
+                     f"from {row['palette']}")
+
+        if row.get("icon"):
+            row["iconCost"] = check_icon(sp, row["icon"], row["iconPal"])
+        if row.get("iconFemale"):
+            check_icon(sp + "/female", row["iconFemale"], row["iconPalFemale"])
+
     for idx in range(1, table_size // size):
         raw = rom.read(base + idx * size, size)
         if not field(raw, layout, "frontPic"):
@@ -368,48 +417,7 @@ def audit(args):
         if row["placeholder"]:
             find("WARN", "placeholder", sp, f"the front sprite is the question mark [{row['front']}]")
             continue
-        img = load_png(row["front"])
-        if img is None:
-            find("ERROR", "front-missing", sp, f"no PNG for {row['front']}")
-            continue
-        nframes = img.size[1] // FRAME
-        f0, w = frame_pixels(img, 0)
-        row["frontMeasuredY"], measured = check_y(sp, "front-y", row["front"], 0, row["frontY"])
-        if measured is not None and row["frontSize"] != measured:
-            find("INFO", "front-size", sp, f"frontPicSize {size_str(row['frontSize'])}, drawing {size_str(measured)}")
-        if nframes >= 2 and f0 == frame_pixels(img, 1)[0]:
-            find("INFO", "static-front", sp, f"frames 1 and 2 are the same: no idle motion [{row['front']}]")
-        bad = sorted({fr for fr, _ in row["frames"] if fr >= nframes})
-        if bad:
-            find("ERROR", "frame-range", sp, f"the animation shows frame {bad}, the sheet has {nframes} [{row['front']}]")
-        specks = strays(f0, w, FRAME)
-        if specks:
-            find("INFO", "stray", sp, f"{len(specks)} detached speck(s) of 1-2 px at {specks[:4]} [{row['front']}]")
-
-        if row["back"]:
-            row["backMeasuredY"], measured = check_y(sp, "back-y", row["back"], 0, row["backY"])
-            if measured is not None and row["backSize"] != measured:
-                find("INFO", "back-size", sp, f"backPicSize {size_str(row['backSize'])}, drawing {size_str(measured)}")
-        for key, check, data_y in (("frontFemale", "front-y", row["frontY"]), ("backFemale", "back-y", row["backY"])):
-            if row.get(key):
-                check_y(sp + "/female", check, row[key], 0, data_y)
-                if "_gba" in (row["front"] or "") and "_gba" not in row[key]:
-                    find("WARN", "female-style", sp, f"GBA-style sprite, DS-style female [{row[key]}]")
-
-        normal, shiny = load_pal(row["palette"]), load_pal(row["shiny"])
-        if normal and shiny and normal[1:] == shiny[1:]:
-            find("ERROR", "shiny-same", sp, f"{row['shiny']} is the same as {row['palette']}")
-        if normal and os.path.dirname(row["palette"]) == os.path.dirname(row["front"]) \
-                and os.path.basename(row["palette"]).startswith("normal"):  # not a recolour form's palette
-            used, pngc = sorted({p for p in f0 if p}), png_colors(img)
-            off = [i for i in used if i < min(len(pngc), len(normal)) and color_distance(pngc[i], normal[i]) > 6]
-            if off:
-                find("INFO", "pal-drift", sp, f"{len(off)} of {len(used)} colours in {row['front']} differ "
-                     f"from {row['palette']}")
-
-        row["iconCost"] = check_icon(sp, row["icon"], row["iconPal"]) if row["icon"] else None
-        if row.get("iconFemale"):
-            check_icon(sp + "/female", row["iconFemale"], row["iconPalFemale"])
+        check_battle(sp, row)
 
         if "owSubstitute" in row:
             if row["owSubstitute"] or not row["ow"]:
@@ -421,6 +429,35 @@ def audit(args):
 
         if levitate in row["abilities"] and not row["elevation"]:
             find("INFO", "levitate", sp, "has Levitate and stands on the ground (enemyMonElevation 0)")
+
+    # DS style (the SPRITES option): the same checks on src/data/pokemon/species_gfx_ds.h as built.
+    if "sSpeciesGfxDs" in by_name:
+        ds_layout, ds_size = struct_layout(tmp, "SpeciesGfxDs", "species_gfx_style.h")
+        index_addr, table_addr = by_name["sSpeciesGfxDsIndex"][0], by_name["sSpeciesGfxDs"][0]
+        for row in rows:
+            k = struct.unpack("<H", rom.read(index_addr + 2 * row["id"], 2))[0]
+            if not k:
+                continue
+            raw = rom.read(table_addr + (k - 1) * ds_size, ds_size)
+
+            def ds_asset(f):
+                return assets.get(by_addr.get(field(raw, ds_layout, f), ""))
+
+            ds = {"front": png_for(ds_asset("frontPic")), "back": png_for(ds_asset("backPic")),
+                  "palette": pal_for(ds_asset("palette")), "shiny": pal_for(ds_asset("shinyPalette")),
+                  "frontSize": field(raw, ds_layout, "frontPicSize"), "frontY": field(raw, ds_layout, "frontPicYOffset"),
+                  "backSize": field(raw, ds_layout, "backPicSize"), "backY": field(raw, ds_layout, "backPicYOffset"),
+                  "elevation": field(raw, ds_layout, "enemyMonElevation"),
+                  "frames": anim_frames(rom, field(raw, ds_layout, "frontAnimFrames")) or row["frames"]}
+            for key, f, conv in (("frontFemale", "frontPicFemale", png_for), ("backFemale", "backPicFemale", png_for),
+                                 ("paletteFemale", "paletteFemale", pal_for), ("shinyFemale", "shinyPaletteFemale", pal_for)):
+                if field(raw, ds_layout, f):
+                    ds[key] = conv(ds_asset(f))
+            if field(raw, ds_layout, "iconSpriteFemale") and ds_asset("iconSpriteFemale") != row.get("iconFemale"):
+                ds["iconFemale"] = png_for(ds_asset("iconSpriteFemale"))
+                ds["iconPalFemale"] = field(raw, ds_layout, "iconPalIndexFemale")
+            row["ds"] = ds
+            check_battle(row["species"] + "/ds", ds, gba=False)
 
     return rows, findings
 

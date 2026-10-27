@@ -1,4 +1,5 @@
 #include "global.h"
+#include "species_gfx_style.h"
 #include "battle.h"
 #include "battle_ai_main.h"
 #include "battle_ai_util.h"
@@ -3095,7 +3096,7 @@ static u32 ReturnAnimIdForBattler(bool32 wasPlayerSideKnockedOut, u32 specificBa
 {
     u32 species = GetBattlerVisualSpecies(specificBattler);
     if (wasPlayerSideKnockedOut)
-        return gSpeciesInfo[species].frontAnimId;
+        return GetSpeciesFrontAnimId(species);
     else
         return GetSpeciesBackAnimSet(species);
 }
@@ -3103,7 +3104,7 @@ static u32 ReturnAnimIdForBattler(bool32 wasPlayerSideKnockedOut, u32 specificBa
 void TrySetBattlerShadowSpriteCallback(enum BattlerId battler)
 {
     if (gSprites[gBattleSpritesDataPtr->healthBoxesData[battler].shadowSpriteIdPrimary].callback == SpriteCallbackDummy
-     && (B_ENEMY_MON_SHADOW_STYLE <= GEN_3 || P_GBA_STYLE_SPECIES_GFX == TRUE
+     && (!UseGen4EnemyShadows()
       || gSprites[gBattleSpritesDataPtr->healthBoxesData[battler].shadowSpriteIdSecondary].callback == SpriteCallbackDummy))
         SetBattlerShadowSpriteCallback(battler, GetBattlerVisualSpecies(battler));
 }

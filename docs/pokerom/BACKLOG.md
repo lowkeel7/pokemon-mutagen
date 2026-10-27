@@ -57,7 +57,7 @@ P4 deep redesigns + content. Nothing deep lands before P2 (it multiplies merge c
 | TS-04 | Link features (trade, link battle, Union Room, record mixing): `cable_club.inc` warps to Emerald's `MAP_TRADE_CENTER`/`MAP_UNION_ROOM`, which don't load without a partner, so the sweep can't tell. Needs two linked emulators | S | mGBA multiplayer, or two libretro cores linked | todo (unverified) |
 | QW-26 | Pokédex "set complete" | S | `dbg` Pokédex flags | todo (part of QW-16) |
 | QW-27 | Deoxys forms from the Meteorite (use it to cycle Normal → Attack → Defense → Speed) | exists | `form_change_tables.h:770-791`; Meteorite given on Birth Island (`BirthIsland_Exterior_hns/scripts.inc:118-122`). Verify in mGBA; QW-09 must open Birth Island without the event ticket. Story tie-in: DP-14 | todo (verify) |
-| QW-28 | Sprite pass: every species' battle sprites, icons and followers checked against their data, and what was wrong fixed | S | `tools/spritecheck/spritecheck.py` (the ROM as built; `--strict` exits 1 on a finding not in `known.txt`), `sheet.py` (review page) | done (2026-10-26, played): Gen 4+ female sprites show in battle, summary and Pokédex (HnS 806c6f2/a52f3e8 hid them along with the Gen 1-3 DS ones); Y offsets of 44 forms (24 species, 21 of them Unown letters) measured from the art (Unown and Chimecho back to Emerald's); Minior icon palette; Keldeo Resolute follows as Ordinary, not the substitute doll. Open: the art style (SG-23); 7 follower shiny palettes need art |
+| QW-28 | Sprite pass: every species' battle sprites, icons and followers checked against their data, and what was wrong fixed | S | `tools/spritecheck/spritecheck.py` (the ROM as built; `--strict` exits 1 on a finding not in `known.txt`), `sheet.py` (review page) | done (2026-10-26, played): Gen 4+ female sprites show in battle, summary and Pokédex (HnS 806c6f2/a52f3e8 hid them along with the Gen 1-3 DS ones); Y offsets of 44 forms (24 species, 21 of them Unown letters) measured from the art (Unown and Chimecho back to Emerald's); Minior icon palette; Keldeo Resolute follows as Ordinary, not the substitute doll. Open: 7 follower shiny palettes need art |
 
 ## P2 — engine upgrade
 
@@ -94,7 +94,7 @@ P4 deep redesigns + content. Nothing deep lands before P2 (it multiplies merge c
 | SG-20 | Make everything configurable in game (config menu) | M | one options screen over HnS options + ruleset | todo |
 | SG-21 | Weight classes (5), more egg groups and crosses | S | species data | todo |
 | SG-22 | Different Pokédex views | M | HGSS dex already in HnS | design |
-| SG-23 | Better / alternate sprite sets | C | `P_GBA_STYLE_SPECIES_GFX`: FALSE gives Gen 1-3 the DS-style art Gen 4-9 already use, Gen 4 enemy shadows and every female sprite, for -2 KB (measured 2026-10-26; spritecheck: 5 small offsets to fix). An in-game GBA/DS option keeps both sets: +690 KB | wip (decided 2026-10-26): an in-game option, zero = GBA style (today's look) |
+| SG-23 | Better / alternate sprite sets | C | FEATURES → SPRITES: GBA (zero, HnS's look) or DS, the DS-era art for the 393 Gen 1-3 species that have both, with Gen 4 shadows and female forms. `include/species_gfx_style.h` getters; data generated into `src/data/pokemon/species_gfx_ds.h` by `tools/spritecheck/gen_ds_style.py` (`.claude/rules/sprites.md`) | done (2026-10-26, played: each style matches its own build pixel for pixel in battle; the Substitute doll follows the option too) |
 
 ## P4 — deep redesigns and content
 
@@ -144,8 +144,10 @@ this). Measured 2026-10-26 on `pokerom/dev` (2.0.6 + QW-01 + the engine fixes):
 |---|---|---|
 | `make hns` | 31,708,260 (94.50%) | 1,846,172 |
 | `make release BUILD=hns` (LTO, no debug menus): what ships | 31,260,004 (93.16%) | 2,294,428 |
+| `make hns` after SG-23 (both sprite styles), 2026-10-26 | 32,429,076 (96.65%) | 1,125,356 |
+| `make release BUILD=hns` after SG-23 | 32,097,188 (95.66%) | 1,457,244 |
 
 Unmodified 2.0.6 measured 31,706,804 with `make hns`. Megas alone measured 99.46% full in HnS+.
 Lead, unmeasured: 931 Emerald (Hoenn) map entries don't load in this build and nothing in HnS leads to them (TS-03), but their scripts and events are still linked in. Measure them before cutting art.
 Save: 22 spare bits per stored Pokémon. The space plan (keep or cut the Gen 4–9 randomizer art)
-is open and blocks SG-10, SG-12, SG-23, DP-11, DP-12, DP-20.
+is open and blocks SG-10, SG-12, DP-11, DP-12, DP-20.

@@ -16,7 +16,8 @@
 #define FOOTPRINT(sprite)
 #endif
 
-#if B_ENEMY_MON_SHADOW_STYLE >= GEN_4 && P_GBA_STYLE_SPECIES_GFX == FALSE
+// Kept in GBA-style builds too: the SPRITES option's DS style draws Gen 4 shadows (SG-23).
+#if B_ENEMY_MON_SHADOW_STYLE >= GEN_4
 #define SHADOW(x, y, size)  .enemyShadowXOffset = x, .enemyShadowYOffset = y, .enemyShadowSize = size,
 #define NO_SHADOW           .suppressEnemyShadow = TRUE,
 #else

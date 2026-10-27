@@ -1,4 +1,5 @@
 #include "global.h"
+#include "species_gfx_style.h"
 #include "battle.h"
 #include "palette.h"
 #include "pokemon.h"
@@ -470,8 +471,8 @@ static void SetPosForRotation(struct Sprite *sprite, u16 index, s16 amplitudeX, 
 
 enum BackAnim GetSpeciesBackAnimSet(u16 species)
 {
-    if (gSpeciesInfo[species].backAnimId != BACK_ANIM_NONE)
-        return gSpeciesInfo[species].backAnimId - 1;
+    if (GetSpeciesBackAnimId(species) != BACK_ANIM_NONE)
+        return GetSpeciesBackAnimId(species) - 1;
     else
         return BACK_ANIM_NONE;
 }

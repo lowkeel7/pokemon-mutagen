@@ -1,4 +1,5 @@
 #include "global.h"
+#include "species_gfx_style.h"
 #include "malloc.h"
 #include "apprentice.h"
 #include "battle.h"
@@ -4292,8 +4293,8 @@ void SetMultiuseSpriteTemplateToPokemon(u16 speciesTag, enum BattlerPosition bat
             speciesTag = speciesTag - SPECIES_SHINY_TAG;
 
         speciesTag = SanitizeSpeciesId(speciesTag);
-        if (gSpeciesInfo[speciesTag].frontAnimFrames != NULL)
-            gMultiuseSpriteTemplate.anims = gSpeciesInfo[speciesTag].frontAnimFrames;
+        if (GetSpeciesFrontAnimFrames(speciesTag) != NULL)
+            gMultiuseSpriteTemplate.anims = GetSpeciesFrontAnimFrames(speciesTag);
         else
             gMultiuseSpriteTemplate.anims = gSpeciesInfo[SPECIES_NONE].frontAnimFrames;
     }
@@ -8243,6 +8244,10 @@ const u16 *GetMonSpritePalFromSpeciesIsEgg(u16 species, bool32 isShiny, bool32 i
         else
             return gSpeciesInfo[SPECIES_EGG].palette;
     }
+    else if (GetSpeciesPaletteDs(species, isShiny, isFemale) != NULL)
+    {
+        return GetSpeciesPaletteDs(species, isShiny, isFemale);
+    }
     else if (isShiny)
     {
         if (gSaveBlock3Ptr != NULL
@@ -8544,18 +8549,18 @@ void DoMonFrontSpriteAnimation(struct Sprite *sprite, u16 species, bool8 noCry, 
             if (HasTwoFramesAnimation(species))
                 StartSpriteAnim(sprite, 1);
         }
-        if (gSpeciesInfo[species].frontAnimDelay != 0)
+        if (GetSpeciesFrontAnimDelay(species) != 0)
         {
             // Animation has delay, start delay task
             u8 taskId = CreateTask(Task_AnimateAfterDelay, 0);
             STORE_PTR_IN_TASK(sprite, taskId, 0);
-            gTasks[taskId].sAnimId = gSpeciesInfo[species].frontAnimId;
-            gTasks[taskId].sAnimDelay = gSpeciesInfo[species].frontAnimDelay;
+            gTasks[taskId].sAnimId = GetSpeciesFrontAnimId(species);
+            gTasks[taskId].sAnimDelay = GetSpeciesFrontAnimDelay(species);
         }
         else
         {
             // No delay, start animation
-            LaunchAnimationTaskForFrontSprite(sprite, gSpeciesInfo[species].frontAnimId);
+            LaunchAnimationTaskForFrontSprite(sprite, GetSpeciesFrontAnimId(species));
         }
         sprite->callback = SpriteCallbackDummy_2;
     }
@@ -8565,20 +8570,20 @@ void PokemonSummaryDoMonAnimation(struct Sprite *sprite, u16 species, bool8 oneF
 {
     if (!oneFrame && HasTwoFramesAnimation(species))
         StartSpriteAnim(sprite, 1);
-    if (gSpeciesInfo[species].frontAnimDelay != 0)
+    if (GetSpeciesFrontAnimDelay(species) != 0)
     {
         // Animation has delay, start delay task
         u8 taskId = CreateTask(Task_PokemonSummaryAnimateAfterDelay, 0);
         STORE_PTR_IN_TASK(sprite, taskId, 0);
-        gTasks[taskId].sAnimId = gSpeciesInfo[species].frontAnimId;
-        gTasks[taskId].sAnimDelay = gSpeciesInfo[species].frontAnimDelay;
+        gTasks[taskId].sAnimId = GetSpeciesFrontAnimId(species);
+        gTasks[taskId].sAnimDelay = GetSpeciesFrontAnimDelay(species);
         SummaryScreen_SetAnimDelayTaskId(taskId);
         SetSpriteCB_MonAnimDummy(sprite);
     }
     else
     {
         // No delay, start animation
-        StartMonSummaryAnimation(sprite, gSpeciesInfo[species].frontAnimId);
+        StartMonSummaryAnimation(sprite, GetSpeciesFrontAnimId(species));
     }
 }
 
@@ -8688,7 +8693,7 @@ void HandleSetPokedexFlagFromMon(struct Pokemon *mon, u32 caseId)
 bool8 HasTwoFramesAnimation(u16 species)
 {
     return P_TWO_FRAME_FRONT_SPRITES
-        && gSpeciesInfo[species].frontAnimFrames != sAnims_SingleFramePlaceHolder
+        && GetSpeciesFrontAnimFrames(species) != sAnims_SingleFramePlaceHolder
         && species != SPECIES_UNOWN
         && !gTestRunnerHeadless;
 }

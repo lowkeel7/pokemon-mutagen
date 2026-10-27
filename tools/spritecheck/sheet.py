@@ -120,6 +120,13 @@ def views(row, icon_pals):
         out += [(f"Female icon {i + 1}", im)
                 for i, im in enumerate(icon_frames(row["iconFemale"], row.get("iconPalFemale", 0), icon_pals))]
     out += [("Follower", follower(row)), ("Follower shiny", follower(row, True))]
+    if row.get("ds"):  # the SPRITES option's DS style, where the art differs
+        ds = dict(row, **row["ds"])
+        out += [("DS enemy", enemy_stage(ds, ds["palette"])), ("DS shiny", enemy_stage(ds, ds["shiny"]))]
+        if ds.get("back"):
+            out.append(("DS player", player_stage(ds, ds["palette"])))
+        if ds.get("frontFemale"):
+            out.append(("DS female", enemy_stage(ds, ds.get("paletteFemale") or ds["palette"], ds["frontFemale"])))
     return [(label, im) for label, im in out if im is not None]
 
 

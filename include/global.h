@@ -340,6 +340,7 @@ struct ChallengeSettings
     u8 tx_Features_ShinyChance:4;
     // Pokerom options. Zero is always the HnS behaviour (old saves read zero).
     u8 typeIcons:2; // 0 off, 1 seen, 2 caught, 3 always
+    u8 tx_Features_SpriteStyle:1; // SPRITES: 0 GBA style (HnS), 1 DS style (SG-23)
 };
 
 struct SaveBlock3

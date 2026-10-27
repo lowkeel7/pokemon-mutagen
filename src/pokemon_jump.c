@@ -1,4 +1,5 @@
 #include "global.h"
+#include "species_gfx_style.h"
 #include "malloc.h"
 #include "battle_anim.h"
 #include "bg.h"
@@ -3569,7 +3570,7 @@ static void CreateJumpMonSprites(void)
     {
         struct PokemonJump_MonInfo *monInfo = GetMonInfoByMultiplayerId(i);
 
-        y = gSpeciesInfo[monInfo->species].frontPicYOffset;
+        y = GetSpeciesFrontPicYOffset(monInfo->species);
         CreateJumpMonSprite(sPokemonJumpGfx, monInfo, *xCoords, y + 112, i);
         CreateStarSprite(sPokemonJumpGfx, *xCoords, 112, i);
         xCoords++;
