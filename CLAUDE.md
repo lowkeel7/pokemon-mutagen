@@ -31,6 +31,7 @@ tools/testgate/testgate.py                # battle tests; exit 1 on a failure no
 tools/spritecheck/spritecheck.py --strict # sprites vs their data; exit 1 on a finding not in known.txt
 tools/make_patch.sh pokehns-release.gba   # → BPS against clean Emerald, rebuilt from pret and SHA-1 checked
 tools/playtest/playtest.py --rom pokehns.gba --session /tmp/pt --fresh @tools/playtest/smoke.txt
+tools/playtest/savecheck.py --out /tmp/saves pokehns.gba pokehns-release.gba  # old saves still load
 ```
 
 - **The toolchain goes on `PATH`.** Naming it only through `DEVKITARM` or `TOOLCHAIN=` fails on

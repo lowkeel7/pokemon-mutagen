@@ -1,80 +1,59 @@
-![HnS Logo](HnS_Logo.png)
+![Pokémon Mutagen title screen](docs/pokerom/title.png)
 
-# About `pokemonHnS-expansion`
+# Pokémon Mutagen
 
-<!-- If you want to re-record or change these gifs, here are some notes that I used: https://files.catbox.moe/05001g.md -->
-<!-- TODO: Actually change these gifs, and generally update contents to convey HnS-specific information -->
-![HnS Collage](HnS_Collage_YourAdventure.png)
+A Game Boy Advance Pokémon game: a fork of [Pokémon Heart & Soul](docs/hns/README.md) 2.0.6, the
+GSC remake / HGSS demake. You get all of Heart & Soul's Johto and Kanto, its options and challenges,
+plus fixes and new options of our own. Everything new is an option, and switched off the game plays
+like Heart & Soul. Bigger systems (a third type, signature moves, new items) are planned, each behind
+its own option ([backlog](docs/pokerom/BACKLOG.md)).
 
-**`pokemonHnS-expansion`**, aka Pokémon Heart and Soul 2.0, is a GBA ROM hack that is both a remake of GSC and demake of HGSS, with added quality-of-life, customization, and more.  
-Originally built on top of [resetes12's **`Modern Emerald`**](https://github.com/resetes12/pokeemerald).  
-Now additionally built on top of [RHH's **`pokeemerald-expansion`**](https://github.com/rh-hideout/pokeemerald-expansion) GBA ROM hack base.  
-Finally, all of these projects are built on top of [pret's **`pokeemerald`**](https://github.com/pret/pokeemerald) decompilation project.
+Current version: **0.1.0** ([what changed](docs/pokerom/CHANGELOG.md)). It is made for real GBA
+hardware (a flash cart) and for RetroArch's mGBA core on a phone; each release's notes say how it
+did on both.
 
-> Pokémon Heart & Soul brings the classic Johto Region and its iconic story to the world of modern GBA decomp hacking. Built on Modern Emerald and pokeemerald-expansion, this project offers a fresh take on the GSC/HGSS experience, blending key aspects of the Gen 2 and Gen 4 games, while incorporating many modern QoL features, as well as some familiar mechanics from Gen 3 to Gen 9. Not only is Heart & Soul (HnS) a first-of-its-kind, fully completed, playtested, and largely faithful GSC remake / HGSS demake, it's also completely open source, and is intended to be a base for a new generation of Johto rom hacks.
+## Play
 
-Unfortunately, saves from before 2.0 will not be compatible moving forward.
+1. Get a Pokémon Emerald (USA) ROM with SHA-1 `f3ae088181bf583e55daf962a92bb46f4f1d07b7`. We don't
+   provide ROMs or links to them.
+2. Apply `pokemon-mutagen-0.1.0.bps` from the release page to a copy of it, with
+   [Flips](https://github.com/Alcaro/Flips) on a computer or UniPatcher on Android. RetroArch can
+   also patch on the fly: put the `.bps` next to the ROM with the same file name.
+3. Play it in mGBA, in RetroArch with the mGBA core, or on a flash cart.
 
-2.0.1 will be the last "official" release of Pokémon Heart and Soul, after which any bug fixes, content updates, or any propogated updates from **`pokeemerald`** or **`pokeemerald-expansion`** will only be available via community forks of the project.
+- The save type is FLASH 1M (128 KB); emulators and most flash carts pick it on their own.
+- The game uses the cartridge clock. On a cart or emulator without one, choose FAKE RTC in the
+  options you get when you start a new game.
+- Saves from Heart & Soul 2.0.6 carry over: load the same save file with the patched ROM.
 
-# [Features](FEATURES.md)
+## Bugs
 
-**`pokemonHnS-expansion`** includes a mix of vanilla Emerald/FRLG features, re/de-made implementations of GSC/HGSS features, custom **`Modern Emerald`** features, and both features from [core series Pokémon games](https://bulbapedia.bulbagarden.net/wiki/Core_series) and popular QOL enhancements made available by **`pokeemerald-expansion`**.  
-A full list of the features present in Pokémon Heart & Soul 2.0 can be found in [`FEATURES.md`](FEATURES.md)
-A full list of the features made available by **`pokeemerald-expansion`** can be found in [`AVAILABLE_FEATURES.md`](AVAILABLE_FEATURES.md).
+Please report bugs in this repository's issues, not to the Heart & Soul team, since a bug here may be
+ours. Say which version you play (it's on the title screen) and where it happened.
 
-# [Credits](CREDITS.md)
+## Credits
 
-<!-- TODO: update .all-contributorsrc and CREDITS.md to match https://pokemonhns-development.github.io/pokehns-expansion-documentation/credits.html -->
-<!-- [![](https://img.shields.io/github/all-contributors/pokemonHnS-Development/pokemonHnS-expansion/upcoming)](CREDITS.md) -->
+Pokémon Mutagen is built on Pokémon Heart & Soul 2.0.6 by the PokemonHnS-Development team, itself
+built on resetes12's Modern Emerald, Rom Hacking Hideout's pokeemerald-expansion 1.15.1 and pret's
+pokeemerald decompilation. Heart & Soul's contributors are listed in [CREDITS.md](CREDITS.md) and its
+[README](docs/hns/README.md). Fixes and features ported from Pokémon Heart & Soul+ (Marcogn) and
+Pokémon Soulgold (Eemeliri) are recorded, with the commits they came from, in
+[PROVENANCE.md](docs/pokerom/PROVENANCE.md).
 
-<!-- TODO: confirm our actual crediting policy and how best to respect our upstreams -->
-If you use **`pokemonHnS-expansion`**, please credit **Pokemon Heart and Soul**, and retain the full chain of credits as best possible.  
-If you additionally use a more updated version of **`pokeemerald-expansion`**, please *specifically* credit **RHH (Rom Hacking Hideout)** and include the version number for clarity.
-For example:
+Pokémon is © Nintendo, Creatures Inc. and GAME FREAK inc. This is a free fan project, not affiliated
+with them; it ships only a patch, never a ROM.
 
-<!-- TODO: confirm the closest applicable expansion version number -->
-```
-pokemonHnS-expansion 2.0 is Based off RHH's pokeemerald-expansion version 1.15.1 https://github.com/rh-hideout/pokemonHnS-expansion/
-```
+## AI disclosure
 
-Finally, please consider [crediting all contributors](CREDITS.md) involved in the project!
+Most of the code changes in this fork were written with an AI coding assistant (Claude Code), from
+the maintainer's direction, and tested with the automated checks below. The title banner's M, G and
+N and the version's 1 were drawn by that assistant in Heart & Soul's existing pixel font, at the
+maintainer's request; everything else in the art, and all music and story text, is Heart & Soul's
+or credited in PROVENANCE.md. Heart & Soul's own disclosure is in [its README](docs/hns/README.md).
 
-# **`pokemonHnS-expansion`** multiplayer compatibility
+## Build it yourself
 
-- **`pokemonHnS-expansion`** supports trade and link battle multiplayer functionality, which *should* extend to forks built on **`pokemonHnS-expansion`** but cannot be guaranteed.
-- **`pokemonHnS-expansion`** is not compatible with official Pokémon games, **`pokemonHnS 1.X`**, **`Modern Emerald`**, or other **`pokeemerald-expansion`** projects.
-
-# [Getting Started](INSTALL.md)
-
-❗❗ **Important**: Do not use GitHub's "Download Zip" option as it will not include commit history. This is necessary if you want to update or merge other feature branches from **`pokeemerald-expansion`**.
-
-If you're new to git and GitHub, [Team Aqua's Asset Repo](https://github.com/Pawkkie/Team-Aquas-Asset-Repo/) has a [guide to forking and cloning the repository](https://github.com/Pawkkie/Team-Aquas-Asset-Repo/wiki/The-Basics-of-GitHub). Then you can follow one of the following guides:
-
-<!-- TODO: update INSTALL.md to refer to HnS-specific things -->
-## 📥 [Installing **`pokemonHnS-expansion`**](INSTALL.md)
-## 🏗️ [Building **`pokemonHnS-expansion`**](INSTALL.md#Building-pokemonHnS-expansion)
-
-# [Documentation](https://pokemonhns-development.github.io/pokehns-expansion-documentation/)
-
-For our player-facing documentation, visit the [**`pokemonHnS-expansion`** documentation page](https://pokemonhns-development.github.io/pokehns-expansion-documentation/).
-
-# [Contributions and Community](https://discord.gg/ksNTFNSBj)
-
-[![](https://dcbadge.limes.pink/api/server/ksNTFNSBj)](https://discord.gg/ksNTFNSBj)
-
-If - in the window between 2.0 release and 2.0.1 release - you are looking to report a bug, make a suggestion, or give feedback, please join the [Pokémon Heart and Soul Discord server](https://discord.gg/ksNTFNSBj). You are also welcome to join just to participate in the community, including pinging our @guides (and only our guides) for help answering questions not sufficiently covered by our documentation or in-game resources.
-
-# AI Disclosure
-Since this is a controversial topic at the moment, we'd like to be transparent about use of AI for this project.
-
-Every line of code written for the game is either hand-written or manually reviewed by a member of the team. However, it is still important to point out that LLMs like Claude Code and GitHub Copilot have been used for some tasks.
-
-Here is what AI has been used for:
-- Code Reviews of hand-written code
-- Debugging more complex scenarios
-- Auto Completion (stuff like repeating lists, DebugPrints, etc.)
-- Creating Python Scripts for I/O procedures (like downloading/writing list data, I/O data with Excel, etc. namely for documentation)
-
-AI has not been used for:
-- Generating assets of any kind; Art or Music
+`make hns` builds the development ROM and `tools/release.sh` the release and its patch; setup,
+toolchain notes and the checks (battle-test gate, headless playtests, map and trainer sweeps) are in
+[CLAUDE.md](CLAUDE.md) §1 and [INSTALL.md](INSTALL.md). Releases follow
+[docs/pokerom/RELEASE.md](docs/pokerom/RELEASE.md).

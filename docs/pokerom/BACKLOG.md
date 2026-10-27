@@ -52,9 +52,11 @@ P4 deep redesigns + content. Nothing deep lands before P2 (it multiplies merge c
 | QW-25 | Save profiles + version control (tree off a common ancestor) | S | outside the ROM: git repo of `.sav` files | todo |
 | HW-01 | Release gate on hardware + phone: RetroArch mGBA core on a phone and a flash cart; save type, RTC/fake RTC, 60 fps, 10-minute play (CLAUDE.md §0) | S | `make release BUILD=hns`, debug menus `DISABLED_ON_RELEASE`; desk pre-check: `tools/playtest` smoke on the release ROM (same libretro core as the phone) | todo (every release) |
 | TS-01 | RHH's battle tests as a pass/fail gate. At 2.0.6 1,924 of 5,130 failed, 1,738 of them only on `Unmatched MESSAGE` (HnS prints classic battle text, "restored HP using its Rain Dish!", where the tests expect Gen 5+ lines) | S | `tools/testgate/testgate.py`: `make check TEST_SKIP_MESSAGES=1`, failures diffed against `tools/testgate/baseline.txt`. The 1,924 → 128; on the way it found the one-type-zero and catch-odds-zero bugs | done (2026-10-26) |
-| TS-02 | Triage the 128 known failures in `tools/testgate/baseline.txt`: each is an HnS design choice (say so in its line, e.g. Quick Ball ×4, Gen 3 Heavy Ball, Fairy off at zero) or a bug (fix it, drop the line). About 60 are probability tolerances (Moody, Keen Eye, AI odds), 30 value mismatches, 20 animation, 4 AI moves | M | the reason column; `testgate.py --tests "X"` to rerun one | todo |
+| TS-02 | Triage the known failures in `tools/testgate/baseline.txt`: each an HnS design choice or a bug | M | `tools/testgate/README.md` has the classes (HnS modes at zero, HnS battle config, skipped-message artefacts, data never seen in play, probability/AI) | wip: 128 → 123; fixed Totem Raticate's form table, the Magnet Train Pass text overflow, save sizes pinned to 2.0.6. Open: Sheer Force ×2, trainer party customisation, G-Max Wildfire, Daycare regional forms, Intimidate/Download on an empty field |
 | TS-03 | Map sweep: warp to every map of a dev build and file the ones that don't load | S | `tools/playtest/mapsweep.py` + `gDebugWarpRequest` (dev builds only). 2026-10-26: 558 of 1,495 load; 931 of the rest are Emerald maps nothing in HnS leads to; fixed Birth Island's sailor (hung going home) and the Battle Frontier Artisan Cave mouths (hung on entry) | done; rerun after any map or script change |
 | TS-04 | Link features (trade, link battle, Union Room, record mixing): `cable_club.inc` warps to Emerald's `MAP_TRADE_CENTER`/`MAP_UNION_ROOM`, which don't load without a partner, so the sweep can't tell. Needs two linked emulators | S | mGBA multiplayer, or two libretro cores linked | todo (unverified) |
+| TS-05 | Battle sweep: every trainer fought to the end, AI on both sides | S | `tools/playtest/battlesweep.py` + `gDebugBattleRequest`/`gDebugAiVsAi` (dev builds only) | done 2026-10-26: all 651 trainers start and end (2.6M frames); the only stalls were the sweep's own one-Pokémon party in double battles, fixed |
+| TS-06 | Old saves keep loading: Heart & Soul 2.0.6 saves continue, save and reload on dev and release ROMs, reading the same data on every ROM | S | `tools/playtest/savecheck.py` over `tools/playtest/saves/*.sav` (two saves written by 2.0.6's code: New Bark 2F after the intro, Cherrygrove's Pokémon Center with a party) | done 2026-10-26: both load on dev and release; the 2.0.6 ROM also loads a Mutagen save. Add each release's save |
 | QW-26 | Pokédex "set complete" | S | `dbg` Pokédex flags | todo (part of QW-16) |
 | QW-27 | Deoxys forms from the Meteorite (use it to cycle Normal → Attack → Defense → Speed) | exists | `form_change_tables.h:770-791`; Meteorite given on Birth Island (`BirthIsland_Exterior_hns/scripts.inc:118-122`). Verify in mGBA; QW-09 must open Birth Island without the event ticket. Story tie-in: DP-14 | todo (verify) |
 | QW-28 | Sprite pass: every species' battle sprites, icons and followers checked against their data, and what was wrong fixed | S | `tools/spritecheck/spritecheck.py` (the ROM as built; `--strict` exits 1 on a finding not in `known.txt`), `sheet.py` (review page) | done (2026-10-26, played): Gen 4+ female sprites show in battle, summary and Pokédex (HnS 806c6f2/a52f3e8 hid them along with the Gen 1-3 DS ones); Y offsets of 44 forms (24 species, 21 of them Unown letters) measured from the art (Unown and Chimecho back to Emerald's); Minior icon palette; Keldeo Resolute follows as Ordinary, not the substitute doll. Open: 7 follower shiny palettes need art |
@@ -138,12 +140,12 @@ GPU) can't run that. Routes, cheapest first:
 ## Space and save budgets
 
 Measure before any art lands: the bytes before the trailing 0xFF pad (CI's ROM-size step does
-this). Measured 2026-10-26 on `pokerom/dev` (2.0.6 + QW-01 + the engine fixes):
+this). Measured 2026-10-26 on 0.1.0 (2.0.6 + QW-01, the engine fixes and the sprite pass):
 
 | Build | Used of 33,554,432 | Free |
 |---|---|---|
-| `make hns` | 31,708,260 (94.50%) | 1,846,172 |
-| `make release BUILD=hns` (LTO, no debug menus): what ships | 31,260,004 (93.16%) | 2,294,428 |
+| `make hns` | 31,708,740 (94.50%) | 1,845,692 |
+| `make release BUILD=hns` (LTO, no debug menus): what ships | 31,255,220 (93.15%) | 2,299,212 |
 | `make hns` after SG-23 (both sprite styles), 2026-10-26 | 32,429,076 (96.65%) | 1,125,356 |
 | `make release BUILD=hns` after SG-23 | 32,097,188 (95.66%) | 1,457,244 |
 
