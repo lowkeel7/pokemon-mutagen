@@ -291,6 +291,9 @@ add_to_results:
                     fprintf(stdout, "[%0*d] %s: ", runners_digits, i, runner->test_name);
                     fwrite(soc, 1, eol - soc, stdout);
                     fprint_buffer(stdout, runner->output_buffer, runner->output_buffer_size);
+                    // Every failure's reason, not only the first MAX_SUMMARY_TESTS_TO_LIST in the summary.
+                    if (soc[-1] == 'F')
+                        fprintf(stdout, "  \e[31m%s\e[0m\n", runner->filename_line);
                     strcpy(runner->test_name, "WAITING...");
                     runner->output_buffer_size = 0;
                     break;

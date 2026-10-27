@@ -377,9 +377,16 @@ else
 TEST_SKIP_IS_FAIL := \x00
 endif
 
+# TEST_SKIP_MESSAGES=1 drops MESSAGE() expectations: HnS's battle text isn't RHH's (BACKLOG TS-01).
+ifeq ($(TEST_SKIP_MESSAGES),1)
+TEST_SKIP_MESSAGES_BYTE := \x01
+else
+TEST_SKIP_MESSAGES_BYTE := \x00
+endif
+
 check: $(TESTELF)
 	@cp $< $(HEADLESSELF)
-	$(PATCHELF) $(HEADLESSELF) gTestRunnerHeadless '\x01' gTestRunnerSkipIsFail "$(TEST_SKIP_IS_FAIL)"
+	$(PATCHELF) $(HEADLESSELF) gTestRunnerHeadless '\x01' gTestRunnerSkipIsFail "$(TEST_SKIP_IS_FAIL)" gTestRunnerSkipMessages "$(TEST_SKIP_MESSAGES_BYTE)"
 	$(ROMTESTHYDRA) $(ROMTEST) $(OBJCOPY) $(HEADLESSELF)
 
 # Other rules

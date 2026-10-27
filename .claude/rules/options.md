@@ -26,7 +26,10 @@ Storage: `struct ChallengeSettings` bitfields, `include/global.h:253-341`, held 
 `SaveBlock3.challengeSettings` (:359).
 
 ## Add a toggle
-1. Add a bitfield to `ChallengeSettings`. Zero = HnS behaviour (CLAUDE.md §2).
+1. Add a bitfield to `ChallengeSettings`. Zero = HnS behaviour (CLAUDE.md §2). HnS fields that
+   break that: `tx_Challenges_OneTypeChallenge` (OFF is 31; `IsOneTypeChallengeActive` also reads 0
+   as off, so a zeroed save no longer sends every gift to the PC) and `optionStyle` (0 = phys/spec
+   split ON, the inverse of its menu row). A test save or `ClearSav3()` leaves every field at 0.
 2. Add `ITEM_<TAB>_X` before the tab enum's `_NEXT`/`_COUNT`.
 3. Add the row to `sTabItems_<Tab>` (`.name`, `.descriptions`, `.numChoices`, `.choiceNames`) and a `sDesc_*` array.
 4. Optional: a lock in `sMidGameLockPolicy` and gating in `CheckConditions`.

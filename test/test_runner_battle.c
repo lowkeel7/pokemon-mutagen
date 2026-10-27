@@ -3128,11 +3128,13 @@ void UseItem(u32 sourceLine, struct BattlePokemon *battler, struct ItemContext c
     s32 i;
     enum BattlerId battlerId = battler - gBattleMons;
     enum ItemType ctxItemType = GetItemType(ctx.itemId);
-    bool32 requirePartyIndex = ctxItemType == ITEM_USE_PARTY_MENU
-                            || ctxItemType == ITEM_USE_PARTY_MENU_MOVES
-                            || (ctxItemType == ITEM_USE_BATTLER
-                                 && !IsAIDoublesTest()
-                                 && STATE->battlersCount > 2);
+    // HnS makes balls ITEM_USE_PARTY_MENU for its field ball swap; in battle they are still thrown.
+    bool32 requirePartyIndex = GetItemBattleUsage(ctx.itemId) != EFFECT_ITEM_THROW_BALL
+                            && (ctxItemType == ITEM_USE_PARTY_MENU
+                             || ctxItemType == ITEM_USE_PARTY_MENU_MOVES
+                             || (ctxItemType == ITEM_USE_BATTLER
+                                  && !IsAIDoublesTest()
+                                  && STATE->battlersCount > 2));
     // Check general bad use.
     INVALID_IF(DATA.turnState == TURN_CLOSED, "USE_ITEM outside TURN");
     INVALID_IF(DATA.actionBattlers & (1 << battlerId), "Multiple battler actions");
@@ -3178,11 +3180,17 @@ void OpenQueueGroup(u32 sourceLine, enum QueueGroupType type)
 {
     INVALID_IF(DATA.queueGroupType, "%s inside %s", sQueueGroupTypeMacros[type], sQueueGroupTypeMacros[DATA.queueGroupType]);
     if (DATA.queuedEventsCount > 0
+     && DATA.queueGroupStart < DATA.queuedEventsCount
      && DATA.queuedEvents[DATA.queueGroupStart].groupType == QUEUE_GROUP_NONE_OF
      && DATA.queuedEvents[DATA.queueGroupStart].groupSize == DATA.queuedEventsCount - DATA.queueGroupStart
      && type == QUEUE_GROUP_NONE_OF)
     {
-        INVALID("'NOT x; NOT y;', did you mean 'NONE_OF { x; y; }'?");
+        // With MESSAGEs skipped, NOTs that a MESSAGE kept apart become adjacent: merge them into
+        // the previous group, as NONE_OF { x; y; } would be (queueGroupStart stays where it is).
+        if (gTestRunnerSkipMessages)
+            DATA.queueGroupType = type;
+        else
+            INVALID("'NOT x; NOT y;', did you mean 'NONE_OF { x; y; }'?");
     }
     else
     {
@@ -3198,6 +3206,12 @@ void CloseQueueGroup(u32 sourceLine)
     {
         DATA.queuedEvents[DATA.queueGroupStart].groupType = DATA.queueGroupType;
         DATA.queuedEvents[DATA.queueGroupStart].groupSize = groupSize;
+        DATA.queueGroupType = QUEUE_GROUP_NONE;
+    }
+    else if (gTestRunnerSkipMessages)
+    {
+        // A group of only MESSAGEs is empty when they are skipped; the ONE_OF/NONE_OF loop
+        // only ends once its group has an event.
         DATA.queueGroupType = QUEUE_GROUP_NONE;
     }
 }
@@ -3409,6 +3423,8 @@ void QueueMessage(u32 sourceLine, const u8 *pattern)
         gTestRunnerState.expectedFailState = EXPECT_FAIL_SCENE_OPEN;
 
     INVALID_IF(!STATE->runScene, "MESSAGE outside of SCENE");
+    if (gTestRunnerSkipMessages)
+        return;
     if (DATA.queuedEventsCount == MAX_QUEUED_EVENTS)
         Test_ExitWithResult(TEST_RESULT_ERROR, sourceLine, ":L%s:%d: MESSAGE exceeds MAX_QUEUED_EVENTS", gTestRunnerState.test->filename, sourceLine);
     DATA.queuedEvents[DATA.queuedEventsCount++] = (struct QueuedEvent) {
