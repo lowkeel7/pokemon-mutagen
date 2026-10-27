@@ -4,7 +4,8 @@
 #   tools/release.sh            version from VERSION; writes release/<version>/
 #   tools/release.sh --dirty    allow uncommitted changes (the notes say so)
 #
-# Writes release/<version>/pokemon-mutagen-<version>.bps, SHA1SUMS and NOTES.md (gitignored).
+# Writes release/<version>/pokemon-mutagen-<version>.bps, SHA1SUMS and NOTES.md (gitignored): only
+# what gets published, so the logs, which name local paths, go to build/release-<version>/.
 # Never a ROM: only the patch is published (docs/pokerom/RELEASE.md). The checks it runs are the
 # desk half of the release gate; the phone and flash-cart half (BACKLOG HW-01) is done by hand and
 # recorded in NOTES.md before publishing.
@@ -15,6 +16,7 @@ cd "$root"
 version=$(tr -d ' \n' < VERSION)
 out="release/$version"
 bps="$out/pokemon-mutagen-$version.bps"
+logs="build/release-$version"
 dirty=0
 [[ ${1:-} == --dirty ]] && dirty=1
 
@@ -27,11 +29,14 @@ if ! git diff --quiet || ! git diff --cached --quiet; then
     ((dirty)) || die "uncommitted changes; commit them or pass --dirty"
 fi
 commit=$(git rev-parse --short HEAD)
-mkdir -p "$out"
+# The notes name the tree, not the commit: rewriting the placeholder identity before the first
+# push (RELEASE.md) changes every commit hash but no tree hash.
+tree=$(git rev-parse "HEAD^{tree}")
+mkdir -p "$out" "$logs"
 
 log "building make release BUILD=hns at $commit"
-make release BUILD=hns -j"$(getconf _NPROCESSORS_ONLN)" > "$out/build.log" 2>&1 ||
-    { tail -20 "$out/build.log" >&2; die "release build failed, log in $out/build.log"; }
+make release BUILD=hns -j"$(getconf _NPROCESSORS_ONLN)" > "$logs/build.log" 2>&1 ||
+    { tail -20 "$logs/build.log" >&2; die "release build failed, log in $logs/build.log"; }
 rom=pokehns-release.gba
 used=$(python3 -c "import sys; d=open(sys.argv[1],'rb').read(); print(f'{len(d.rstrip(bytes([255]))):,}')" "$rom")
 header=$(python3 -c "import sys; d=open(sys.argv[1],'rb').read(); print(d[0xA0:0xAC].rstrip(b'\0').decode(), d[0xAC:0xB0].decode())" "$rom")
@@ -39,11 +44,11 @@ header=$(python3 -c "import sys; d=open(sys.argv[1],'rb').read(); print(d[0xA0:0
 smoke="not run (no libretro mGBA core found)"
 if python3 -c "import sys; sys.path.insert(0, 'tools/playtest'); import playtest, os; sys.exit(0 if any(os.path.exists(os.path.expanduser(p)) for p in playtest.DEFAULT_CORES) else 1)"; then
     session=$(mktemp -d)
-    if python3 tools/playtest/playtest.py --rom "$rom" --session "$session" --fresh @tools/playtest/smoke.txt > "$out/smoke.log" 2>&1; then
+    if python3 tools/playtest/playtest.py --rom "$rom" --session "$session" --fresh @tools/playtest/smoke.txt > "$logs/smoke.log" 2>&1; then
         smoke="passed (boot, new game, save, power cycle, continue; mGBA libretro core)"
     else
-        tail -5 "$out/smoke.log" >&2
-        die "smoke test failed on the release ROM, log in $out/smoke.log"
+        tail -5 "$logs/smoke.log" >&2
+        die "smoke test failed on the release ROM, log in $logs/smoke.log"
     fi
     rm -rf "$session"
 fi
@@ -61,7 +66,8 @@ base=f3ae088181bf583e55daf962a92bb46f4f1d07b7
 cat > "$out/NOTES.md" <<EOF
 # Pokémon Mutagen $version
 
-Built from \`$commit\`$( ((dirty)) && echo ' with uncommitted changes' ) by \`tools/release.sh\`.
+Built by \`tools/release.sh\` from source tree \`$tree\`$( ((dirty)) && echo ' plus uncommitted changes' )
+(\`git rev-parse v$version^{tree}\` prints it).
 
 | | |
 |---|---|
@@ -81,8 +87,8 @@ Built from \`$commit\`$( ((dirty)) && echo ' with uncommitted changes' ) by \`to
 | Flash cart (model: ) | | | | | | | |
 
 ## Changes
-
-See docs/pokerom/CHANGELOG.md, section $version.
 EOF
+# The version's section of the changelog, without its heading.
+awk -v head="## $version" '$0 == head { on = 1; next } /^## / { on = 0 } on' docs/pokerom/CHANGELOG.md >> "$out/NOTES.md"
 
-log "done: $out (patch $(wc -c < "$bps" | tr -d ' ') bytes, ROM $used bytes used)"
+log "done: $out, logs in $logs (patch $(wc -c < "$bps" | tr -d ' ') bytes, ROM $used bytes used)"

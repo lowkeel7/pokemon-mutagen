@@ -31,7 +31,10 @@ and `_write` stubs (ARM's toolchain; devkitARM supplies them), a LOAD segment wi
 3. `tools/release.sh`: builds `make release BUILD=hns`, runs the smoke test on it in RetroArch's mGBA
    core, makes `release/<version>/pokemon-mutagen-<version>.bps` with `tools/make_patch.sh` (which
    rebuilds clean Emerald, checks its SHA-1, and applies the patch back to compare), and writes
-   `SHA1SUMS` and `NOTES.md`.
+   `SHA1SUMS` and `NOTES.md` (with the changelog section). That folder holds only what gets
+   published; the build and smoke logs, which name local paths, go to `build/release-<version>/`.
+   The notes name the source tree, not the commit, so they stay true after the identity rewrite.
+   Running it again rewrites `NOTES.md`: fill in the hardware table last.
 
 ## 3. The hardware gate (by hand, every release)
 
