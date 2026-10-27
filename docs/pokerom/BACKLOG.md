@@ -25,10 +25,10 @@ P4 deep redesigns + content. Nothing deep lands before P2 (it multiplies merge c
 | ID | Feature | Tier | Prior art / hook | Status |
 |---|---|---|---|---|
 | QW-01 | Type icons in battle (own + foe), move type + live effectiveness | exists | HnS+ `src/type_icons.c`; option BATTLE → TYPE ICONS (OFF/SEEN/CAUGHT/ALL), `challengeSettings.typeIcons`. Move type + effectiveness were already in HnS's move box | done for the foe side, singles, GEN 3 and GEN 4 UI (played 2026-10-26). Open: doubles layout unchecked; own-side icons not shown (HnS+/Soulgold choice) |
-| QW-02 | Exp multiplier, Exp to whole party | exists | HnS gamemode options; Gen 6 Exp. Share | todo (verify) |
-| QW-03 | Mints | exists | HnS challenge `MINTS` toggle | todo (verify) |
-| QW-04 | Random modes: moves / types / abilities / evos / starters | exists | HnS randomizer menu | todo (verify) |
-| QW-05 | Multi configurable modes (Nuzlocke, caps, party limit, IV/EV…) | exists | HnS gamemode/difficulty/challenge | todo (verify) |
+| QW-02 | Exp multiplier, Exp to whole party | exists | DIFFICULTY → EXP. MULTIPLIER x1.0/x1.5/x2.0/x0.0 (read in `battle_script_commands.c`); Gen 6 key-item Exp. Share (`I_EXP_SHARE_ITEM GEN_6`), given at Mr. Pokémon's house | done: exists in 2.0.6 (menu and code checked 2026-10-26, not played) |
+| QW-03 | Mints | exists | MODE → NATURE MINTS; sold in Goldenrod Flower Shop (seller hidden by `FLAG_MINTS_DISABLED`), more on Route 42 | done: exists in 2.0.6 (checked 2026-10-26, not played) |
+| QW-04 | Random modes: moves / types / abilities / evos / starters | exists | RANDOMIZER tab: starter, wild, trainer, static, type, moves, abilities, evolutions, evo lines, effectiveness, items, chaos (`randomizer.c`) | done: exists in 2.0.6 (checked 2026-10-26, not played) |
+| QW-05 | Multi configurable modes (Nuzlocke, caps, party limit, IV/EV…) | exists | NUZLOCKE tab (`nuzlocke.c`); DIFFICULTY: level cap (`caps.c`), party limit, player/trainer IVs and EVs, items, escapes; CHALLENGES: one type, BST equalizer, evo limit, mirror | done: exists in 2.0.6 (checked 2026-10-26, not played) |
 | QW-06 | Elite Four heals between fights | S | E4 room scripts | todo |
 | QW-07 | Buy everything at every shop | S | mart scripts / shop.c, as a ruleset toggle | todo |
 | QW-08 | Battle Points from every battle | S | post-battle hook | todo |
@@ -86,7 +86,7 @@ P4 deep redesigns + content. Nothing deep lands before P2 (it multiplies merge c
 | SG-16 | Pick any starter (dex-style picker) | M | Pokédex list UI | todo |
 | SG-17 | Mutant Pokérus (third type, mutations) | M | Pokérus hooks | design |
 | SG-18 | Breeding: move + third-type inheritance | M | daycare egg code | todo after SG-01 |
-| SG-19 | Custom party size 1–6 | exists | HnS party-limit mode | todo (verify) |
+| SG-19 | Custom party size 1–6 | exists | DIFFICULTY → PARTY LIMIT OFF/5/4/3/2/1, `GetMaxPartySize()` in 11 files | done: exists in 2.0.6 (checked 2026-10-26, not played) |
 | SG-20 | Make everything configurable in game (config menu) | M | one options screen over HnS options + ruleset | todo |
 | SG-21 | Weight classes (5), more egg groups and crosses | S | species data | todo |
 | SG-22 | Different Pokédex views | M | HGSS dex already in HnS | design |
