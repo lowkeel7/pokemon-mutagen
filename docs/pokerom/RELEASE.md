@@ -11,10 +11,17 @@ On the commit to release, with the toolchain on PATH (CLAUDE.md §1):
 | Battle tests | `tools/testgate/testgate.py` | "no new failures" |
 | Every map (dev build) | `make hns`, then `tools/playtest/mapsweep.py --rom pokehns.gba --save <save> --out <dir>` | no new problem since the last release's results (BACKLOG TS-03) |
 | Every trainer (dev build) | `tools/playtest/battlesweep.py --rom pokehns.gba --save <save> --out <dir>` | no new problem since the last release's results (BACKLOG TS-05) |
-| Old saves | continue a Heart & Soul 2.0.6 save (and the previous release's) with the new dev ROM | reaches the overworld where it was saved |
+| Sprites | `tools/spritecheck/spritecheck.py --strict` | no finding outside `known.txt` |
+| Old saves | `tools/playtest/savecheck.py --out <dir> pokehns.gba pokehns-release.gba` | every save in `tools/playtest/saves/` continues, saves and reloads on both ROMs, read the same on both |
 
 `<save>` is any save that continues into the overworld; `tools/playtest/smoke.txt` makes one in its
-`--session` folder.
+`--session` folder. After a release, add a save the release wrote to `tools/playtest/saves/`, so the
+next one is checked against it.
+
+The release link prints a few warnings that aren't ours to fix: newlib's `_close`, `_lseek`, `_read`
+and `_write` stubs (ARM's toolchain; devkitARM supplies them), a LOAD segment with RWX permissions
+(binutils 2.39 and later), and `mystery_gift_client.c` copying 1,024 bytes from a 16-byte script
+(pret's and RHH's code too; it only reads ROM). Anything else is new and needs a look.
 
 ## 2. Build the release
 

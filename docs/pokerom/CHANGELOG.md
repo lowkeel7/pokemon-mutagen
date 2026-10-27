@@ -43,6 +43,14 @@ Elsewhere:
 - One Type challenge: a cleared setting no longer counts as "only typeless Pokémon" and sends every
   gift and catch to the PC.
 
+Sprites:
+- Gen 4 and later Pokémon show their female sprites again in battle, the summary and the Pokédex
+  (36 species, Jellicent, Unfezant, Pyroar, Hippowdon and Garchomp among them, battled as males).
+- 44 forms that floated above or sank into their battle platform sit on it: every Unown letter,
+  Chimecho, the partner Pikachu and Eevee, Keldeo Resolute and others.
+- Minior's Meteor icon is brown, not red, and Keldeo's Resolute form follows you as Keldeo instead
+  of a substitute doll.
+
 ### Known issues
 - Link features (trading, link battles, the Union Room, record mixing) haven't been tested.
 - Artisan Cave is closed (see above).

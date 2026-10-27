@@ -75,3 +75,5 @@ tools/mid2gbs/.venv
 .env*
 *.bps
 /release/
+# Save fixtures for tools/playtest/savecheck.py
+!/tools/playtest/saves/*.sav
