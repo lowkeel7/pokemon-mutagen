@@ -53,6 +53,7 @@
 #include "constants/items.h"
 #include "difficulty.h"
 #include "follower_npc.h"
+#include "mutagen.h"
 
 // 1 in sandbox dev builds (make hns SANDBOX=1): new games start with Mutagen's options on, every
 // item and full PC boxes. 0 everywhere else, which compiles to the same code as before.
@@ -237,6 +238,8 @@ void NewGameInitData(void)
 #endif
     struct ChallengeSettings savedChallenge = gSaveBlock3Ptr->challengeSettings;
     struct MutagenSettings savedMutagen = gSaveBlock3Ptr->mutagenSettings; // chosen in the new-game menu (QW-29)
+    bool32 newGamePlus = NewGamePlus_IsPending(); // Pokémon Mutagen (SG-15)
+    void *newGamePlusCarry = newGamePlus ? NewGamePlus_Snapshot() : NULL; // before the bag's key resets
     if (gSaveFileStatus == SAVE_STATUS_EMPTY || gSaveFileStatus == SAVE_STATUS_CORRUPT)
         RtcReset();
 
@@ -245,7 +248,8 @@ void NewGameInitData(void)
 #endif
     gDifferentSaveFile = TRUE;
     gSaveBlock2Ptr->encryptionKey = 0;
-    ZeroPlayerPartyMons();
+    if (!newGamePlus)
+        ZeroPlayerPartyMons();
     ZeroEnemyPartyMons();
     ResetPokedex();
     ClearFrontierRecord();
@@ -259,9 +263,11 @@ void NewGameInitData(void)
     ClearAllMail();
     gSaveBlock2Ptr->specialSaveWarpFlags = 0;
     gSaveBlock2Ptr->gcnLinkFlags = 0;
-    InitPlayerTrainerId();
+    if (!newGamePlus) // the carried Pokémon keep their trainer, so they still obey
+        InitPlayerTrainerId();
     PlayTimeCounter_Reset();
     ClearPokedexFlags();
+    NewGamePlus_RestoreDex(newGamePlusCarry);
     InitEventData();
     ClearTVShowData();
     ResetGabbyAndTy();
@@ -275,14 +281,22 @@ void NewGameInitData(void)
     ClearPlayerLinkBattleRecords();
     InitSeedotSizeRecord();
     InitLotadSizeRecord();
-    gPlayerPartyCount = 0;
-    ZeroPlayerPartyMons();
-    ResetPokemonStorageSystem();
+    if (!newGamePlus)
+    {
+        gPlayerPartyCount = 0;
+        ZeroPlayerPartyMons();
+        ResetPokemonStorageSystem();
+    }
+    else
+    {
+        CalculatePlayerPartyCount();
+    }
     DeactivateAllRoamers();
     gSaveBlock1Ptr->registeredItem = ITEM_NONE;
     gSaveBlock3Ptr->registeredItemHold = ITEM_NONE;
     ClearBag();
     NewGameInitPCItems();
+    NewGamePlus_RestoreItemsAndMoney(newGamePlusCarry);
     ClearPokeblocks();
     ClearDecorationInventories();
     InitEasyChatPhrases();
@@ -317,6 +331,8 @@ void NewGameInitData(void)
     ResetDexNav();
     ClearFollowerNPCData();
 
+    if (newGamePlus)
+        NewGamePlus_Finish(newGamePlusCarry);
     // Sync engine flags from restored challenge settings
     if (!gSaveBlock3Ptr->challengeSettings.tx_Mode_Mints)
         FlagSet(FLAG_MINTS_DISABLED);

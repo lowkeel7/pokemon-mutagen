@@ -49,6 +49,10 @@ Heart & Soul's own history see its documentation, and for the engine see `CHANGE
   Roaring Moon, Gardevoir into Iron Valiant, Raikou, Entei and Suicune into Raging Bolt, Gouging
   Fire and Walking Wake, Diglett and Dugtrio into Wiglett and Wugtrio, Tentacool and Tentacruel
   into Toedscool and Toedscruel.
+- **New Game+** (MUTAGEN tab, NEW GAME+ → KEEP LV or LEVEL 1): once you have beaten the League, NEW
+  GAME on the title screen becomes NEW GAME+, and the new adventure keeps your party and boxes (as
+  they are, or every Pokémon back at level 1 with a fresh moveset, as in R.O.W.E.), your bag apart
+  from key items, your PC items, money and Pokédex. The story, badges and trainers start over.
 - **DS-style sprites**: FEATURES → SPRITES switches every Pokémon's battle art between GBA (the
   default, Heart & Soul's look) and DS: DS-era art for the 393 Gen 1-3 species, Gen 4 shadows
   under foes, female forms and the DS-style Substitute doll. Older saves read GBA.

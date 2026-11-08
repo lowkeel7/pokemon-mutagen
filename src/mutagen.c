@@ -14,6 +14,12 @@
 #include "string_util.h"
 #include "task.h"
 #include "species_picker.h"
+#include "coins.h"
+#include "item.h"
+#include "malloc.h"
+#include "money.h"
+#include "pokemon_storage_system.h"
+#include "constants/pokedex.h"
 #include "constants/battle_ai.h"
 #include "constants/flags.h"
 #include "constants/vars.h"
@@ -139,6 +145,157 @@ void MutagenOnStrainEnd(struct Pokemon *mon)
 
     if (GetSpeciesAbility(species, abilityNum) != ABILITY_NONE)
         SetMonData(mon, MON_DATA_ABILITY_NUM, &abilityNum);
+}
+
+// NEW GAME+ (SG-15), after R.O.W.E.: NEW GAME on the title menu becomes NEW GAME+ once the game
+// is cleared and the option is on. The new game then keeps the party and every box (as they are, or
+// reset to Lv 1 with fresh movesets), the bag but its key items, the PC items, money, coins and
+// the Pokédex; everything else starts over, the trainer ID included among what stays (so the
+// carried Pokémon still obey).
+static EWRAM_DATA u8 sNewGamePlusPending = 0; // loop number of the coming new game, 0 for a plain one
+static EWRAM_DATA u8 sNewGamePlusMode = 0;    // 1 keep levels, 2 reset to Lv 1
+
+struct NewGamePlusCarry
+{
+    u32 money;
+    u16 coins;
+    u16 bagCount;
+    u16 pcCount;
+    struct Pokedex pokedex;
+    u8 dexSeen[NUM_DEX_FLAG_BYTES];
+    u8 dexCaught[NUM_DEX_FLAG_BYTES];
+    struct ItemSlot pc[PC_ITEMS_COUNT];
+    struct ItemSlot bag[]; // every non-key-item slot in use
+};
+
+bool32 IsNewGamePlusOffered(void)
+{
+    return gSaveBlock3Ptr != NULL && gSaveBlock3Ptr->mutagenSettings.newGamePlus != 0 && FlagGet(FLAG_SYS_GAME_CLEAR);
+}
+
+void NewGamePlus_ChooseAtTitle(void)
+{
+    if (IsNewGamePlusOffered())
+    {
+        sNewGamePlusPending = gSaveBlock3Ptr->mutagenSettings.newGamePlusCount + 1;
+        sNewGamePlusMode = gSaveBlock3Ptr->mutagenSettings.newGamePlus;
+    }
+    else
+    {
+        sNewGamePlusPending = 0;
+        sNewGamePlusMode = 0;
+    }
+}
+
+bool32 NewGamePlus_IsPending(void)
+{
+    return sNewGamePlusPending != 0;
+}
+
+void *NewGamePlus_Snapshot(void)
+{
+    struct NewGamePlusCarry *carry;
+    struct BagPocket pcPocket = {.itemSlots = gSaveBlock1Ptr->pcItems, .capacity = PC_ITEMS_COUNT, .id = POCKET_DUMMY};
+    u32 slots = 0, n = 0;
+
+    for (u32 p = 0; p < POCKETS_COUNT; p++)
+        if (p != POCKET_KEY_ITEMS)
+            slots += gBagPockets[p].capacity;
+    carry = AllocZeroed(sizeof(*carry) + slots * sizeof(struct ItemSlot));
+    if (carry == NULL)
+        return NULL;
+    carry->money = GetMoney(&gSaveBlock1Ptr->money);
+    carry->coins = GetCoins();
+    carry->pokedex = gSaveBlock2Ptr->pokedex;
+    memcpy(carry->dexSeen, gSaveBlock1Ptr->dexSeen, sizeof(carry->dexSeen));
+    memcpy(carry->dexCaught, gSaveBlock1Ptr->dexCaught, sizeof(carry->dexCaught));
+    for (u32 p = 0; p < POCKETS_COUNT; p++)
+    {
+        if (p == POCKET_KEY_ITEMS)
+            continue;
+        for (u32 i = 0; i < gBagPockets[p].capacity; i++)
+        {
+            struct ItemSlot slot = BagPocket_GetSlotData(&gBagPockets[p], i);
+
+            if (slot.itemId != ITEM_NONE && slot.quantity != 0)
+                carry->bag[n++] = slot;
+        }
+    }
+    carry->bagCount = n;
+    n = 0;
+    for (u32 i = 0; i < PC_ITEMS_COUNT; i++)
+    {
+        struct ItemSlot slot = BagPocket_GetSlotData(&pcPocket, i);
+
+        if (slot.itemId != ITEM_NONE && slot.quantity != 0)
+            carry->pc[n++] = slot;
+    }
+    carry->pcCount = n;
+    return carry;
+}
+
+void NewGamePlus_RestoreDex(const void *carryPtr)
+{
+    const struct NewGamePlusCarry *carry = carryPtr;
+
+    if (carry == NULL)
+        return;
+    gSaveBlock2Ptr->pokedex = carry->pokedex;
+    memcpy(gSaveBlock1Ptr->dexSeen, carry->dexSeen, sizeof(carry->dexSeen));
+    memcpy(gSaveBlock1Ptr->dexCaught, carry->dexCaught, sizeof(carry->dexCaught));
+}
+
+void NewGamePlus_RestoreItemsAndMoney(const void *carryPtr)
+{
+    const struct NewGamePlusCarry *carry = carryPtr;
+
+    if (carry == NULL)
+        return;
+    SetMoney(&gSaveBlock1Ptr->money, carry->money);
+    SetCoins(carry->coins);
+    for (u32 i = 0; i < carry->bagCount; i++)
+        AddBagItem(carry->bag[i].itemId, carry->bag[i].quantity);
+    for (u32 i = 0; i < carry->pcCount; i++)
+        AddPCItem(carry->pc[i].itemId, carry->pc[i].quantity);
+}
+
+static void ResetBoxMonToLevelOne(struct BoxPokemon *boxMon)
+{
+    u32 species = GetBoxMonData(boxMon, MON_DATA_SPECIES);
+    u32 exp, none = MOVE_NONE, zero = 0;
+
+    if (species == SPECIES_NONE || GetBoxMonData(boxMon, MON_DATA_IS_EGG))
+        return;
+    exp = gExperienceTables[gSpeciesInfo[species].growthRate][1];
+    SetBoxMonData(boxMon, MON_DATA_EXP, &exp);
+    for (u32 i = 0; i < MAX_MON_MOVES; i++)
+    {
+        SetBoxMonData(boxMon, MON_DATA_MOVE1 + i, &none);
+        SetBoxMonData(boxMon, MON_DATA_PP1 + i, &zero);
+    }
+    GiveBoxMonInitialMoveset(boxMon);
+}
+
+void NewGamePlus_Finish(void *carry)
+{
+    if (sNewGamePlusMode == 2)
+    {
+        for (u32 i = 0; i < PARTY_SIZE; i++)
+        {
+            if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES) == SPECIES_NONE)
+                continue;
+            ResetBoxMonToLevelOne(&gPlayerParty[i].box);
+            CalculateMonStats(&gPlayerParty[i]);
+        }
+        for (u32 box = 0; box < TOTAL_BOXES_COUNT; box++)
+            for (u32 i = 0; i < IN_BOX_COUNT; i++)
+                ResetBoxMonToLevelOne(&gPokemonStoragePtr->boxes[box][i]);
+    }
+    gSaveBlock3Ptr->mutagenSettings.newGamePlusCount = sNewGamePlusPending;
+    if (carry != NULL)
+        Free(carry);
+    sNewGamePlusPending = 0;
+    sNewGamePlusMode = 0;
 }
 
 // The post-battle "caught Pokérus" notice. pokerus.c sets gPokerusNoticeSlot when a wild battle

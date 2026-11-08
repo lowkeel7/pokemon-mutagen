@@ -82,6 +82,7 @@ enum {
     ITEM_MUTAGEN_STARTER,
     ITEM_MUTAGEN_SHINY_STARTER,
     ITEM_MUTAGEN_MUTAGEN,
+    ITEM_MUTAGEN_NEW_GAME_PLUS,
     ITEM_MUTAGEN_NEXT,
     ITEM_MUTAGEN_COUNT,
 };
@@ -394,6 +395,12 @@ static const u8 *const sChoices_Mutagen[] = {
     COMPOUND_STRING("RAMPANT"),
 };
 
+static const u8 *const sChoices_NewGamePlus[] = {
+    COMPOUND_STRING("OFF"),
+    COMPOUND_STRING("KEEP LV"),
+    COMPOUND_STRING("LEVEL 1"),
+};
+
 static const u8 *const sChoices_OriginalModern[] = {
     COMPOUND_STRING("ORIGINAL"),
     COMPOUND_STRING("MODERN"),
@@ -447,6 +454,12 @@ static const u8 *const sDesc_Mutagen[] = {
     COMPOUND_STRING("No mutant POKéRUS strain."),
     COMPOUND_STRING("Wild Pokémon at the Lake of Rage,\nthe hideouts, the Power Plant… carry it."),
     COMPOUND_STRING("The mutant strain can be caught\nanywhere. 4 days, then it mutates."),
+};
+
+static const u8 *const sDesc_NewGamePlus[] = {
+    COMPOUND_STRING("NEW GAME starts from nothing,\nas in Heart & Soul."),
+    COMPOUND_STRING("Once the game is cleared, NEW GAME+\nkeeps your Pokémon, bag and Pokédex."),
+    COMPOUND_STRING("NEW GAME+ keeps them too, with every\nPokémon reset to Lv. 1 (R.O.W.E.)."),
 };
 
 static const u8 *const sDesc_MutagenNext[] = {
@@ -835,6 +848,12 @@ static const struct ChallengeMenuItem sTabItems_Mutagen[] = {
         .descriptions = sDesc_Mutagen,
         .numChoices   = 3,
         .choiceNames  = sChoices_Mutagen,
+    },
+    [ITEM_MUTAGEN_NEW_GAME_PLUS] = {
+        .name         = COMPOUND_STRING("NEW GAME+"),
+        .descriptions = sDesc_NewGamePlus,
+        .numChoices   = 3,
+        .choiceNames  = sChoices_NewGamePlus,
     },
     [ITEM_MUTAGEN_NEXT] = {
         .name         = COMPOUND_STRING("NEXT"),
@@ -1529,6 +1548,7 @@ static void ApplyMutagenPresets(void)
     *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_STARTER)         = 1; // ANY
     *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_SHINY_STARTER)   = 1; // ASK
     *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_MUTAGEN)         = 1; // ON
+    *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_NEW_GAME_PLUS)   = 1; // KEEP LV
 }
 
 // =============================================================================
@@ -2163,6 +2183,7 @@ static void Task_ConfirmSaveYes(u8 taskId)
     gSaveBlock3Ptr->mutagenSettings.starterPick = *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_STARTER);
     gSaveBlock3Ptr->mutagenSettings.shinyStarter = *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_SHINY_STARTER);
     gSaveBlock3Ptr->mutagenSettings.mutagen      = *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_MUTAGEN);
+    gSaveBlock3Ptr->mutagenSettings.newGamePlus  = *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_NEW_GAME_PLUS);
     if (*GetSelectionPtr(TAB_MODE, ITEM_MODE_GAMEMODE) == 2) // GAMEMODE MUTAGEN: type icons on too
         cs->typeIcons = 3;
 
@@ -2413,6 +2434,7 @@ void CB2_InitChallengeMenu(void)
             *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_STARTER)      = gSaveBlock3Ptr->mutagenSettings.starterPick;
             *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_SHINY_STARTER)= gSaveBlock3Ptr->mutagenSettings.shinyStarter;
             *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_MUTAGEN)      = gSaveBlock3Ptr->mutagenSettings.mutagen;
+            *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_NEW_GAME_PLUS)= gSaveBlock3Ptr->mutagenSettings.newGamePlus;
 
             // Randomizer tab — derive master toggle from whether any sub-field is active
             *GetSelectionPtr(TAB_RANDOMIZER, ITEM_RANDOM_OFF_ON) =

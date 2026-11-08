@@ -1,4 +1,5 @@
 #include "global.h"
+#include "mutagen.h"
 #include "trainer_pokemon_sprites.h"
 #include "bg.h"
 #include "constants/rgb.h"
@@ -262,6 +263,13 @@ static const u8 gJPText_No1MSubCircuit[] = _("1Mサブきばんが ささって�
 static const u8 gText_BatteryRunDry[] = _("The internal battery has run dry.\nThe game can be played.\pHowever, clock-based events will\nno longer occur.");
 
 static const u8 gText_MainMenuNewGame[] = _("NEW GAME");
+static const u8 gText_MainMenuNewGamePlus[] = _("NEW GAME+");
+
+// Pokémon Mutagen (SG-15): NEW GAME+ once the game is cleared and the option is on.
+static const u8 *NewGameLabel(void)
+{
+    return IsNewGamePlusOffered() ? gText_MainMenuNewGamePlus : gText_MainMenuNewGame;
+}
 static const u8 gText_MainMenuContinue[] = _("CONTINUE");
 static const u8 gText_MainMenuOption[] = _("OPTION");
 static const u8 gText_MainMenuMysteryGift[] = _("MYSTERY GIFT");
@@ -803,7 +811,7 @@ static void Task_DisplayMainMenu(u8 taskId)
         default:
             FillWindowPixelBuffer(0, PIXEL_FILL(0xA));
             FillWindowPixelBuffer(1, PIXEL_FILL(0xA));
-            AddTextPrinterParameterized3(0, FONT_NORMAL, 0, 1, sTextColor_Headers, TEXT_SKIP_DRAW, gText_MainMenuNewGame);
+            AddTextPrinterParameterized3(0, FONT_NORMAL, 0, 1, sTextColor_Headers, TEXT_SKIP_DRAW, NewGameLabel());
             AddTextPrinterParameterized3(1, FONT_NORMAL, 0, 1, sTextColor_Headers, TEXT_SKIP_DRAW, gText_MainMenuOption);
             PutWindowTilemap(0);
             PutWindowTilemap(1);
@@ -817,7 +825,7 @@ static void Task_DisplayMainMenu(u8 taskId)
             FillWindowPixelBuffer(3, PIXEL_FILL(0xA));
             FillWindowPixelBuffer(4, PIXEL_FILL(0xA));
             AddTextPrinterParameterized3(2, FONT_NORMAL, 0, 1, sTextColor_Headers, TEXT_SKIP_DRAW, gText_MainMenuContinue);
-            AddTextPrinterParameterized3(3, FONT_NORMAL, 0, 1, sTextColor_Headers, TEXT_SKIP_DRAW, gText_MainMenuNewGame);
+            AddTextPrinterParameterized3(3, FONT_NORMAL, 0, 1, sTextColor_Headers, TEXT_SKIP_DRAW, NewGameLabel());
             AddTextPrinterParameterized3(4, FONT_NORMAL, 0, 1, sTextColor_Headers, TEXT_SKIP_DRAW, gText_MainMenuOption);
             MainMenu_FormatSavegameText();
             PutWindowTilemap(2);
@@ -836,7 +844,7 @@ static void Task_DisplayMainMenu(u8 taskId)
             FillWindowPixelBuffer(4, PIXEL_FILL(0xA));
             FillWindowPixelBuffer(5, PIXEL_FILL(0xA));
             AddTextPrinterParameterized3(2, FONT_NORMAL, 0, 1, sTextColor_Headers, TEXT_SKIP_DRAW, gText_MainMenuContinue);
-            AddTextPrinterParameterized3(3, FONT_NORMAL, 0, 1, sTextColor_Headers, TEXT_SKIP_DRAW, gText_MainMenuNewGame);
+            AddTextPrinterParameterized3(3, FONT_NORMAL, 0, 1, sTextColor_Headers, TEXT_SKIP_DRAW, NewGameLabel());
             AddTextPrinterParameterized3(4, FONT_NORMAL, 0, 1, sTextColor_Headers, TEXT_SKIP_DRAW, gText_MainMenuMysteryGift);
             AddTextPrinterParameterized3(5, FONT_NORMAL, 0, 1, sTextColor_Headers, TEXT_SKIP_DRAW, gText_MainMenuOption);
             MainMenu_FormatSavegameText();
@@ -860,7 +868,7 @@ static void Task_DisplayMainMenu(u8 taskId)
             FillWindowPixelBuffer(5, PIXEL_FILL(0xA));
             FillWindowPixelBuffer(6, PIXEL_FILL(0xA));
             AddTextPrinterParameterized3(2, FONT_NORMAL, 0, 1, sTextColor_Headers, TEXT_SKIP_DRAW, gText_MainMenuContinue);
-            AddTextPrinterParameterized3(3, FONT_NORMAL, 0, 1, sTextColor_Headers, TEXT_SKIP_DRAW, gText_MainMenuNewGame);
+            AddTextPrinterParameterized3(3, FONT_NORMAL, 0, 1, sTextColor_Headers, TEXT_SKIP_DRAW, NewGameLabel());
             AddTextPrinterParameterized3(4, FONT_NORMAL, 0, 1, sTextColor_Headers, TEXT_SKIP_DRAW, gText_MainMenuMysteryGift2);
             AddTextPrinterParameterized3(5, FONT_NORMAL, 0, 1, sTextColor_Headers, TEXT_SKIP_DRAW, gText_MainMenuMysteryEvents);
             AddTextPrinterParameterized3(6, FONT_NORMAL, 0, 1, sTextColor_Headers, TEXT_SKIP_DRAW, gText_MainMenuOption);
@@ -1096,6 +1104,8 @@ static void Task_HandleMainMenuAPressed(u8 taskId)
                     sCurrItemAndOptionMenuCheck = 0;
                 else
                     sCurrItemAndOptionMenuCheck |= OPTION_MENU_FLAG;
+                if (action == ACTION_NEW_GAME)
+                    NewGamePlus_ChooseAtTitle(); // Pokémon Mutagen (SG-15)
                 StartNewGameSceneHns();
                 return;
             }

@@ -20,6 +20,16 @@ bool32 MutagenRollsHere(void);         // the mutant strain can be caught on thi
 bool32 MutagenHasRunItsCourse(struct Pokemon *mon); // mutant strain, days down to 0: mutations may set
 void MutagenOnStrainEnd(struct Pokemon *mon);       // the day the mutant strain ends: hidden ability
 
+// NEW GAME+ (SG-15): offered on the title menu once the game is cleared; the title sets the pending
+// loop number, NewGameInitData carries the team, boxes, bag, money and Pokédex across the reset.
+bool32 IsNewGamePlusOffered(void);
+void NewGamePlus_ChooseAtTitle(void);       // sets or clears the pending loop for the coming new game
+bool32 NewGamePlus_IsPending(void);
+void *NewGamePlus_Snapshot(void);           // before the bag's encryption key is reset
+void NewGamePlus_RestoreDex(const void *carry);
+void NewGamePlus_RestoreItemsAndMoney(const void *carry);
+void NewGamePlus_Finish(void *carry);       // level reset, the loop count, frees the snapshot
+
 extern u8 gPokerusNoticeSlot;          // party slot + 1 of the Pokémon that just caught Pokérus, 0 none
 extern bool8 gPokerusNoticeMutant;     // that infection was the mutant strain
 void FieldCB_ReturnToFieldPokerusNotice(void);
