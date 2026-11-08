@@ -23,6 +23,8 @@ Heart & Soul's own history see its documentation, and for the engine see `CHANGE
   "CHERRYGROVE CIT!" on a phone; names wider than the banner's clear area use the narrower face.
 - Alolan Dugtrio's Pokédex entry: "heir" → "their" (an unmerged Heart & Soul pull request).
 - Sandbox builds: the Pokémon stocked into the PC are now also seen and caught in the Pokédex.
+- Evolving into a species with a slower growth curve (Donphan into Great Tusk) no longer drops the
+  level: the experience is re-mapped the way the randomizer's evolutions already were.
 
 ### New
 - **A MUTAGEN tab** in the new-game and PC options, and **GAMEMODE → MUTAGEN** on the new-game
@@ -48,11 +50,14 @@ Heart & Soul's own history see its documentation, and for the engine see `CHANGE
   Delibird into Iron Bundle, Hariyama into Iron Hands, Tyranitar into Iron Thorns, Salamence into
   Roaring Moon, Gardevoir into Iron Valiant, Raikou, Entei and Suicune into Raging Bolt, Gouging
   Fire and Walking Wake, Diglett and Dugtrio into Wiglett and Wugtrio, Tentacool and Tentacruel
-  into Toedscool and Toedscruel.
+  into Toedscool and Toedscruel; Farfetch'd into Sirfetch'd, Corsola into Cursola, Mr. Mime into
+  Mr. Rime, Meowth into Perrserker, Linoone into Obstagoon, Wooper into Clodsire, Qwilfish into
+  Overqwil, Sneasel into Sneasler, Scyther into Kleavor and Gallade into Iron Valiant.
 - **New Game+** (MUTAGEN tab, NEW GAME+ → KEEP LV or LEVEL 1): once you have beaten the League, NEW
   GAME on the title screen becomes NEW GAME+, and the new adventure keeps your party and boxes (as
   they are, or every Pokémon back at level 1 with a fresh moveset, as in R.O.W.E.), your bag apart
-  from key items, your PC items, money and Pokédex. The story, badges and trainers start over.
+  from key items, your PC items, money and Pokédex. The story, badges and trainers start over,
+  and every wild and trainer Pokémon is one level higher per loop.
 - **Discovery** (MUTAGEN tab, DISCOVERY → ON): one wild Pokémon in 128 is a boss, five levels up with
   perfect IVs and its hidden ability, announced as "A powerful wild X appeared!"; and eighteen more
   abilities on your lead Pokémon pull wild Pokémon of their type, the way Static and Magnet Pull

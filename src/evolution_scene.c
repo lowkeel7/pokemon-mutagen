@@ -785,8 +785,12 @@ static void Task_EvolutionScene(u8 taskId)
             PlayBGM(MUS_EVOLVED);
             gTasks[taskId].tState++;
 
+            // A different growth curve would change the level (Pokémon Mutagen's cross-family
+            // evolutions, Donphan → Great Tusk: 50 became 46), so re-map the experience the way
+            // the randomizer already does; within a family the curves match and nothing changes.
 #if RANDOMIZER_AVAILABLE
-            if (RandomizerFeatureEnabled(RANDOMIZE_EVO_METHODS) || RandomizerFeatureEnabled(RANDOMIZE_EVOLUTIONS))
+            if (RandomizerFeatureEnabled(RANDOMIZE_EVO_METHODS) || RandomizerFeatureEnabled(RANDOMIZE_EVOLUTIONS)
+             || gSpeciesInfo[gTasks[taskId].tPreEvoSpecies].growthRate != gSpeciesInfo[gTasks[taskId].tPostEvoSpecies].growthRate)
             {
                 u32 level = GetMonData(mon, MON_DATA_LEVEL);
                 u32 excess_exp = GetMonData(mon, MON_DATA_EXP) - gExperienceTables[gSpeciesInfo[GetMonData(mon, MON_DATA_SPECIES)].growthRate][level];

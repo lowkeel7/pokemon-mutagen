@@ -16,6 +16,7 @@
 #include "species_picker.h"
 #include "coins.h"
 #include "item.h"
+#include "load_save.h"
 #include "malloc.h"
 #include "money.h"
 #include "pokemon_storage_system.h"
@@ -214,6 +215,9 @@ void *NewGamePlus_Snapshot(void)
     carry = AllocZeroed(sizeof(*carry) + slots * sizeof(struct ItemSlot));
     if (carry == NULL)
         return NULL;
+    // From the title screen the party is only in the save block (a continued game copies it out
+    // on its way in); pull it into the working party now, before the save block is cleared.
+    LoadPlayerParty();
     carry->money = GetMoney(&gSaveBlock1Ptr->money);
     carry->coins = GetCoins();
     carry->pokedex = gSaveBlock2Ptr->pokedex;
@@ -284,6 +288,17 @@ static void ResetBoxMonToLevelOne(struct BoxPokemon *boxMon)
         SetBoxMonData(boxMon, MON_DATA_PP1 + i, &zero);
     }
     GiveBoxMonInitialMoveset(boxMon);
+}
+
+// Every wild and trainer Pokémon is one level higher per New Game+ loop (R.O.W.E.'s ramp).
+u32 ApplyNewGamePlusRamp(u32 level)
+{
+    u32 loop = gSaveBlock3Ptr != NULL ? gSaveBlock3Ptr->mutagenSettings.newGamePlusCount : 0;
+
+    if (loop == 0 || level == 0)
+        return level;
+    level += loop;
+    return level > MAX_LEVEL ? MAX_LEVEL : level;
 }
 
 void NewGamePlus_Finish(void *carry)

@@ -7512,7 +7512,8 @@ const struct SpeciesInfo gSpeciesInfoGen1[] =
         .eggMoveLearnset = sMeowthEggMoveLearnset,
         .formSpeciesIdTable = sMeowthFormSpeciesIdTable,
         .formChangeTable = sMeowthFormChangeTable,
-        .evolutions = EVOLUTION({EVO_LEVEL, 28, SPECIES_PERSIAN}),
+        .evolutions = EVOLUTION({EVO_LEVEL, 28, SPECIES_PERSIAN},
+                                {EVO_LEVEL, 0, SPECIES_PERRSERKER, CONDITIONS({IF_MUTAGEN})}), // + Pokémon Mutagen (SG-24)
     },
 
     [SPECIES_PERSIAN] =
@@ -11683,6 +11684,7 @@ const struct SpeciesInfo gSpeciesInfoGen1[] =
         .teachableLearnset = sFarfetchdTeachableLearnset,
         .eggMoveLearnset = sFarfetchdEggMoveLearnset,
         .formSpeciesIdTable = sFarfetchdFormSpeciesIdTable,
+        .evolutions = EVOLUTION({EVO_LEVEL, 0, SPECIES_SIRFETCHD, CONDITIONS({IF_MUTAGEN})}), // Pokémon Mutagen (SG-24)
     },
 
 #if P_GALARIAN_FORMS
@@ -16749,6 +16751,7 @@ const struct SpeciesInfo gSpeciesInfoGen1[] =
         .teachableLearnset = sMrMimeTeachableLearnset,
         .eggMoveLearnset = sMrMimeEggMoveLearnset,
         .formSpeciesIdTable = sMrMimeFormSpeciesIdTable,
+        .evolutions = EVOLUTION({EVO_LEVEL, 0, SPECIES_MR_RIME, CONDITIONS({IF_MUTAGEN})}), // Pokémon Mutagen (SG-24)
     },
 
 #if P_GALARIAN_FORMS
@@ -17000,7 +17003,8 @@ const struct SpeciesInfo gSpeciesInfoGen1[] =
                             #if P_GEN_8_CROSS_EVOS
                                 {EVO_ITEM, ITEM_BLACK_AUGURITE, SPECIES_KLEAVOR}
                             #endif
-                            ),
+                            ,
+                                {EVO_LEVEL, 0, SPECIES_KLEAVOR, CONDITIONS({IF_MUTAGEN})}), // + Pokémon Mutagen (SG-24)
     #endif
     },
 

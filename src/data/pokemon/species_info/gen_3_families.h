@@ -1243,6 +1243,7 @@ const struct SpeciesInfo gSpeciesInfoGen3[] =
         .levelUpLearnset = sLinooneLevelUpLearnset,
         .teachableLearnset = sLinooneTeachableLearnset,
         .formSpeciesIdTable = sLinooneFormSpeciesIdTable,
+        .evolutions = EVOLUTION({EVO_LEVEL, 0, SPECIES_OBSTAGOON, CONDITIONS({IF_MUTAGEN})}), // Pokémon Mutagen (SG-24)
     },
 
 #if P_GALARIAN_FORMS
@@ -3082,6 +3083,7 @@ const struct SpeciesInfo gSpeciesInfoGen3[] =
         .teachableLearnset = sGalladeTeachableLearnset,
         .formSpeciesIdTable = sGalladeFormSpeciesIdTable,
         .formChangeTable = sGalladeFormChangeTable,
+        .evolutions = EVOLUTION({EVO_LEVEL, 0, SPECIES_IRON_VALIANT, CONDITIONS({IF_MUTAGEN})}), // Pokémon Mutagen (SG-24)
     },
 
 #if P_MEGA_EVOLUTIONS

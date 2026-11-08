@@ -31,6 +31,7 @@ void *NewGamePlus_Snapshot(void);           // before the bag's encryption key i
 void NewGamePlus_RestoreDex(const void *carry);
 void NewGamePlus_RestoreItemsAndMoney(const void *carry);
 void NewGamePlus_Finish(void *carry);       // level reset, the loop count, frees the snapshot
+u32 ApplyNewGamePlusRamp(u32 level);        // +1 level per New Game+ loop for wild and trainer Pokémon
 
 extern u8 gPokerusNoticeSlot;          // party slot + 1 of the Pokémon that just caught Pokérus, 0 none
 extern bool8 gPokerusNoticeMutant;     // that infection was the mutant strain
