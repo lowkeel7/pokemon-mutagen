@@ -12,7 +12,10 @@
 #include "script.h"
 #include "string_util.h"
 #include "task.h"
+#include "species_picker.h"
 #include "constants/battle_ai.h"
+#include "constants/flags.h"
+#include "constants/vars.h"
 
 // POKÉRUS odds (QW-20). Index 0 is Heart & Soul's and the main games' 3/65536.
 u32 GetPokerusInfectionOdds(void)
@@ -49,6 +52,51 @@ u64 GetMutagenTrainerAiFlags(void)
 bool32 AreShinyTokensSold(void)
 {
     return gSaveBlock3Ptr != NULL && gSaveBlock3Ptr->mutagenSettings.shinyTokens;
+}
+
+// STARTER and SHINY STARTER (SG-16), read by Elm's lab script.
+bool32 IsStarterPickAny(void)
+{
+    return gSaveBlock3Ptr != NULL && gSaveBlock3Ptr->mutagenSettings.starterPick;
+}
+
+u32 GetShinyStarterMode(void)
+{
+    return gSaveBlock3Ptr != NULL ? gSaveBlock3Ptr->mutagenSettings.shinyStarter : 0;
+}
+
+// callnative, right after the lab sets PLAYER_STARTER_SPECIES (VAR_TEMP_2) for the ball touched.
+// With STARTER at Elm's three: VAR_RESULT 0 and nothing happens. With ANY: the species list opens,
+// the script must waitstate, and on return VAR_RESULT is the chosen species or 0 for backing out.
+void Mutagen_StarterPicker(struct ScriptContext *ctx)
+{
+    if (!IsStarterPickAny())
+    {
+        gSpecialVar_Result = 0;
+        return;
+    }
+    gSpecialVar_Result = 1;
+    SpeciesPicker_Open(VarGet(VAR_TEMP_2));
+}
+
+void Mutagen_StarterShinyMode(struct ScriptContext *ctx)
+{
+    gSpecialVar_Result = GetShinyStarterMode();
+}
+
+// VAR_RESULT (YES/NO, or 1 for ALWAYS) decides the shiny flag of the ball in VAR_STARTER_MON; the
+// lab's give scripts read those flags, as they do for HnS's own preview roll.
+void Mutagen_SetStarterShiny(struct ScriptContext *ctx)
+{
+    static const u16 sShinyStarterFlags[] = {FLAG_SHINY_STARTER_1, FLAG_SHINY_STARTER_2, FLAG_SHINY_STARTER_3};
+    u32 ball = VarGet(VAR_STARTER_MON);
+
+    if (ball >= ARRAY_COUNT(sShinyStarterFlags))
+        ball = 0;
+    if (gSpecialVar_Result)
+        FlagSet(sShinyStarterFlags[ball]);
+    else
+        FlagClear(sShinyStarterFlags[ball]);
 }
 
 // The post-battle "caught Pokérus" notice. pokerus.c sets gPokerusNoticeSlot when a wild battle

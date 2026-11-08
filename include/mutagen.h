@@ -10,6 +10,11 @@ u32 GetPokerusInfectionOdds(void);     // out of 65536 per battle (QW-20)
 bool32 ShouldAnnouncePokerus(void);    // a post-battle notice when POKÉRUS is above RARE
 u64 GetMutagenTrainerAiFlags(void);    // added to every trainer's AI flags (QW-31)
 bool32 AreShinyTokensSold(void);       // SHINY TOKEN in every Poké Mart (QW-14)
+bool32 IsStarterPickAny(void);         // the lab's balls open a species list (SG-16)
+u32 GetShinyStarterMode(void);         // 0 chance, 1 ask, 2 always (SG-16)
+void Mutagen_StarterPicker(struct ScriptContext *ctx);
+void Mutagen_StarterShinyMode(struct ScriptContext *ctx);
+void Mutagen_SetStarterShiny(struct ScriptContext *ctx);
 
 extern u8 gPokerusNoticeSlot;          // party slot + 1 of the Pokémon that just caught Pokérus, 0 none
 void FieldCB_ReturnToFieldPokerusNotice(void);

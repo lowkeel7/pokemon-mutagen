@@ -36,6 +36,9 @@ Heart & Soul's own history see its documentation, and for the engine see `CHANGE
   prediction).
 - **SHINY TOKEN** (MUTAGEN tab, SHINY TOKENS ON): sold in every Poké Mart for ¥30,000; use one on a
   Pokémon to make it shiny, or on a shiny Pokémon to take its shine away.
+- **Any starter** (MUTAGEN tab, STARTER → ANY): touching a Poké Ball in Elm's lab opens a list of
+  every Pokémon; pick one and the rest of the scene runs as usual. **SHINY STARTER**: CHANCE (as in
+  Heart & Soul), ASK (Elm asks) or ALWAYS.
 - **DS-style sprites**: FEATURES → SPRITES switches every Pokémon's battle art between GBA (the
   default, Heart & Soul's look) and DS: DS-era art for the 393 Gen 1-3 species, Gen 4 shadows
   under foes, female forms and the DS-style Substitute doll. Older saves read GBA.

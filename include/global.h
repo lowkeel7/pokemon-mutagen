@@ -352,7 +352,8 @@ struct MutagenSettings
     u8 pokerusOdds:2;  // POKÉRUS: 0 RARE (HnS, 3/65536 per battle), 1 UNCOMMON 1/1024, 2 COMMON 1/128, 3 EPIDEMIC 1/16 (QW-20)
     u8 trainerAi:2;    // TRAINER AI: 0 OFF (each trainer's own flags), 1 SMART, 2 EXPERT (QW-31)
     u8 shinyTokens:1;  // SHINY TOKENS: 0 never sold (HnS), 1 sold in every Poké Mart (QW-14)
-    u8 unused_00:3;
+    u8 starterPick:1;  // STARTER: 0 Elm's three (HnS), 1 any species from a list in the lab (SG-16)
+    u8 shinyStarter:2; // SHINY STARTER: 0 CHANCE (HnS's preview roll), 1 ASK, 2 ALWAYS (SG-16)
     u8 unused[31];
 };
 

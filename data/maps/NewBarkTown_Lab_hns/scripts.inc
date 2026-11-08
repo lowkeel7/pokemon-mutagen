@@ -182,6 +182,13 @@ NewBarkTown_Lab_EventScript_ChikoritaBall_Choice::
 	@callnative DisableStaticRandomizer
 	setvar VAR_STARTER_MON, 0
 	setvar PLAYER_STARTER_SPECIES, SPECIES_CHIKORITA
+	@ Pokémon Mutagen (SG-16): with STARTER at ANY, a species list replaces the ball's Pokémon.
+	callnative Mutagen_StarterPicker
+	goto_if_eq VAR_RESULT, 0, NewBarkTown_Lab_EventScript_ChikoritaBall_Preview
+	waitstate
+	goto_if_eq VAR_RESULT, 0, NewBarkTown_Lab_EventScript_DeclinedStarter
+	copyvar PLAYER_STARTER_SPECIES, VAR_RESULT
+NewBarkTown_Lab_EventScript_ChikoritaBall_Preview:
 	showmonpic PLAYER_STARTER_SPECIES, 10, 3
 	playmoncry PLAYER_STARTER_SPECIES, CRY_MODE_NORMAL
 	bufferspeciesname STR_VAR_1, PLAYER_STARTER_SPECIES
@@ -204,6 +211,13 @@ NewBarkTown_Lab_EventScript_CyndaquilBall_Choice::
 	@callnative DisableStaticRandomizer
 	setvar VAR_STARTER_MON, 1
 	setvar PLAYER_STARTER_SPECIES, SPECIES_CYNDAQUIL
+	@ Pokémon Mutagen (SG-16): with STARTER at ANY, a species list replaces the ball's Pokémon.
+	callnative Mutagen_StarterPicker
+	goto_if_eq VAR_RESULT, 0, NewBarkTown_Lab_EventScript_CyndaquilBall_Preview
+	waitstate
+	goto_if_eq VAR_RESULT, 0, NewBarkTown_Lab_EventScript_DeclinedStarter
+	copyvar PLAYER_STARTER_SPECIES, VAR_RESULT
+NewBarkTown_Lab_EventScript_CyndaquilBall_Preview:
 	showmonpic PLAYER_STARTER_SPECIES, 10, 3
 	playmoncry PLAYER_STARTER_SPECIES, CRY_MODE_NORMAL
 	bufferspeciesname STR_VAR_1, PLAYER_STARTER_SPECIES
@@ -226,6 +240,13 @@ NewBarkTown_Lab_EventScript_TotodileBall_Choice::
 	@callnative DisableStaticRandomizer
 	setvar VAR_STARTER_MON, 2
 	setvar PLAYER_STARTER_SPECIES, SPECIES_TOTODILE
+	@ Pokémon Mutagen (SG-16): with STARTER at ANY, a species list replaces the ball's Pokémon.
+	callnative Mutagen_StarterPicker
+	goto_if_eq VAR_RESULT, 0, NewBarkTown_Lab_EventScript_TotodileBall_Preview
+	waitstate
+	goto_if_eq VAR_RESULT, 0, NewBarkTown_Lab_EventScript_DeclinedStarter
+	copyvar PLAYER_STARTER_SPECIES, VAR_RESULT
+NewBarkTown_Lab_EventScript_TotodileBall_Preview:
 	showmonpic PLAYER_STARTER_SPECIES, 10, 3
 	playmoncry PLAYER_STARTER_SPECIES, CRY_MODE_NORMAL
 	bufferspeciesname STR_VAR_1, PLAYER_STARTER_SPECIES
@@ -248,6 +269,10 @@ NewBarkTown_Lab_EventScript_ChoseStarter::
 	hidemonpic
 	removeobject VAR_LAST_TALKED
 	msgbox NewBarkTown_Lab_Text_ChoseStarter, MSGBOX_DEFAULT
+	@ Pokémon Mutagen (SG-16): SHINY STARTER ASK / ALWAYS decides the shiny flag before the give.
+	callnative Mutagen_StarterShinyMode
+	call_if_eq VAR_RESULT, 1, Mutagen_EventScript_AskShinyStarter
+	call_if_eq VAR_RESULT, 2, Mutagen_EventScript_ForceShinyStarter
 	call_if_eq VAR_STARTER_MON, 0, NewBarkTown_Lab_EventScript_GiveStarter_Chikorita
 	call_if_eq VAR_STARTER_MON, 1, NewBarkTown_Lab_EventScript_GiveStarter_Cyndaquil
 	call_if_eq VAR_STARTER_MON, 2, NewBarkTown_Lab_EventScript_GiveStarter_Totodile
