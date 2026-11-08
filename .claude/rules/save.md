@@ -26,16 +26,21 @@ Total about 22 bits. Planned claims: third type (5 bits), variant flags (1 each)
 Claim them in BACKLOG before writing code, so two features don't take the same bits.
 
 ## Option bits (`struct ChallengeSettings`)
-Pinned to exactly 32 bytes (`STATIC_ASSERT`, `src/save.c:94`): never grow it. At 2.0.6 the fields
-use 236 of 256 bits (u8 bitfields don't straddle bytes), leaving **20 free bits at the tail**.
-Pokerom options go there, appended after `tx_Features_ShinyChance`, under the "Pokerom options"
-comment. Claimed so far:
+Pinned to exactly 32 bytes (`STATIC_ASSERT`, `src/save.c:94`): never grow it. u8 bitfields don't
+straddle bytes, so counting byte by byte: bytes 0-29 are HnS's, byte 30 holds `tx_Features_ShinyChance:4`,
+`typeIcons:2` and `tx_Features_SpriteStyle:1`, byte 31 is empty: **9 free bits at the tail** (checked
+2026-11-08). Pokerom options go there, appended under the "Pokerom options" comment, until QW-29 adds
+`struct MutagenSettings` at the end of SaveBlock3. Claimed so far:
 
 | Field | Bits | Backlog |
 |---|---|---|
 | `typeIcons` | 2 | QW-01 |
+| `tx_Features_SpriteStyle` | 1 | SG-23 |
 
-When the tail runs out, move Pokerom options to a new field at the end of SaveBlock3.
+When the tail runs out, move Pokerom options to a new field at the end of SaveBlock3 (QW-29). That is
+safe: SaveBlock3 is 52 bytes of the 14 × 116 available, and `src/save.c` zero-fills every sector
+before writing it (:210, :235, :346), so a field appended to SaveBlock3 reads zero from an old save.
+Update the pinned size in `test/save.c` when you do; it is not a save break.
 
 ## SaveBlocks
 | Block | Struct | Compile-time limit |
