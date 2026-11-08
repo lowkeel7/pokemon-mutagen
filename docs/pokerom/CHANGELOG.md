@@ -6,6 +6,17 @@ Heart & Soul's own history see its documentation, and for the engine see `CHANGE
 
 ## Unreleased
 
+### Fixed
+- Day Care: with a LEVEL CAP set, a Pokémon deposited above the cap "grew by 2xx levels" and the
+  fee ran to over ¥20,000 (a u8 underflow); the shown level and the fee now follow the capped
+  experience the Pokémon really gets. From Heart & Soul+ (Soulgold).
+- Battle Pyramid: X items (and other items used on a battler) did nothing from the Pyramid bag.
+  From Heart & Soul+ (Soulgold).
+- Bug-Catching Contest: an item taken from your lead Pokémon in the park was duplicated when you
+  left, and one given there was lost. From Heart & Soul+ (Soulgold).
+- A following Pokémon returning to its ball right after a sprite change (surfing, for one) could
+  read past its animation table. From Heart & Soul+ (Soulgold).
+
 ### New
 - **DS-style sprites**: FEATURES → SPRITES switches every Pokémon's battle art between GBA (the
   default, Heart & Soul's look) and DS: DS-era art for the 393 Gen 1-3 species, Gen 4 shadows

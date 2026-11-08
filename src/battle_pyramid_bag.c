@@ -1314,9 +1314,12 @@ static void BagAction_UseInBattle(u8 taskId)
         return;
 
     CloseMenuActionWindow();
-    if (type == ITEM_USE_BAG_MENU)
+    // X items are ITEM_USE_BATTLER (B_X_ITEMS_CROSSUSE): without these two
+    // cases they matched no branch: the action window closed while the task
+    // stayed in the menu input handler. Same rule as item_menu.c.
+    if (type == ITEM_USE_BAG_MENU || (type == ITEM_USE_BATTLER && !IsDoubleBattle()))
         ItemUseInBattle_BagMenu(taskId);
-    else if (type == ITEM_USE_PARTY_MENU)
+    else if (type == ITEM_USE_PARTY_MENU || (type == ITEM_USE_BATTLER && IsDoubleBattle()))
         ItemUseInBattle_PartyMenu(taskId);
     else if (type == ITEM_USE_PARTY_MENU_MOVES)
         ItemUseInBattle_PartyMenuChooseMove(taskId);

@@ -368,9 +368,19 @@ static void ApplyDaycareExperience(struct Pokemon *mon)
     CalculateMonStats(mon);
 }
 
-static u32 GetExpAtLevelCap(struct Pokemon *mon)
+// Experience after the walked steps, capped at the level cap. A mon already
+// at or above the cap (traded, or deposited before the cap option was set)
+// keeps its experience instead of being clamped down to the cap.
+static u32 GetExperienceAfterDaycareSteps(struct BoxPokemon *mon, u32 steps)
 {
-    return gExperienceTables[gSpeciesInfo[GetMonData(mon, MON_DATA_SPECIES)].growthRate][GetCurrentLevelCap()];
+    u32 experience = GetBoxMonData(mon, MON_DATA_EXP);
+    u32 growthRate = gSpeciesInfo[GetBoxMonData(mon, MON_DATA_SPECIES)].growthRate;
+    u32 maxExp = gExperienceTables[growthRate][min(GetCurrentLevelCap(), MAX_LEVEL)];
+
+    if (experience >= maxExp)
+        return experience;
+
+    return experience + min(steps, maxExp - experience);
 }
 
 static u16 TakeSelectedPokemonFromDaycare(struct DaycareMon *daycareMon)
@@ -383,12 +393,9 @@ static u16 TakeSelectedPokemonFromDaycare(struct DaycareMon *daycareMon)
 
     TryFormChange(&pokemon, FORM_CHANGE_WITHDRAW);
 
-    if (GetMonData(&pokemon, MON_DATA_LEVEL) < GetCurrentLevelCap())
+    experience = GetExperienceAfterDaycareSteps(&pokemon.box, daycareMon->steps);
+    if (experience != GetMonData(&pokemon, MON_DATA_EXP))
     {
-        experience = GetMonData(&pokemon, MON_DATA_EXP) + daycareMon->steps;
-        u32 maxExp = GetExpAtLevelCap(&pokemon);
-        if (experience > maxExp)
-            experience = maxExp;
         SetMonData(&pokemon, MON_DATA_EXP, &experience);
         ApplyDaycareExperience(&pokemon);
     }
@@ -419,12 +426,14 @@ u16 TakePokemonFromDaycare(void)
     return TakeSelectedPokemonMonFromDaycareShiftSlots(&gSaveBlock1Ptr->daycare, gSpecialVar_0x8004);
 }
 
-static u8 GetLevelAfterDaycareSteps(struct BoxPokemon *mon, u32 steps)
+// Level shown by the daycare: the same capped experience the mon gets when
+// withdrawn, so the shown level and the charged levels match the real ones.
+static u8 GetDaycareMonLevel(struct DaycareMon *daycareMon)
 {
-    struct BoxPokemon tempMon = *mon;
+    struct BoxPokemon tempMon = daycareMon->mon;
+    u32 experience = GetExperienceAfterDaycareSteps(&tempMon, daycareMon->steps);
 
-    u32 experience = GetBoxMonData(mon, MON_DATA_EXP) + steps;
-    SetBoxMonData(&tempMon, MON_DATA_EXP,  &experience);
+    SetBoxMonData(&tempMon, MON_DATA_EXP, &experience);
     return GetLevelFromBoxMonExp(&tempMon);
 }
 
@@ -434,10 +443,10 @@ static u8 GetNumLevelsGainedFromSteps(struct DaycareMon *daycareMon)
     u8 levelAfter;
 
     levelBefore = GetLevelFromBoxMonExp(&daycareMon->mon);
-    levelAfter = GetLevelAfterDaycareSteps(&daycareMon->mon, daycareMon->steps);
-    if (levelAfter > GetCurrentLevelCap())
-        levelAfter = GetCurrentLevelCap();
-    return levelAfter - levelBefore;
+    levelAfter = GetDaycareMonLevel(daycareMon);
+    // was levelCap - levelBefore: a mon above the cap underflowed the u8
+    // (level 30 under a cap of 15: "241 levels", 24,200 to pay)
+    return levelAfter > levelBefore ? levelAfter - levelBefore : 0;
 }
 
 static u8 GetNumLevelsGainedForDaycareMon(struct DaycareMon *daycareMon)
@@ -1521,7 +1530,7 @@ static void UNUSED GetDaycareLevelMenuLevelText(struct DayCare *daycare, u8 *des
     for (i = 0; i < DAYCARE_MON_COUNT; i++)
     {
         StringAppend(dest, gText_Lv);
-        level = GetLevelAfterDaycareSteps(&daycare->mons[i].mon, daycare->mons[i].steps);
+        level = GetDaycareMonLevel(&daycare->mons[i]);
         ConvertIntToDecimalStringN(text, level, STR_CONV_MODE_LEFT_ALIGN, 3);
         StringAppend(dest, text);
         StringAppend(dest, gText_NewLine2);
@@ -1567,7 +1576,7 @@ static void DaycarePrintMonLvl(struct DayCare *daycare, u8 windowId, u32 daycare
     u8 intText[8];
 
     StringCopy(lvlText, gText_Lv);
-    level = GetLevelAfterDaycareSteps(&daycare->mons[daycareSlotId].mon, daycare->mons[daycareSlotId].steps);
+    level = GetDaycareMonLevel(&daycare->mons[daycareSlotId]);
     ConvertIntToDecimalStringN(intText, level, STR_CONV_MODE_LEFT_ALIGN, 3);
     StringAppend(lvlText, intText);
     x = GetStringRightAlignXOffset(FONT_NORMAL, lvlText, 112);

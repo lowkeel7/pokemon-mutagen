@@ -8318,6 +8318,9 @@ bool8 MovementAction_EnterPokeball_Step2(struct ObjectEvent *objectEvent, struct
     objectEvent->invisible = TRUE;
     sprite->sTypeFuncId = 0;
     sprite->sSpeedFlip = 0;
+    // The new graphics can have a shorter anim table (e.g. after a surf sprite):
+    // a stale index would read past it once unpaused. Same reset as ExitPokeball_Step1.
+    sprite->animCmdIndex = 0;
     sprite->animPaused = TRUE;
     return TRUE;
 }

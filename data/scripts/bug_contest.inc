@@ -106,7 +106,6 @@ BugContest_EventScript_Third::
 
 BugContest_EventScript_End::
 	special HealPlayerParty
-	special LoadPlayerParty
 	special ExitBugContestMode
 	clearflag FLAG_DISABLE_EXP_GAIN
 	setvar VAR_BUG_CONTEST_STATE, 0

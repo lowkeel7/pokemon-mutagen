@@ -14,6 +14,7 @@
 #include "battle.h"
 #include "field_screen_effect.h"
 #include "string_util.h"
+#include "load_save.h"
 
 #if IS_HNS
 
@@ -40,8 +41,45 @@ void EnterBugContestMode(void)
     sBugContestTimerActive = TRUE;
 }
 
+// The contest party is a copy: LoadPlayerParty puts back the lead as it was
+// at the gate. Its held item and mail can change during the contest (taken,
+// given, eaten in battle), so carry them over first, or an item taken in the
+// park is duplicated and one given there is lost. The lead is found by
+// personality and OT ID of the saved copy rather than by a static set at the
+// gate, so a save and reload in the park still matches it.
+static void CarryContestLeadItemToSavedParty(void)
+{
+    struct Pokemon *savedLead = GetSavedPlayerPartyMon(0);
+    u32 personality = GetMonData(savedLead, MON_DATA_PERSONALITY);
+    u32 otId = GetMonData(savedLead, MON_DATA_OT_ID);
+
+    if (GetMonData(savedLead, MON_DATA_SPECIES) == SPECIES_NONE)
+        return;
+
+    for (u32 i = 0; i < PARTY_SIZE; i++)
+    {
+        struct Pokemon *mon = &gPlayerParty[i];
+
+        if (GetMonData(mon, MON_DATA_SPECIES) != SPECIES_NONE
+            && GetMonData(mon, MON_DATA_PERSONALITY) == personality
+            && GetMonData(mon, MON_DATA_OT_ID) == otId)
+        {
+            u16 item = GetMonData(mon, MON_DATA_HELD_ITEM);
+            u8 mail = GetMonData(mon, MON_DATA_MAIL);
+
+            SetMonData(savedLead, MON_DATA_HELD_ITEM, &item);
+            SetMonData(savedLead, MON_DATA_MAIL, &mail);
+            break;
+        }
+    }
+}
+
+// Also restores the party: the script used to call LoadPlayerParty itself,
+// before this, which was too late to read the contest party.
 void ExitBugContestMode(void)
 {
+    CarryContestLeadItemToSavedParty();
+    LoadPlayerParty();
     FlagClear(FLAG_SYS_BUG_CONTEST_MODE);
     sBugContestTimerActive = FALSE;
 }
