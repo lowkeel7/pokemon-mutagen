@@ -11,6 +11,8 @@ bool32 ShouldAnnouncePokerus(void);    // a post-battle notice when POKÉRUS is 
 u64 GetMutagenTrainerAiFlags(void);    // added to every trainer's AI flags (QW-31)
 bool32 AreShinyTokensSold(void);       // SHINY TOKEN in every Poké Mart (QW-14)
 bool32 IsStarterPickAny(void);         // the lab's balls open a species list (SG-16)
+bool32 IsDiscoveryOn(void);            // wild bosses, lead-ability encounter pulls (QW-32)
+extern bool8 gWildBossPending;         // the wild Pokémon just created is a boss (QW-32)
 u32 GetShinyStarterMode(void);         // 0 chance, 1 ask, 2 always (SG-16)
 void Mutagen_StarterPicker(struct ScriptContext *ctx);
 void Mutagen_StarterShinyMode(struct ScriptContext *ctx);

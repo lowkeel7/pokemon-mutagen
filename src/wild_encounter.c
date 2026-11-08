@@ -1,4 +1,5 @@
 #include "global.h"
+#include "mutagen.h"
 #include "battle_setup.h"
 #include "battle_pike.h"
 #include "battle_pyramid.h"
@@ -584,9 +585,19 @@ static void TryApplyPokeblockBonus(struct Pokemon *mon, u16 species)
 
 void CreateWildMon(u16 species, u8 level)
 {
+    // Pokémon Mutagen (QW-32): with DISCOVERY on, one wild Pokémon in 128 is a boss.
+    bool32 boss = IsDiscoveryOn() && level + 5 <= MAX_LEVEL && (Random() % 128) == 0;
+
     ZeroEnemyPartyMons();
     u32 personality = GetMonPersonality(species, GetSynchronizedGender(WILDMON_ORIGIN, species), PickWildMonNature(species), RANDOM_UNOWN_LETTER);
-    CreateMonWithIVs(&gEnemyParty[0], species, level, personality, OTID_STRUCT_PLAYER_ID, USE_RANDOM_IVS);
+    CreateMonWithIVs(&gEnemyParty[0], species, boss ? level + 5 : level, personality, OTID_STRUCT_PLAYER_ID, boss ? MAX_PER_STAT_IVS : USE_RANDOM_IVS);
+    if (boss && GetSpeciesAbility(species, 2) != ABILITY_NONE)
+    {
+        u32 hidden = 2;
+
+        SetMonData(&gEnemyParty[0], MON_DATA_ABILITY_NUM, &hidden);
+    }
+    gWildBossPending = boss;
     TryApplyPokeblockBonus(&gEnemyParty[0], species);
     GiveMonInitialMoveset(&gEnemyParty[0]);
 }
@@ -596,6 +607,32 @@ void CreateWildMon(u16 species, u8 level)
 #else
 #define TRY_GET_ABILITY_INFLUENCED_WILD_MON_INDEX(wildPokemon, type, ability, ptr, count) TryGetAbilityInfluencedWildMonIndex(wildPokemon, type, ability, ptr)
 #endif
+
+// Pokémon Mutagen (QW-32): with DISCOVERY on, more of the lead's abilities pull encounters of their
+// type, each with the 50% chance Static and Magnet Pull have.
+static bool8 TryGetDiscoveryInfluencedWildMonIndex(const struct WildPokemon *wildMon, u8 *monIndex, u32 count)
+{
+    static const struct { u16 ability; u8 type; } sPulls[] = {
+        {ABILITY_BLAZE, TYPE_FIRE},          {ABILITY_FLAME_BODY, TYPE_FIRE},
+        {ABILITY_TORRENT, TYPE_WATER},       {ABILITY_SWIFT_SWIM, TYPE_WATER},
+        {ABILITY_OVERGROW, TYPE_GRASS},      {ABILITY_CHLOROPHYLL, TYPE_GRASS},
+        {ABILITY_SWARM, TYPE_BUG},           {ABILITY_SAND_VEIL, TYPE_GROUND},
+        {ABILITY_ROCK_HEAD, TYPE_ROCK},      {ABILITY_CURSED_BODY, TYPE_GHOST},
+        {ABILITY_POISON_POINT, TYPE_POISON}, {ABILITY_SNOW_CLOAK, TYPE_ICE},
+        {ABILITY_GUTS, TYPE_FIGHTING},       {ABILITY_KEEN_EYE, TYPE_FLYING},
+        {ABILITY_VOLT_ABSORB, TYPE_ELECTRIC},{ABILITY_INNER_FOCUS, TYPE_PSYCHIC},
+        {ABILITY_PICKPOCKET, TYPE_DARK},     {ABILITY_SHED_SKIN, TYPE_DRAGON},
+    };
+
+    if (!IsDiscoveryOn())
+        return FALSE;
+    for (u32 i = 0; i < ARRAY_COUNT(sPulls); i++)
+    {
+        if (TRY_GET_ABILITY_INFLUENCED_WILD_MON_INDEX(wildMon, sPulls[i].type, sPulls[i].ability, monIndex, count))
+            return TRUE;
+    }
+    return FALSE;
+}
 
 static bool8 TryGenerateWildMon(const struct WildPokemonInfo *wildMonInfo, enum WildPokemonArea area, u8 flags)
 {
@@ -622,6 +659,8 @@ static bool8 TryGenerateWildMon(const struct WildPokemonInfo *wildMonInfo, enum 
             break;
     #endif
 
+        if (TryGetDiscoveryInfluencedWildMonIndex(wildMonInfo->wildPokemon, &wildMonIndex, LAND_WILD_COUNT))
+            break;
         wildMonIndex = ChooseWildMonIndex_Land();
         break;
     case WILD_AREA_WATER:
@@ -642,6 +681,8 @@ static bool8 TryGenerateWildMon(const struct WildPokemonInfo *wildMonInfo, enum 
             break;
     #endif
 
+        if (TryGetDiscoveryInfluencedWildMonIndex(wildMonInfo->wildPokemon, &wildMonIndex, WATER_WILD_COUNT))
+            break;
         wildMonIndex = ChooseWildMonIndex_Water();
         break;
     case WILD_AREA_ROCKS:

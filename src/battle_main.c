@@ -1,5 +1,6 @@
 #include "global.h"
 #include "species_gfx_style.h"
+#include "mutagen.h"
 #include "battle.h"
 #include "battle_anim.h"
 #include "challenge_menu.h"
@@ -6079,6 +6080,7 @@ static void ReturnFromBattleToOverworld(void)
         CalculatePlayerPartyCount();
         RandomlyGivePartyPokerus();
         PartySpreadPokerus();
+        gWildBossPending = FALSE; // Pokémon Mutagen (QW-32)
     }
 
     if (gBattleTypeFlags & BATTLE_TYPE_LINK && gReceivedRemoteLinkPlayers)

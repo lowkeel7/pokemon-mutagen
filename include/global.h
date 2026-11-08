@@ -356,7 +356,8 @@ struct MutagenSettings
     u8 shinyStarter:2; // SHINY STARTER: 0 CHANCE (HnS's preview roll), 1 ASK, 2 ALWAYS (SG-16)
     u8 mutagen:2;      // MUTAGEN: 0 OFF (HnS), 1 ON (the mutant strain in mutated places), 2 RAMPANT (everywhere) (SG-17)
     u8 newGamePlus:2;  // NEW GAME+: 0 OFF (HnS), 1 KEEP LV (carry the team as it is), 2 LEVEL 1 (carry it reset to Lv 1) (SG-15)
-    u8 unused_01:4;
+    u8 discovery:1;    // DISCOVERY: 0 OFF (HnS), 1 wild bosses and more lead-ability encounter pulls (QW-32)
+    u8 unused_01:3;
     u8 newGamePlusCount; // how many New Game+ runs this save has started (SG-15)
     u8 unused[29];
 };

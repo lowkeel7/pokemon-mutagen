@@ -1,4 +1,5 @@
 #include "global.h"
+#include "mutagen.h"
 #include "battle.h"
 #include "battle_anim.h"
 #include "battle_ai_util.h"
@@ -89,6 +90,7 @@ static const u8 sText_TwoWildFled[] = _("{PLAY_SE SE_FLEE}{B_LINK_OPPONENT1_NAME
 static const u8 sText_PlayerDefeatedLinkTrainerTrainer1[] = _("You defeated {B_TRAINER1_NAME_WITH_CLASS}!\p");
 static const u8 sText_OpponentMon1Appeared[] = _("{B_OPPONENT_MON1_NAME} appeared!\p");
 static const u8 sText_WildPkmnAppeared[] = _("You encountered a wild {B_OPPONENT_MON1_NAME}!\p");
+static const u8 sText_WildBossAppeared[] = _("A powerful wild {B_OPPONENT_MON1_NAME}\nappeared!\p"); // Pokémon Mutagen (QW-32)
 static const u8 sText_WildPkmnAppearedLR[] = _("Wild {B_OPPONENT_MON1_NAME} appeared!\nRun? {L_BUTTON}+{R_BUTTON}+{A_BUTTON}\p");
 static const u8 sText_WildPkmnAppearedB[] = _("Wild {B_OPPONENT_MON1_NAME} appeared!\nRun? Press {B_BUTTON}.\p");
 static const u8 sText_LegendaryPkmnAppeared[] = _("You encountered a wild {B_OPPONENT_MON1_NAME}!\p");
@@ -2455,6 +2457,8 @@ void BufferStringBattle(enum StringID stringID, enum BattlerId battler)
                 stringPtr = sText_TheGhostAppeared;
             else if (gBattleTypeFlags & BATTLE_TYPE_LEGENDARY)
                 stringPtr = sText_LegendaryPkmnAppeared;
+            else if (gWildBossPending && !IsDoubleBattle())
+                stringPtr = sText_WildBossAppeared;
             else if (IsDoubleBattle() && IsValidForBattle(GetBattlerMon(GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT))))
                 stringPtr = sText_TwoWildPkmnAppeared;
             else if (gBattleTypeFlags & BATTLE_TYPE_CATCH_TUTORIAL)

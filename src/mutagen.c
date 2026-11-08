@@ -63,6 +63,16 @@ bool32 AreShinyTokensSold(void)
     return gSaveBlock3Ptr != NULL && gSaveBlock3Ptr->mutagenSettings.shinyTokens;
 }
 
+// DISCOVERY (QW-32), after Emerald Enhanced: one wild Pokémon in 128 is a boss (five levels up,
+// perfect IVs, its hidden ability, announced), and more of the lead's abilities pull encounters of
+// their type, the way Static and Magnet Pull always have.
+bool32 IsDiscoveryOn(void)
+{
+    return gSaveBlock3Ptr != NULL && gSaveBlock3Ptr->mutagenSettings.discovery;
+}
+
+EWRAM_DATA bool8 gWildBossPending = FALSE;
+
 // STARTER and SHINY STARTER (SG-16), read by Elm's lab script.
 bool32 IsStarterPickAny(void)
 {
