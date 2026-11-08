@@ -442,10 +442,12 @@ static void Sandbox_StockNewGame(void)
         monCount++;
     }
 
-    // Every item but key items: the useful ones first, so they land in the bag.
+    // Every item but key items: the useful ones first, so they land in the bag. Mutagen's own
+    // items come first of all (they sit at the end of the item list, past the bag's room).
+    Sandbox_GiveItem(ITEM_SHINY_TOKEN, &holder, monCount);
     for (itemId = ITEM_NONE + 1; itemId < ITEMS_COUNT; itemId++)
     {
-        if (!Sandbox_SkipItem(itemId) && !Sandbox_IsLaterItem(itemId))
+        if (!Sandbox_SkipItem(itemId) && !Sandbox_IsLaterItem(itemId) && itemId != ITEM_SHINY_TOKEN)
             Sandbox_GiveItem(itemId, &holder, monCount);
     }
     for (i = 0; i < ARRAY_COUNT(sSandboxLaterItems); i++)

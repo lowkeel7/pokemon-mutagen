@@ -1002,26 +1002,27 @@ static void SetShopItemsForSale(const u16 *items)
             sMartInfo.itemList = sShopInventories[badgeCount];
         else
             sMartInfo.itemList = sShopInventories_PC[badgeCount];
-
-        // Pokémon Mutagen (QW-14): with SHINY TOKENS on, every Poké Mart also sells the token.
-        if (AreShinyTokensSold())
-        {
-            u32 n = 0;
-
-            while (sMartInfo.itemList[n] != ITEM_NONE && n < ARRAY_COUNT(sMutagenMartItems) - 2)
-            {
-                sMutagenMartItems[n] = sMartInfo.itemList[n];
-                n++;
-            }
-            sMutagenMartItems[n++] = ITEM_SHINY_TOKEN;
-            sMutagenMartItems[n] = ITEM_NONE;
-            sMartInfo.itemList = sMutagenMartItems;
-        }
     }
     else
 #endif
     {
         sMartInfo.itemList = items;
+    }
+
+    // Pokémon Mutagen (QW-14): with SHINY TOKENS on, every Poké Mart also sells the token, whether
+    // the script passed its own list (the early-game marts do) or took the badge-count one.
+    if (sMartInfo.martType == MART_TYPE_NORMAL && AreShinyTokensSold())
+    {
+        u32 n = 0;
+
+        while (sMartInfo.itemList[n] != ITEM_NONE && n < ARRAY_COUNT(sMutagenMartItems) - 2)
+        {
+            sMutagenMartItems[n] = sMartInfo.itemList[n];
+            n++;
+        }
+        sMutagenMartItems[n++] = ITEM_SHINY_TOKEN;
+        sMutagenMartItems[n] = ITEM_NONE;
+        sMartInfo.itemList = sMutagenMartItems;
     }
 
     sMartInfo.itemCount = 0;
