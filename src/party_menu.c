@@ -5231,7 +5231,8 @@ static void Task_ShinyToken(u8 taskId)
         if (!IsPartyMenuTextPrinterActive())
         {
             RemoveBagItem(gSpecialVar_ItemId, 1);
-            UpdateFollowingPokemon(); // a following lead changes colour at once
+            // The follower takes the new colours when the field returns (overworld.c refreshes it);
+            // refreshing it from inside the menu made it vanish instead.
             gTasks[taskId].func = Task_ClosePartyMenu;
         }
         break;
