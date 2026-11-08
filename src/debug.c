@@ -1,4 +1,5 @@
 #include "global.h"
+#include "mutagen.h"
 #include "battle.h"
 #include "battle_setup.h"
 #include "berry.h"
@@ -370,6 +371,7 @@ extern const u8 Debug_EventScript_FontTest[];
 extern const u8 Debug_EventScript_CheckEVs[];
 extern const u8 Debug_EventScript_CheckIVs[];
 extern const u8 Debug_EventScript_GivePokerus[];
+extern const u8 Debug_EventScript_GiveMutagen[];
 extern const u8 Debug_EventScript_InflictStatus1[];
 extern const u8 Debug_EventScript_KoPokemon[];
 extern const u8 Debug_EventScript_SetHiddenNature[];
@@ -625,6 +627,7 @@ static const struct DebugMenuOption sDebugMenu_Actions_Party[] =
     { COMPOUND_STRING("Check IVs"),          DebugAction_ExecuteScript, Debug_EventScript_CheckIVs },
     { COMPOUND_STRING("Give Pokerus"),       DebugAction_ExecuteScript, Debug_EventScript_GivePokerus },
     { COMPOUND_STRING("Clear Pokerus"),      DebugAction_Party_ClearPokerus},
+    { COMPOUND_STRING("Give Mutagen (run)"), DebugAction_ExecuteScript, Debug_EventScript_GiveMutagen },
     { COMPOUND_STRING("Clear Party"),        DebugAction_Party_ClearParty },
     { COMPOUND_STRING("Set Party"),          DebugAction_Party_SetParty },
     { COMPOUND_STRING("Start Debug Battle"), DebugAction_Party_BattleSingle },
@@ -5178,6 +5181,23 @@ void DebugNative_Party_SetPokerus(void)
 #undef tSubWindowId
 #undef tInput
 #undef tDigit
+
+// Pokémon Mutagen (SG-17): the chosen party member had the mutant strain and it has run its
+// course (random parity, so Ancient or Future), as if four days had passed: the next level up
+// may evolve it, and its hidden ability is awake.
+void DebugNative_Party_GiveMutagen(struct ScriptContext *ctx)
+{
+    struct Pokemon *mon = &gPlayerParty[gSpecialVar_0x8004];
+    u32 one = 1, zero = 0;
+    u32 strain = (Random() & 1) ? 3 : 2;
+
+    if (gSpecialVar_0x8004 >= PARTY_SIZE || GetMonData(mon, MON_DATA_SPECIES) == SPECIES_NONE)
+        return;
+    SetMonData(mon, MON_DATA_IS_MUTAGEN, &one);
+    SetMonData(mon, MON_DATA_POKERUS_STRAIN, &strain);
+    SetMonData(mon, MON_DATA_POKERUS_DAYS_LEFT, &zero);
+    MutagenOnStrainEnd(mon);
+}
 
 static void DebugAction_Party_ClearPokerus(u8 taskId)
 {

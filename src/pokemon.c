@@ -1,5 +1,6 @@
 #include "global.h"
 #include "species_gfx_style.h"
+#include "mutagen.h"
 #include "malloc.h"
 #include "apprentice.h"
 #include "battle.h"
@@ -4639,6 +4640,9 @@ u32 GetBoxMonData3(struct BoxPokemon *boxMon, s32 field, u8 *data)
         case MON_DATA_POKERUS_DAYS_LEFT:
             retVal = (GetSubstruct3(boxMon)->pokerus & 0x0F);
             break;
+        case MON_DATA_IS_MUTAGEN:
+            retVal = GetSubstruct3(boxMon)->isMutagen;
+            break;
         case MON_DATA_MET_LOCATION:
             retVal = GetSubstruct3(boxMon)->metLocation;
             break;
@@ -5153,6 +5157,9 @@ void SetBoxMonData(struct BoxPokemon *boxMon, s32 field, const void *dataArg)
             break;
         case MON_DATA_POKERUS_DAYS_LEFT:
             GetSubstruct3(boxMon)->pokerus = (GetSubstruct3(boxMon)->pokerus & 0xF0) | *data;
+            break;
+        case MON_DATA_IS_MUTAGEN:
+            GetSubstruct3(boxMon)->isMutagen = (*data != 0);
             break;
         case MON_DATA_MET_LOCATION:
             SET8(GetSubstruct3(boxMon)->metLocation);
@@ -6906,6 +6913,19 @@ bool32 DoesMonMeetAdditionalConditions(struct Pokemon *mon, const struct Evoluti
             break;
         case IF_IN_MAPSEC:
             if (gMapHeader.regionMapSectionId == params[i].arg1)
+                currentCondition = TRUE;
+            break;
+        // Pokémon Mutagen (SG-17): the mutant strain ran its course; its strain parity picks the form.
+        case IF_MUTAGEN:
+            if (MutagenHasRunItsCourse(mon))
+                currentCondition = TRUE;
+            break;
+        case IF_MUTAGEN_ANCIENT:
+            if (MutagenHasRunItsCourse(mon) && !(GetMonData(mon, MON_DATA_POKERUS_STRAIN) & 1))
+                currentCondition = TRUE;
+            break;
+        case IF_MUTAGEN_FUTURE:
+            if (MutagenHasRunItsCourse(mon) && (GetMonData(mon, MON_DATA_POKERUS_STRAIN) & 1))
                 currentCondition = TRUE;
             break;
         case IF_KNOWS_MOVE:

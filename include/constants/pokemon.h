@@ -320,6 +320,9 @@ enum EvolutionConditions {
     IF_BAG_ITEM_COUNT,                  // The Player has the specific amount of an item in the bag. It then removes those items.
     IF_REGION,                          // The Player is in the specific region.
     IF_NOT_REGION,                      // The Player is NOT in the specific region.
+    IF_MUTAGEN,                         // Pokémon Mutagen (SG-17): the mutant Pokérus strain has run its course.
+    IF_MUTAGEN_ANCIENT,                 // ... and its strain is even: the Ancient form.
+    IF_MUTAGEN_FUTURE,                  // ... and its strain is odd: the Future form.
     CONDITIONS_END
 };
 

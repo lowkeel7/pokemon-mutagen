@@ -2927,6 +2927,7 @@ const struct SpeciesInfo gSpeciesInfoGen3[] =
         .teachableLearnset = sGardevoirTeachableLearnset,
         .formSpeciesIdTable = sGardevoirFormSpeciesIdTable,
         .formChangeTable = sGardevoirFormChangeTable,
+        .evolutions = EVOLUTION({EVO_LEVEL, 0, SPECIES_IRON_VALIANT, CONDITIONS({IF_MUTAGEN})}), // Pokémon Mutagen (SG-24)
     },
 
 #if P_MEGA_EVOLUTIONS
@@ -4299,6 +4300,7 @@ const struct SpeciesInfo gSpeciesInfoGen3[] =
         )
         .levelUpLearnset = sHariyamaLevelUpLearnset,
         .teachableLearnset = sHariyamaTeachableLearnset,
+        .evolutions = EVOLUTION({EVO_LEVEL, 0, SPECIES_IRON_HANDS, CONDITIONS({IF_MUTAGEN})}), // Pokémon Mutagen (SG-24)
     },
 #endif //P_FAMILY_MAKUHITA
 
@@ -11855,6 +11857,7 @@ const struct SpeciesInfo gSpeciesInfoGen3[] =
         .formSpeciesIdTable = sSalamenceFormSpeciesIdTable,
         .formChangeTable = sSalamenceFormChangeTable,
         .randomizerMode = MON_RANDOMIZER_INVALID,
+        .evolutions = EVOLUTION({EVO_LEVEL, 0, SPECIES_ROARING_MOON, CONDITIONS({IF_MUTAGEN})}), // Pokémon Mutagen (SG-24)
     },
 
 #if P_MEGA_EVOLUTIONS

@@ -3998,7 +3998,8 @@ const struct SpeciesInfo gSpeciesInfoGen2[] =
         .teachableLearnset = sMisdreavusTeachableLearnset,
         .eggMoveLearnset = sMisdreavusEggMoveLearnset,
     #if P_GEN_4_CROSS_EVOS
-        .evolutions = EVOLUTION({EVO_ITEM, ITEM_DUSK_STONE, SPECIES_MISMAGIUS}),
+        .evolutions = EVOLUTION({EVO_ITEM, ITEM_DUSK_STONE, SPECIES_MISMAGIUS},
+                                {EVO_LEVEL, 0, SPECIES_FLUTTER_MANE, CONDITIONS({IF_MUTAGEN})}), // + Pokémon Mutagen (SG-24)
     #endif
     },
 
@@ -7122,6 +7123,7 @@ const struct SpeciesInfo gSpeciesInfoGen2[] =
         .levelUpLearnset = sDelibirdLevelUpLearnset,
         .teachableLearnset = sDelibirdTeachableLearnset,
         .eggMoveLearnset = sDelibirdEggMoveLearnset,
+        .evolutions = EVOLUTION({EVO_LEVEL, 0, SPECIES_IRON_BUNDLE, CONDITIONS({IF_MUTAGEN})}), // Pokémon Mutagen (SG-24)
     },
 #endif //P_FAMILY_DELIBIRD
 
@@ -7790,6 +7792,8 @@ const struct SpeciesInfo gSpeciesInfoGen2[] =
         )
         .levelUpLearnset = sDonphanLevelUpLearnset,
         .teachableLearnset = sDonphanTeachableLearnset,
+        .evolutions = EVOLUTION({EVO_LEVEL, 0, SPECIES_GREAT_TUSK, CONDITIONS({IF_MUTAGEN_ANCIENT})},
+                                {EVO_LEVEL, 0, SPECIES_IRON_TREADS, CONDITIONS({IF_MUTAGEN_FUTURE})}), // Pokémon Mutagen (SG-24)
     },
 #endif //P_FAMILY_PHANPY
 
@@ -8165,6 +8169,7 @@ const struct SpeciesInfo gSpeciesInfoGen2[] =
         .perfectIVCount = LEGENDARY_PERFECT_IV_COUNT,
         .levelUpLearnset = sRaikouLevelUpLearnset,
         .teachableLearnset = sRaikouTeachableLearnset,
+        .evolutions = EVOLUTION({EVO_LEVEL, 0, SPECIES_RAGING_BOLT, CONDITIONS({IF_MUTAGEN})}), // Pokémon Mutagen (SG-24)
     },
 #endif //P_FAMILY_RAIKOU
 
@@ -8246,6 +8251,7 @@ const struct SpeciesInfo gSpeciesInfoGen2[] =
         .perfectIVCount = LEGENDARY_PERFECT_IV_COUNT,
         .levelUpLearnset = sEnteiLevelUpLearnset,
         .teachableLearnset = sEnteiTeachableLearnset,
+        .evolutions = EVOLUTION({EVO_LEVEL, 0, SPECIES_GOUGING_FIRE, CONDITIONS({IF_MUTAGEN})}), // Pokémon Mutagen (SG-24)
     },
 #endif //P_FAMILY_ENTEI
 
@@ -8327,6 +8333,7 @@ const struct SpeciesInfo gSpeciesInfoGen2[] =
         .perfectIVCount = LEGENDARY_PERFECT_IV_COUNT,
         .levelUpLearnset = sSuicuneLevelUpLearnset,
         .teachableLearnset = sSuicuneTeachableLearnset,
+        .evolutions = EVOLUTION({EVO_LEVEL, 0, SPECIES_WALKING_WAKE, CONDITIONS({IF_MUTAGEN})}), // Pokémon Mutagen (SG-24)
     },
 #endif //P_FAMILY_SUICUNE
 
@@ -8542,6 +8549,7 @@ const struct SpeciesInfo gSpeciesInfoGen2[] =
         .teachableLearnset = sTyranitarTeachableLearnset,
         .formSpeciesIdTable = sTyranitarFormSpeciesIdTable,
         .formChangeTable = sTyranitarFormChangeTable,
+        .evolutions = EVOLUTION({EVO_LEVEL, 0, SPECIES_IRON_THORNS, CONDITIONS({IF_MUTAGEN})}), // Pokémon Mutagen (SG-24)
     },
 
 #if P_MEGA_EVOLUTIONS

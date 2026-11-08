@@ -35,7 +35,13 @@ void RandomlyGivePartyPokerus(void)
         return;
 
     // Pokémon Mutagen: the odds follow the POKÉRUS option; its zero is P_POKERUS_INFECTION_ODDS (QW-20).
-    if (RandomUniform(RNG_POKERUS_INFECTION, 0, MAX_u16) < GetPokerusInfectionOdds())
+    // In a mutated place with MUTAGEN on, the roll is 8× as likely and gives the mutant strain (SG-17).
+    bool32 mutant = MutagenRollsHere();
+    u32 odds = GetPokerusInfectionOdds();
+
+    if (mutant)
+        odds *= 8;
+    if (RandomUniform(RNG_POKERUS_INFECTION, 0, MAX_u16) < odds)
     {
         struct Pokemon *mon;
         u32 randomIndex;
@@ -66,10 +72,20 @@ void RandomlyGivePartyPokerus(void)
             u32 strain = GetRandomPokerusStrain();
             u32 daysLeft = GetDaysLeftBasedOnStrain(strain);
 
+            if (mutant)
+            {
+                u32 one = 1;
+
+                daysLeft = 4; // the mutant strain always runs four days
+                SetMonData(mon, MON_DATA_IS_MUTAGEN, &one);
+            }
             SetMonData(mon, MON_DATA_POKERUS_STRAIN, &strain);
             SetMonData(mon, MON_DATA_POKERUS_DAYS_LEFT, &daysLeft);
-            if (ShouldAnnouncePokerus())
+            if (ShouldAnnouncePokerus() || mutant)
+            {
                 gPokerusNoticeSlot = validTargets[randomIndex] + 1;
+                gPokerusNoticeMutant = mutant;
+            }
         }
     }
 }
@@ -164,12 +180,15 @@ void UpdatePartyPokerusTime(u32 days)
             }
 
             SetMonData(&gPlayerParty[i], MON_DATA_POKERUS_DAYS_LEFT, &daysLeft);
+            if (daysLeft == 0 && GetMonData(&gPlayerParty[i], MON_DATA_IS_MUTAGEN))
+                MutagenOnStrainEnd(&gPlayerParty[i]); // Pokémon Mutagen (SG-17)
         }
     }
 }
 
-static void SpreadPokerusToSpecificMon(struct Pokemon *mon, u32 strain, u32 daysLeft)
+static void SpreadPokerusToSpecificMon(struct Pokemon *mon, u32 strain, u32 daysLeft, u32 isMutagen)
 {
+    SetMonData(mon, MON_DATA_IS_MUTAGEN, &isMutagen); // the mutant strain spreads as itself (SG-17)
     SetMonData(mon, MON_DATA_POKERUS_STRAIN, &strain);
     if (GetConfig(POKERUS_SPREAD_DAYS_LEFT) < GEN_3)
         daysLeft = GetDaysLeftBasedOnStrain(strain);
@@ -198,6 +217,7 @@ void PartySpreadPokerus(void)
 
         u32 strain = GetMonData(&gPlayerParty[i], MON_DATA_POKERUS_STRAIN);
         u32 daysLeft = GetMonData(&gPlayerParty[i], MON_DATA_POKERUS_DAYS_LEFT);
+        u32 isMutagen = GetMonData(&gPlayerParty[i], MON_DATA_IS_MUTAGEN);
         if (daysLeft)
         {
             bool32 spreadUp = TRUE, spreadDown = TRUE;
@@ -211,10 +231,10 @@ void PartySpreadPokerus(void)
                     spreadUp = FALSE;
             }
             if (spreadDown && i != 0 && CanReceivePokerusFromSpread(&gPlayerParty[i - 1]))
-                SpreadPokerusToSpecificMon(&gPlayerParty[i - 1], strain, daysLeft);
+                SpreadPokerusToSpecificMon(&gPlayerParty[i - 1], strain, daysLeft, isMutagen);
             if (spreadUp && i != (PARTY_SIZE - 1) && CanReceivePokerusFromSpread(&gPlayerParty[i + 1]))
             {
-                SpreadPokerusToSpecificMon(&gPlayerParty[i + 1], strain, daysLeft);
+                SpreadPokerusToSpecificMon(&gPlayerParty[i + 1], strain, daysLeft, isMutagen);
                 i++;
             }
         }

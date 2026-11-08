@@ -6043,7 +6043,8 @@ const struct SpeciesInfo gSpeciesInfoGen1[] =
         )
         .levelUpLearnset = sJigglypuffLevelUpLearnset,
         .teachableLearnset = sJigglypuffTeachableLearnset,
-        .evolutions = EVOLUTION({EVO_ITEM, ITEM_MOON_STONE, SPECIES_WIGGLYTUFF}),
+        .evolutions = EVOLUTION({EVO_ITEM, ITEM_MOON_STONE, SPECIES_WIGGLYTUFF},
+                                {EVO_LEVEL, 0, SPECIES_SCREAM_TAIL, CONDITIONS({IF_MUTAGEN})}), // + Pokémon Mutagen (SG-24)
     },
 
 #if P_UPDATED_STATS >= GEN_6
@@ -7179,7 +7180,8 @@ const struct SpeciesInfo gSpeciesInfoGen1[] =
         .teachableLearnset = sDiglettTeachableLearnset,
         .eggMoveLearnset = sDiglettEggMoveLearnset,
         .formSpeciesIdTable = sDiglettFormSpeciesIdTable,
-        .evolutions = EVOLUTION({EVO_LEVEL, 26, SPECIES_DUGTRIO}),
+        .evolutions = EVOLUTION({EVO_LEVEL, 26, SPECIES_DUGTRIO},
+                                {EVO_LEVEL, 0, SPECIES_WIGLETT, CONDITIONS({IF_MUTAGEN})}), // + Pokémon Mutagen (SG-24)
     },
 
     [SPECIES_DUGTRIO] =
@@ -7263,6 +7265,7 @@ const struct SpeciesInfo gSpeciesInfoGen1[] =
         .levelUpLearnset = sDugtrioLevelUpLearnset,
         .teachableLearnset = sDugtrioTeachableLearnset,
         .formSpeciesIdTable = sDugtrioFormSpeciesIdTable,
+        .evolutions = EVOLUTION({EVO_LEVEL, 0, SPECIES_WUGTRIO, CONDITIONS({IF_MUTAGEN})}), // Pokémon Mutagen (SG-24)
     },
 
 #if P_ALOLAN_FORMS
@@ -9968,7 +9971,8 @@ const struct SpeciesInfo gSpeciesInfoGen1[] =
         .levelUpLearnset = sTentacoolLevelUpLearnset,
         .teachableLearnset = sTentacoolTeachableLearnset,
         .eggMoveLearnset = sTentacoolEggMoveLearnset,
-        .evolutions = EVOLUTION({EVO_LEVEL, 30, SPECIES_TENTACRUEL}),
+        .evolutions = EVOLUTION({EVO_LEVEL, 30, SPECIES_TENTACRUEL},
+                                {EVO_LEVEL, 0, SPECIES_TOEDSCOOL, CONDITIONS({IF_MUTAGEN})}), // + Pokémon Mutagen (SG-24)
     },
 
     [SPECIES_TENTACRUEL] =
@@ -10041,6 +10045,7 @@ const struct SpeciesInfo gSpeciesInfoGen1[] =
         )
         .levelUpLearnset = sTentacruelLevelUpLearnset,
         .teachableLearnset = sTentacruelTeachableLearnset,
+        .evolutions = EVOLUTION({EVO_LEVEL, 0, SPECIES_TOEDSCRUEL, CONDITIONS({IF_MUTAGEN})}), // Pokémon Mutagen (SG-24)
     },
 #endif //P_FAMILY_TENTACOOL
 
@@ -11505,7 +11510,8 @@ const struct SpeciesInfo gSpeciesInfoGen1[] =
     #if P_GEN_4_CROSS_EVOS
         .evolutions = EVOLUTION({EVO_LEVEL, 0, SPECIES_MAGNEZONE, CONDITIONS({IF_IN_MAPSEC, MAPSEC_ROUTE_10})},
                                 {EVO_LEVEL, 0, SPECIES_MAGNEZONE, CONDITIONS({IF_IN_MAPSEC, MAPSEC_POWER_PLANT})},
-                                {EVO_ITEM, ITEM_THUNDER_STONE, SPECIES_MAGNEZONE}),
+                                {EVO_ITEM, ITEM_THUNDER_STONE, SPECIES_MAGNEZONE},
+                                {EVO_LEVEL, 0, SPECIES_SANDY_SHOCKS, CONDITIONS({IF_MUTAGEN})}), // + Pokémon Mutagen (SG-24)
     #endif
     },
 

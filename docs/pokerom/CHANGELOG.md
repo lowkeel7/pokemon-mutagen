@@ -39,6 +39,16 @@ Heart & Soul's own history see its documentation, and for the engine see `CHANGE
 - **Any starter** (MUTAGEN tab, STARTER → ANY): touching a Poké Ball in Elm's lab opens a list of
   every Pokémon; pick one and the rest of the scene runs as usual. **SHINY STARTER**: CHANCE (as in
   Heart & Soul), ASK (Elm asks) or ALWAYS.
+- **The Mutagen** (MUTAGEN tab, MUTAGEN → ON or RAMPANT): a mutant strain of Pokérus. Wild Pokémon
+  at the Lake of Rage, in the Rocket hideouts, Cerulean Cave, the Power Plant and the Burned Tower
+  carry it (RAMPANT: everywhere); it is caught eight times as readily as Pokérus, spreads through
+  the party like it, lasts four days, and when it ends the Pokémon awakens its hidden ability. Its
+  next level up may then evolve it into an Ancient or Future form: Donphan into Great Tusk or Iron
+  Treads, Misdreavus into Flutter Mane, Jigglypuff into Scream Tail, Magneton into Sandy Shocks,
+  Delibird into Iron Bundle, Hariyama into Iron Hands, Tyranitar into Iron Thorns, Salamence into
+  Roaring Moon, Gardevoir into Iron Valiant, Raikou, Entei and Suicune into Raging Bolt, Gouging
+  Fire and Walking Wake, Diglett and Dugtrio into Wiglett and Wugtrio, Tentacool and Tentacruel
+  into Toedscool and Toedscruel.
 - **DS-style sprites**: FEATURES → SPRITES switches every Pokémon's battle art between GBA (the
   default, Heart & Soul's look) and DS: DS-era art for the 393 Gen 1-3 species, Gen 4 shadows
   under foes, female forms and the DS-style Substitute doll. Older saves read GBA.

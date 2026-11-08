@@ -11,6 +11,17 @@ Mutagen_EventScript_PokerusNotice::
 Mutagen_Text_CaughtPokerus:
 	.string "{STR_VAR_1} caught POKéRUS!$"
 
+@ The same, for the mutant strain (SG-17).
+Mutagen_EventScript_MutagenNotice::
+	lockall
+	callnative Mutagen_BufferPokerusNoticeMon
+	msgbox Mutagen_Text_CaughtMutagen, MSGBOX_DEFAULT
+	releaseall
+	end
+
+Mutagen_Text_CaughtMutagen:
+	.string "{STR_VAR_1} caught the MUTAGEN strain\nof POKéRUS!$"
+
 @ SHINY STARTER (SG-16), called from Elm's lab once the starter is confirmed.
 Mutagen_EventScript_AskShinyStarter::
 	msgbox Mutagen_Text_ShinyStarter, MSGBOX_YESNO

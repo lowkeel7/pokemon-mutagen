@@ -354,7 +354,9 @@ struct MutagenSettings
     u8 shinyTokens:1;  // SHINY TOKENS: 0 never sold (HnS), 1 sold in every Poké Mart (QW-14)
     u8 starterPick:1;  // STARTER: 0 Elm's three (HnS), 1 any species from a list in the lab (SG-16)
     u8 shinyStarter:2; // SHINY STARTER: 0 CHANCE (HnS's preview roll), 1 ASK, 2 ALWAYS (SG-16)
-    u8 unused[31];
+    u8 mutagen:2;      // MUTAGEN: 0 OFF (HnS), 1 ON (the mutant strain in mutated places), 2 RAMPANT (everywhere) (SG-17)
+    u8 unused_01:6;
+    u8 unused[30];
 };
 
 struct SaveBlock3

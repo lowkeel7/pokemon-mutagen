@@ -67,6 +67,7 @@ enum MonData {
     MON_DATA_POKERUS,
     MON_DATA_POKERUS_STRAIN,
     MON_DATA_POKERUS_DAYS_LEFT,
+    MON_DATA_IS_MUTAGEN, // Pokémon Mutagen (SG-17)
     MON_DATA_MET_LOCATION,
     MON_DATA_MET_LEVEL,
     MON_DATA_MET_GAME,
@@ -214,7 +215,7 @@ struct PokemonSubstruct3
     u32 earthRibbon:1;    // Given to teams that have beaten Mt. Battle's 100-battle challenge in Colosseum/XD.
     u32 worldRibbon:1;    // Distributed during Pokémon Festa '04 and '05 to tournament winners.
     u32 isShadow:1;
-    u32 unused_0B:1;
+    u32 isMutagen:1; // Pokémon Mutagen (SG-17): the Pokérus it has, or had, was the mutant strain
     u32 abilityNum:2;
 
     // The functionality of this bit changed in FRLG:

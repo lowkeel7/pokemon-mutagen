@@ -6796,6 +6796,16 @@ static void PrintEvolutionTargetSpeciesAndMethod(u8 taskId, u16 species, u8 dept
                 case IF_MIN_FRIENDSHIP:
                     StringAppend(gStringVar4, COMPOUND_STRING("{UP_ARROW_2}friendship"));
                     break;
+                // Pokémon Mutagen (SG-17)
+                case IF_MUTAGEN:
+                    StringAppend(gStringVar4, COMPOUND_STRING("after the MUTAGEN"));
+                    break;
+                case IF_MUTAGEN_ANCIENT:
+                    StringAppend(gStringVar4, COMPOUND_STRING("after the MUTAGEN (ancient)"));
+                    break;
+                case IF_MUTAGEN_FUTURE:
+                    StringAppend(gStringVar4, COMPOUND_STRING("after the MUTAGEN (future)"));
+                    break;
                 case IF_ATK_GT_DEF:
                     StringAppend(gStringVar4, COMPOUND_STRING("Atk > Def"));
                     break;

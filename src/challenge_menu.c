@@ -81,6 +81,7 @@ enum {
     ITEM_MUTAGEN_SHINY_TOKENS,
     ITEM_MUTAGEN_STARTER,
     ITEM_MUTAGEN_SHINY_STARTER,
+    ITEM_MUTAGEN_MUTAGEN,
     ITEM_MUTAGEN_NEXT,
     ITEM_MUTAGEN_COUNT,
 };
@@ -387,6 +388,12 @@ static const u8 *const sChoices_ShinyStarter[] = {
     COMPOUND_STRING("ALWAYS"),
 };
 
+static const u8 *const sChoices_Mutagen[] = {
+    COMPOUND_STRING("OFF"),
+    COMPOUND_STRING("ON"),
+    COMPOUND_STRING("RAMPANT"),
+};
+
 static const u8 *const sChoices_OriginalModern[] = {
     COMPOUND_STRING("ORIGINAL"),
     COMPOUND_STRING("MODERN"),
@@ -434,6 +441,12 @@ static const u8 *const sDesc_ShinyStarter[] = {
     COMPOUND_STRING("Your starter is shiny at the\nSHINY CHANCE odds, as in Heart & Soul."),
     COMPOUND_STRING("Elm asks whether you'd like your\nstarter shiny."),
     COMPOUND_STRING("Your starter is always shiny."),
+};
+
+static const u8 *const sDesc_Mutagen[] = {
+    COMPOUND_STRING("No mutant POKéRUS strain."),
+    COMPOUND_STRING("Wild Pokémon at the Lake of Rage,\nthe hideouts, the Power Plant… carry it."),
+    COMPOUND_STRING("The mutant strain can be caught\nanywhere. 4 days, then it mutates."),
 };
 
 static const u8 *const sDesc_MutagenNext[] = {
@@ -816,6 +829,12 @@ static const struct ChallengeMenuItem sTabItems_Mutagen[] = {
         .descriptions = sDesc_ShinyStarter,
         .numChoices   = 3,
         .choiceNames  = sChoices_ShinyStarter,
+    },
+    [ITEM_MUTAGEN_MUTAGEN] = {
+        .name         = COMPOUND_STRING("MUTAGEN"),
+        .descriptions = sDesc_Mutagen,
+        .numChoices   = 3,
+        .choiceNames  = sChoices_Mutagen,
     },
     [ITEM_MUTAGEN_NEXT] = {
         .name         = COMPOUND_STRING("NEXT"),
@@ -1509,6 +1528,7 @@ static void ApplyMutagenPresets(void)
     *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_SHINY_TOKENS)    = 1; // ON
     *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_STARTER)         = 1; // ANY
     *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_SHINY_STARTER)   = 1; // ASK
+    *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_MUTAGEN)         = 1; // ON
 }
 
 // =============================================================================
@@ -2142,6 +2162,7 @@ static void Task_ConfirmSaveYes(u8 taskId)
     gSaveBlock3Ptr->mutagenSettings.shinyTokens = *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_SHINY_TOKENS);
     gSaveBlock3Ptr->mutagenSettings.starterPick = *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_STARTER);
     gSaveBlock3Ptr->mutagenSettings.shinyStarter = *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_SHINY_STARTER);
+    gSaveBlock3Ptr->mutagenSettings.mutagen      = *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_MUTAGEN);
     if (*GetSelectionPtr(TAB_MODE, ITEM_MODE_GAMEMODE) == 2) // GAMEMODE MUTAGEN: type icons on too
         cs->typeIcons = 3;
 
@@ -2391,6 +2412,7 @@ void CB2_InitChallengeMenu(void)
             *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_SHINY_TOKENS) = gSaveBlock3Ptr->mutagenSettings.shinyTokens;
             *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_STARTER)      = gSaveBlock3Ptr->mutagenSettings.starterPick;
             *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_SHINY_STARTER)= gSaveBlock3Ptr->mutagenSettings.shinyStarter;
+            *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_MUTAGEN)      = gSaveBlock3Ptr->mutagenSettings.mutagen;
 
             // Randomizer tab — derive master toggle from whether any sub-field is active
             *GetSelectionPtr(TAB_RANDOMIZER, ITEM_RANDOM_OFF_ON) =

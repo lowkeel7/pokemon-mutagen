@@ -16,7 +16,12 @@ void Mutagen_StarterPicker(struct ScriptContext *ctx);
 void Mutagen_StarterShinyMode(struct ScriptContext *ctx);
 void Mutagen_SetStarterShiny(struct ScriptContext *ctx);
 
+bool32 MutagenRollsHere(void);         // the mutant strain can be caught on this map (SG-17)
+bool32 MutagenHasRunItsCourse(struct Pokemon *mon); // mutant strain, days down to 0: mutations may set
+void MutagenOnStrainEnd(struct Pokemon *mon);       // the day the mutant strain ends: hidden ability
+
 extern u8 gPokerusNoticeSlot;          // party slot + 1 of the Pokémon that just caught Pokérus, 0 none
+extern bool8 gPokerusNoticeMutant;     // that infection was the mutant strain
 void FieldCB_ReturnToFieldPokerusNotice(void);
 void Mutagen_BufferPokerusNoticeMon(struct ScriptContext *ctx);
 

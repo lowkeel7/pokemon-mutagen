@@ -5,6 +5,7 @@
 #include "field_player_avatar.h"
 #include "field_screen_effect.h"
 #include "field_weather.h"
+#include "fieldmap.h"
 #include "overworld.h"
 #include "palette.h"
 #include "party_menu.h"
@@ -16,6 +17,8 @@
 #include "constants/battle_ai.h"
 #include "constants/flags.h"
 #include "constants/vars.h"
+#include "constants/region_map_sections.h"
+#include "constants/abilities.h"
 
 // POKÉRUS odds (QW-20). Index 0 is Heart & Soul's and the main games' 3/65536.
 u32 GetPokerusInfectionOdds(void)
@@ -99,12 +102,53 @@ void Mutagen_SetStarterShiny(struct ScriptContext *ctx)
         FlagClear(sShinyStarterFlags[ball]);
 }
 
+// MUTAGEN (SG-17). ON: the mutant strain can be caught in Johto's and Kanto's irradiated places;
+// RAMPANT: anywhere. Caught at 8 × the POKÉRUS odds, it spreads like Pokérus, lasts 4 days, and
+// when it ends the Pokémon awakens its hidden ability and may evolve into its Ancient or Future
+// form on its next level up (IF_MUTAGEN* evolution conditions, species data).
+static const u8 sMutatedMapSections[] = {
+    MAPSEC_LAKE_OF_RAGE, MAPSEC_ROCKET_HIDEOUT_HNS, MAPSEC_ROCKET_HIDEOUT,
+    MAPSEC_CERULEAN_CAVE, MAPSEC_POWER_PLANT, MAPSEC_BURNED_TOWER,
+};
+
+bool32 MutagenRollsHere(void)
+{
+    u32 mode = gSaveBlock3Ptr != NULL ? gSaveBlock3Ptr->mutagenSettings.mutagen : 0;
+
+    if (mode == 0)
+        return FALSE;
+    if (mode >= 2)
+        return TRUE;
+    for (u32 i = 0; i < ARRAY_COUNT(sMutatedMapSections); i++)
+    {
+        if (gMapHeader.regionMapSectionId == sMutatedMapSections[i])
+            return TRUE;
+    }
+    return FALSE;
+}
+
+bool32 MutagenHasRunItsCourse(struct Pokemon *mon)
+{
+    return GetMonData(mon, MON_DATA_IS_MUTAGEN) && GetMonData(mon, MON_DATA_POKERUS_DAYS_LEFT) == 0;
+}
+
+void MutagenOnStrainEnd(struct Pokemon *mon)
+{
+    u32 species = GetMonData(mon, MON_DATA_SPECIES);
+    u32 abilityNum = 2;
+
+    if (GetSpeciesAbility(species, abilityNum) != ABILITY_NONE)
+        SetMonData(mon, MON_DATA_ABILITY_NUM, &abilityNum);
+}
+
 // The post-battle "caught Pokérus" notice. pokerus.c sets gPokerusNoticeSlot when a wild battle
 // infects a party member and the option is above RARE; CB2_EndWildBattle then returns to the field
 // through this callback, which runs the notice script once the fade-in is done.
 EWRAM_DATA u8 gPokerusNoticeSlot = 0;
+EWRAM_DATA bool8 gPokerusNoticeMutant = FALSE;
 
 extern const u8 Mutagen_EventScript_PokerusNotice[];
+extern const u8 Mutagen_EventScript_MutagenNotice[];
 
 static void Task_ReturnToFieldPokerusNotice(u8 taskId)
 {
@@ -113,7 +157,7 @@ static void Task_ReturnToFieldPokerusNotice(u8 taskId)
         DestroyTask(taskId);
         ScriptUnfreezeObjectEvents();
         UnlockPlayerFieldControls();
-        ScriptContext_SetupScript(Mutagen_EventScript_PokerusNotice);
+        ScriptContext_SetupScript(gPokerusNoticeMutant ? Mutagen_EventScript_MutagenNotice : Mutagen_EventScript_PokerusNotice);
     }
 }
 
@@ -130,5 +174,6 @@ void Mutagen_BufferPokerusNoticeMon(struct ScriptContext *ctx)
     u32 slot = gPokerusNoticeSlot ? gPokerusNoticeSlot - 1 : 0;
 
     gPokerusNoticeSlot = 0;
+    gPokerusNoticeMutant = FALSE;
     GetMonNickname(&gPlayerParty[slot], gStringVar1);
 }
