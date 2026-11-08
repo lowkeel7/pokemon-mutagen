@@ -54,6 +54,16 @@
 #include "difficulty.h"
 #include "follower_npc.h"
 
+// 1 in sandbox dev builds (make hns SANDBOX=1): new games start with Mutagen's options on, every
+// item and full PC boxes. 0 everywhere else, which compiles to the same code as before.
+#ifndef MUTAGEN_SANDBOX
+#define MUTAGEN_SANDBOX 0
+#endif
+#if MUTAGEN_SANDBOX
+#include "party_menu.h"
+static void Sandbox_StockNewGame(void);
+#endif
+
 extern const u8 EventScript_ResetAllMapFlags[];
 #if IS_FRLG
 extern const u8 EventScript_ResetAllMapFlagsFrlg[];
@@ -158,6 +168,13 @@ void SetDefaultChallengeSettings(void)
     gSaveblock3.challengeSettings.tx_Nuzlocke_SpeciesClause  = 1;
     gSaveblock3.challengeSettings.tx_Nuzlocke_ShinyClause    = 1;
     gSaveblock3.challengeSettings.tx_Nuzlocke_Nicknaming     = 1;
+
+#if MUTAGEN_SANDBOX
+    // Mutagen's options start on. The new-game menu can still set SPRITES back to GBA (FEATURES
+    // tab), and OPTION → BATTLE OPTIONS changes TYPE ICONS.
+    gSaveblock3.challengeSettings.typeIcons               = 3; // ALL
+    gSaveblock3.challengeSettings.tx_Features_SpriteStyle = 1; // DS
+#endif
 }
 
 static void ClearPokedexFlags(void)
@@ -308,6 +325,9 @@ void NewGameInitData(void)
     StringCopy(gSaveBlock2Ptr->rivalName, gText_ExpandedPlaceholder_Silver);
     InitMomSavings();
 #endif
+#if MUTAGEN_SANDBOX
+    Sandbox_StockNewGame();
+#endif
 }
 
 static void ResetMiniGamesRecords(void)
@@ -332,3 +352,106 @@ static void ResetDexNav(void)
 #endif
     gSaveBlock3Ptr->dexNavChain = 0;
 }
+
+#if MUTAGEN_SANDBOX
+// The bag's Items pocket holds 236 kinds of item and the PC's item storage 50, out of about 530,
+// so these groups go in last: they end up held by the Pokémon in the PC boxes.
+static const u16 sSandboxLaterItems[][2] =
+{
+    {ITEM_HELIX_FOSSIL, ITEM_FOSSILIZED_DINO},
+    {ITEM_RED_APRICORN, ITEM_DYNITE_ORE},
+    {ITEM_FLAME_PLATE, ITEM_PIXIE_PLATE},
+    {ITEM_NORMAL_GEM, ITEM_FAIRY_GEM},
+    {ITEM_RED_NECTAR, ITEM_PURPLE_NECTAR},
+    {ITEM_DOUSE_DRIVE, ITEM_RUSTED_SHIELD},
+    {ITEM_NORMALIUM_Z, ITEM_ULTRANECROZIUM_Z},
+    {ITEM_BUG_TERA_SHARD, ITEM_WATER_TERA_SHARD},
+    {ITEM_STELLAR_TERA_SHARD, ITEM_STELLAR_TERA_SHARD},
+    {ITEM_BOTTLE_CAP, ITEM_STRANGE_SOUVENIR},
+    {ITEM_GROWTH_MULCH, ITEM_AMAZE_MULCH},
+    {ITEM_RED_SCARF, ITEM_YELLOW_SCARF},
+    {ITEM_HARBOR_MAIL, ITEM_RETRO_MAIL},
+};
+
+// Key items stay out: a story script that gives one you already hold can stop at "bag full". The
+// debug menu's PC/Bag → Fill Key Items gives them all.
+static bool32 Sandbox_SkipItem(enum Item itemId)
+{
+    return GetItemPocket(itemId) == POCKET_KEY_ITEMS
+        || (itemId >= ITEM_UNUSED_BERRY_1 && itemId <= ITEM_UNUSED_BERRY_3);
+}
+
+static bool32 Sandbox_IsLaterItem(enum Item itemId)
+{
+    u32 i;
+
+    for (i = 0; i < ARRAY_COUNT(sSandboxLaterItems); i++)
+    {
+        if (itemId >= sSandboxLaterItems[i][0] && itemId <= sSandboxLaterItems[i][1])
+            return TRUE;
+    }
+    return FALSE;
+}
+
+// Into the bag, else the PC's item storage, else held by the next PC Pokémon without an item.
+// Mail is never held: a held letter needs its own mail data.
+static void Sandbox_GiveItem(enum Item itemId, u32 *holder, u32 monCount)
+{
+    u16 count = MAX_BAG_ITEM_CAPACITY;
+    u16 heldItem = itemId;
+
+    if (GetItemPocket(itemId) == POCKET_TM_HM)
+    {
+        if (ItemIdToBattleMoveId(itemId) == MOVE_NONE)
+            return;
+        count = 1;
+    }
+    if (CheckBagHasSpace(itemId, count))
+        AddBagItem(itemId, count);
+    else if (AddPCItem(itemId, MAX_PC_ITEM_CAPACITY))
+        return;
+    else if (*holder < monCount && !(itemId >= ITEM_HARBOR_MAIL && itemId <= ITEM_RETRO_MAIL))
+    {
+        SetBoxMonData(&gPokemonStoragePtr->boxes[*holder / IN_BOX_COUNT][*holder % IN_BOX_COUNT],
+                      MON_DATA_HELD_ITEM, &heldItem);
+        (*holder)++;
+    }
+}
+
+static void Sandbox_StockNewGame(void)
+{
+    enum Item itemId;
+    u32 i, monCount = 0, holder = 0;
+    u16 species;
+    struct BoxPokemon boxMon;
+
+    // PC boxes 1-13: every species in National Dex order from Bulbasaur, at level 50 with random
+    // natures and IVs. Box 14 stays empty so catching still works.
+    for (species = SPECIES_BULBASAUR; species < NUM_SPECIES && monCount < (TOTAL_BOXES_COUNT - 1) * IN_BOX_COUNT; species++)
+    {
+        if (!IsSpeciesEnabled(species))
+            continue;
+        CreateBoxMon(&boxMon, species, 50, Random32(), OTID_STRUCT_PLAYER_ID);
+        SetBoxMonIVs(&boxMon, USE_RANDOM_IVS);
+        GiveBoxMonInitialMoveset(&boxMon);
+        gPokemonStoragePtr->boxes[monCount / IN_BOX_COUNT][monCount % IN_BOX_COUNT] = boxMon;
+        monCount++;
+    }
+
+    // Every item but key items: the useful ones first, so they land in the bag.
+    for (itemId = ITEM_NONE + 1; itemId < ITEMS_COUNT; itemId++)
+    {
+        if (!Sandbox_SkipItem(itemId) && !Sandbox_IsLaterItem(itemId))
+            Sandbox_GiveItem(itemId, &holder, monCount);
+    }
+    for (i = 0; i < ARRAY_COUNT(sSandboxLaterItems); i++)
+    {
+        for (itemId = sSandboxLaterItems[i][0]; itemId <= sSandboxLaterItems[i][1]; itemId++)
+        {
+            if (!Sandbox_SkipItem(itemId))
+                Sandbox_GiveItem(itemId, &holder, monCount);
+        }
+    }
+    SetMoney(&gSaveBlock1Ptr->money, MAX_MONEY);
+}
+#endif // MUTAGEN_SANDBOX

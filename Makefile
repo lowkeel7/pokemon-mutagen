@@ -56,6 +56,9 @@ LTO          ?= 0
 # Makes an optimized build for release, also enabling NDEBUG macro and disabling other debugging features
 # Enables LTO by default, but can be changed in the config.mk file
 RELEASE      ?= 0
+# Mutagen sandbox dev build: new games start with Mutagen's options on, every item but key items, full PC
+# boxes (src/new_game.c). make hns SANDBOX=1 → pokehns-sandbox.gba, objects in build/hns-sandbox
+SANDBOX      ?= 0
 
 ifeq (compare,$(MAKECMDGOALS))
   COMPARE := 1
@@ -105,12 +108,16 @@ CPP := $(PREFIX)cpp
 ifeq ($(RELEASE),1)
 	FILE_NAME := $(FILE_NAME)-release
 endif
+ifeq ($(SANDBOX),1)
+	FILE_NAME := $(FILE_NAME)-sandbox
+endif
 
 ROM_NAME := $(FILE_NAME).gba
 OBJ_DIR_NAME := $(BUILD_DIR)/$(BUILD_NAME)
 OBJ_DIR_NAME_TEST := $(BUILD_DIR)/$(BUILD_NAME)-test
 OBJ_DIR_NAME_DEBUG := $(BUILD_DIR)/$(BUILD_NAME)-debug
 OBJ_DIR_NAME_RELEASE := $(BUILD_DIR)/$(BUILD_NAME)-release
+OBJ_DIR_NAME_SANDBOX := $(BUILD_DIR)/$(BUILD_NAME)-sandbox
 
 ELF_NAME := $(ROM_NAME:.gba=.elf)
 MAP_NAME := $(ROM_NAME:.gba=.map)
@@ -132,6 +139,9 @@ ifeq ($(DEBUG),1)
 endif
 ifeq ($(RELEASE),1)
   OBJ_DIR := $(OBJ_DIR_NAME_RELEASE)
+endif
+ifeq ($(SANDBOX),1)
+  OBJ_DIR := $(OBJ_DIR_NAME_SANDBOX)
 endif
 ELF := $(ROM:.gba=.elf)
 MAP := $(ROM:.gba=.map)
@@ -173,6 +183,9 @@ ifeq ($(RELEASE),1)
 	ifeq ($(USE_LTO_ON_RELEASE),1)
 		LTO := 1
 	endif
+endif
+ifeq ($(SANDBOX),1)
+	override CPPFLAGS += -DMUTAGEN_SANDBOX=1
 endif
 ARMCC := $(PREFIX)gcc
 PATH_ARMCC := PATH="$(PATH)" $(ARMCC)
