@@ -435,6 +435,8 @@ static void Sandbox_StockNewGame(void)
         SetBoxMonIVs(&boxMon, USE_RANDOM_IVS);
         GiveBoxMonInitialMoveset(&boxMon);
         gPokemonStoragePtr->boxes[monCount / IN_BOX_COUNT][monCount % IN_BOX_COUNT] = boxMon;
+        // Seen and caught, so the Pokédex, the type icons' CAUGHT mode and dex-gated NPCs know them.
+        HandleSetPokedexFlag(SpeciesToNationalPokedexNum(species), FLAG_SET_CAUGHT, GetBoxMonData(&boxMon, MON_DATA_PERSONALITY));
         monCount++;
     }
 

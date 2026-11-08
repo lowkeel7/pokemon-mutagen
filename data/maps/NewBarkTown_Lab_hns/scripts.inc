@@ -149,7 +149,16 @@ NewBarkTown_Lab_EventScript_TriggerReturnPlayer::
 	closemessage
 	applymovement OBJ_EVENT_ID_PLAYER, NewBarkTown_Lab_Movement_ReturnPlayer
 	waitmovement 0
+	@ With the starter already chosen, "Wait!" used to be the whole scene, over and over, until the
+	@ player thought of talking to Elm. Continue into his Mr. Pokémon errand instead, as HGSS does.
+	goto_if_set FLAG_SYS_POKEMON_GET, NewBarkTown_Lab_EventScript_TriggerReturnPlayer_MrPokemon
 	release
+	end
+
+NewBarkTown_Lab_EventScript_TriggerReturnPlayer_MrPokemon::
+	applymovement OBJ_EVENT_ID_PLAYER, NewBarkTown_Lab_Movement_Look_Up
+	waitmovement 0
+	goto NewBarkTown_Lab_EventScript_MrPokemon
 	end
 
 NewBarkTown_Lab_EventScript_ShouldntTouch::

@@ -768,8 +768,13 @@ static void ShowMapNamePopUpWindow(void)
     }
     else
     {
-        x = GetStringCenterAlignXOffset(FONT_NARROW, withoutPrefixPtr, 80);
-        AddTextPrinterParameterized(GetMapNamePopUpWindowId(), FONT_NARROW, mapDisplayHeader, x, 3, TEXT_SKIP_DRAW, NULL);
+        // The window is 80 px wide and its frame art runs to both edges, so a name wider than
+        // about 68 px (CHERRYGROVE CITY is 75) sits on the flowers and reads as "CHERRYGROVE CIT!"
+        // on a phone. The narrower face of the same height gives those names a margin.
+        u32 fontId = GetStringWidth(FONT_NARROW, withoutPrefixPtr, 0) > 68 ? FONT_NARROWER : FONT_NARROW;
+
+        x = GetStringCenterAlignXOffset(fontId, withoutPrefixPtr, 80);
+        AddTextPrinterParameterized(GetMapNamePopUpWindowId(), fontId, mapDisplayHeader, x, 3, TEXT_SKIP_DRAW, NULL);
         CopyWindowToVram(GetMapNamePopUpWindowId(), COPYWIN_FULL);
     }
 }

@@ -16,6 +16,13 @@ Heart & Soul's own history see its documentation, and for the engine see `CHANGE
   left, and one given there was lost. From Heart & Soul+ (Soulgold).
 - A following Pokémon returning to its ball right after a sprite change (surfing, for one) could
   read past its animation table. From Heart & Soul+ (Soulgold).
+- Elm's lab: after choosing your starter, walking to the door only ever got "Wait! Where are you
+  going?" and a push back, until you thought of talking to Elm. He now goes on with the Mr. Pokémon
+  errand right there, as in HeartGold.
+- The map-name banner sat its longest names on the frame's flowers, so CHERRYGROVE CITY read as
+  "CHERRYGROVE CIT!" on a phone; names wider than the banner's clear area use the narrower face.
+- Alolan Dugtrio's Pokédex entry: "heir" → "their" (an unmerged Heart & Soul pull request).
+- Sandbox builds: the Pokémon stocked into the PC are now also seen and caught in the Pokédex.
 
 ### New
 - **DS-style sprites**: FEATURES → SPRITES switches every Pokémon's battle art between GBA (the
