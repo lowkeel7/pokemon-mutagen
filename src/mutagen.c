@@ -316,6 +316,20 @@ void NewGamePlus_Finish(void *carry)
             for (u32 i = 0; i < IN_BOX_COUNT; i++)
                 ResetBoxMonToLevelOne(&gPokemonStoragePtr->boxes[box][i]);
     }
+    // The system flags the story would set on the way: with a team and a Pokédex in hand, the
+    // START menu shows POKéMON and POKéDEX from the first step (the story reset cleared them).
+    if (gPlayerPartyCount > 0)
+        FlagSet(FLAG_SYS_POKEMON_GET);
+    for (u32 i = 0; i < NUM_DEX_FLAG_BYTES; i++)
+    {
+        if (gSaveBlock1Ptr->dexSeen[i] != 0)
+        {
+            FlagSet(FLAG_SYS_POKEDEX_GET);
+            break;
+        }
+    }
+    if (gSaveBlock2Ptr->pokedex.nationalMagic == 0xDA)
+        FlagSet(FLAG_SYS_NATIONAL_DEX);
     gSaveBlock3Ptr->mutagenSettings.newGamePlusCount = sNewGamePlusPending;
     if (carry != NULL)
         Free(carry);
