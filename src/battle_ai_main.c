@@ -1,4 +1,5 @@
 #include "global.h"
+#include "mutagen.h"
 #include "main.h"
 #include "malloc.h"
 #include "battle.h"
@@ -238,7 +239,7 @@ static u64 GetAiFlags(u16 trainerId, enum BattlerId battler)
         else if (IsSpecialTrainer(trainerId))
             flags = 0; // Link/Union Room/Secret Base opponents have no entry in gTrainers.
         else
-            flags = GetTrainerAIFlagsFromId(trainerId);
+            flags = GetTrainerAIFlagsFromId(trainerId) | GetMutagenTrainerAiFlags(); // TRAINER AI (QW-31)
     }
 
     if (IsDoubleBattle() && flags != 0)

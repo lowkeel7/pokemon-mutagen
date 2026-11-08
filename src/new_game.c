@@ -236,6 +236,7 @@ void NewGameInitData(void)
     u8 rivalName[PLAYER_NAME_LENGTH + 1];
 #endif
     struct ChallengeSettings savedChallenge = gSaveBlock3Ptr->challengeSettings;
+    struct MutagenSettings savedMutagen = gSaveBlock3Ptr->mutagenSettings; // chosen in the new-game menu (QW-29)
     if (gSaveFileStatus == SAVE_STATUS_EMPTY || gSaveFileStatus == SAVE_STATUS_CORRUPT)
         RtcReset();
 
@@ -254,6 +255,7 @@ void NewGameInitData(void)
     gSaveBlock1Ptr->saveVersion = SAVE_VERSION;
     SetDefaultChallengeSettings();
     gSaveBlock3Ptr->challengeSettings = savedChallenge;
+    gSaveBlock3Ptr->mutagenSettings = savedMutagen;
     ClearAllMail();
     gSaveBlock2Ptr->specialSaveWarpFlags = 0;
     gSaveBlock2Ptr->gcnLinkFlags = 0;

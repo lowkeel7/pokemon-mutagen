@@ -156,8 +156,9 @@ NewBarkTown_Lab_EventScript_TriggerReturnPlayer::
 	end
 
 NewBarkTown_Lab_EventScript_TriggerReturnPlayer_MrPokemon::
-	applymovement OBJ_EVENT_ID_PLAYER, NewBarkTown_Lab_Movement_Look_Up
+	applymovement OBJ_EVENT_ID_PLAYER, Common_Movement_FaceUp
 	waitmovement 0
+	delay 8
 	goto NewBarkTown_Lab_EventScript_MrPokemon
 	end
 

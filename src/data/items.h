@@ -16474,6 +16474,25 @@ const struct ItemInfo gItemsInfo[] =
         .iconPic = gItemIcon_AzureFlute,
         .iconPalette = gItemIconPalette_AzureFlute,
     },
+
+    // Pokémon Mutagen (QW-14). The icon is HnS's Ability Patch art until there is one of its own.
+    [ITEM_SHINY_TOKEN] =
+    {
+        .name = ITEM_NAME("SHINY TOKEN"),
+        .pluralName = ITEM_PLURAL_NAME("Shiny Tokens"),
+        .price = 30000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "Makes a Pokémon\n"
+            "shiny, or takes\n"
+            "its shine away."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_ShinyToken,
+        .iconPic = gItemIcon_AbilityPatch,
+        .iconPalette = gItemIconPalette_AbilityPatch,
+    },
 };
 
 #undef ITEM_NAME

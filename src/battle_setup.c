@@ -1,4 +1,5 @@
 #include "global.h"
+#include "mutagen.h"
 #include "battle.h"
 #include "bug_contest.h"
 #include "load_save.h"
@@ -766,7 +767,10 @@ static void CB2_EndWildBattle(void)
     {
         SetMainCallback2(CB2_ReturnToField);
         DowngradeBadPoison();
-        gFieldCallback = FieldCB_ReturnToFieldNoScriptCheckMusic;
+        if (gPokerusNoticeSlot != 0) // Pokémon Mutagen (QW-20): "{mon} caught Pokérus!"
+            gFieldCallback = FieldCB_ReturnToFieldPokerusNotice;
+        else
+            gFieldCallback = FieldCB_ReturnToFieldNoScriptCheckMusic;
     }
 }
 

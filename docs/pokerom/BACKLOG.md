@@ -38,13 +38,13 @@ P4 deep redesigns + content. Nothing deep lands before P2 (it multiplies merge c
 | QW-11 | HM field moves need no Pokémon | S | field-move party check | todo |
 | QW-12 | Fly from roofs and mountains | S | Fly map-type check | todo |
 | QW-13 | Mobile PC (key item / start-menu entry) | S | `dbg` "Access PC" call | todo |
-| QW-14 | Shiny token (toggle shiny bit) | S | HnS+ Shiny Genome (one-way); make it a toggle | todo |
+| QW-14 | Shiny token: SHINY TOKEN (Items pocket, ¥30,000) flips a Pokémon's shiny bit either way from the party menu; MUTAGEN → SHINY TOKENS OFF (never sold, HnS) / ON (every Poké Mart) | S | `src/party_menu.c` Task_ShinyToken, `src/shop.c` SetShopItemsForSale, item in `src/data/items.h` (Ability Patch icon until there is art); the bit is `shinyModifier`, pinned against a constant 1/8192, so later SHINY CHANCE changes never undo it | done (2026-11-08, not yet played) |
 | QW-15 | Ability token (pick from species' abilities) | S | Ability Capsule/Patch → picker | todo |
 | QW-16 | Cheat menu, in-game toggle: every QW-17/18/26 entry plus fly anywhere; save-corrupting debug entries stay dev-only | S | `dbg` cheat entries; HnS+ Easy Catch, party editor | todo |
 | QW-17 | Cheats: rare candy / master balls in PC, all TMs/items/berries/battle items, teach any move | S | `dbg` Fill PC Items / Fill Pocket *, relearner | todo (part of QW-16) |
 | QW-18 | Cheats: walk through walls, infinite PP, master-ball catch rate (keep ball art) | S | collision test, PP decrement, catch formula; HnS+ Easy Catch | todo |
 | QW-19 | Visible natures (summary marker; eye-expression art later) | S | summary screen | todo |
-| QW-20 | Pokérus higher chance | S | `include/config/pokerus.h` | todo |
+| QW-20 | Pokérus odds: MUTAGEN → POKÉRUS RARE (HnS, 3/65536 per battle: about 1 playthrough in 20 ever sees it) / UNCOMMON 1/1024 / COMMON 1/128 / EPIDEMIC 1/16; above RARE a wild battle that infects a party member is followed by "{mon} caught POKéRUS!". Spread stays 1/3 per battle; infection and spread were verified on this build (19 engine tests, `testgate.py --tests "(Pokerus)"`) | S | `src/mutagen.c` GetPokerusInfectionOdds, `src/pokerus.c:36`, notice through `FieldCB_ReturnToFieldPokerusNotice` in `battle_setup.c` + `data/scripts/mutagen.inc` | done (2026-11-08, notice not yet played) |
 | QW-21 | Pick a partner from a story-character roster (rival, beaten Gym Leaders, Kimono Girls…), manage their team, double battles | exists+S | RHH follower-NPC partner (`FNPC_*`, off in HnS); one script per partner | todo |
 | QW-22 | Tutors / trades use PC Pokémon | exists | `OW_CHOOSE_FROM_PC_AND_PARTY` | todo |
 | QW-23 | Catch trainers' Pokémon: HnS+ TcloneR as the engine, plus Thief + held ball (the Pokémon throws it, reuse allowed) | exists+S | HnS+ TcloneR (key item) | todo |
@@ -60,13 +60,15 @@ P4 deep redesigns + content. Nothing deep lands before P2 (it multiplies merge c
 | QW-26 | Pokédex "set complete" | S | `dbg` Pokédex flags | todo (part of QW-16) |
 | QW-27 | Deoxys forms from the Meteorite (use it to cycle Normal → Attack → Defense → Speed) | exists | `form_change_tables.h:770-791`; Meteorite given on Birth Island (`BirthIsland_Exterior_hns/scripts.inc:118-122`). Verify in mGBA; QW-09 must open Birth Island without the event ticket. Story tie-in: DP-14 | todo (verify) |
 | QW-28 | Sprite pass: every species' battle sprites, icons and followers checked against their data, and what was wrong fixed | S | `tools/spritecheck/spritecheck.py` (the ROM as built; `--strict` exits 1 on a finding not in `known.txt`), `sheet.py` (review page) | done (2026-10-26, played): Gen 4+ female sprites show in battle, summary and Pokédex (HnS 806c6f2/a52f3e8 hid them along with the Gen 1-3 DS ones); Y offsets of 44 forms (24 species, 21 of them Unown letters) measured from the art (Unown and Chimecho back to Emerald's); Minior icon palette; Keldeo Resolute follows as Ordinary, not the substitute doll. Open: 7 follower shiny palettes need art |
+| QW-29 | MUTAGEN tab in the challenge menu + `struct MutagenSettings` (32 bytes, zero = HnS) at the end of SaveBlock3 + GAMEMODE → MUTAGEN on the new-game menu (recommended settings plus every Mutagen feature on: SPRITES DS, TYPE ICONS ALL, POKÉRUS COMMON, TRAINER AI SMART, SHINY TOKENS ON). SaveBlock3 grew 52 → 84 bytes; sectors are zero-filled before every write, so older saves read the block as zero: not a save break (test/save.c pins 84) | S | `src/challenge_menu.c` TAB_MUTAGEN, `src/mutagen.c` accessors, `src/new_game.c` + `oak_speech_hns.c` new-game handling | done (2026-11-08) |
+| QW-31 | Trainer AI: MUTAGEN → TRAINER AI OFF (HnS's per-trainer flags: 438 of 651 trainers run Check Bad Move only) / SMART (adds `AI_FLAG_SMART_TRAINER`, the set every Emerald Imperium boss carries) / EXPERT (adds `AI_FLAG_PREDICTION` + `AI_FLAG_ASSUMPTIONS`). Supersedes UP-02: the flags were already in the 1.15 engine. Still open as content: competitive boss sets (natures, items, 31 IVs) for gym leaders and the Elite Four (M) | S | `GetAiFlags`, `battle_ai_main.c:241`; wild battles untouched; AI tests run at zero | done (2026-11-08) |
 
 ## P2 — engine upgrade
 
 | ID | Feature | Tier | Prior art / hook | Status |
 |---|---|---|---|---|
 | UP-01 | Merge RHH master (1.17.x / 1.18), run `migration_scripts/`, save break | L | `rhh` remote | todo |
-| UP-02 | Battle AI strategy for harder modes | exists | RHH `AI_FLAG_*` (smart switch, prediction) | todo after UP-01 |
+| UP-02 | Battle AI strategy for harder modes | exists | superseded by QW-31 (the `AI_FLAG_*` set is in the 1.15 engine) | cut (folded into QW-31, 2026-11-08) |
 | UP-03 | Smarter move learning (level/egg/tutor/TM in one menu) | M | RHH 1.16 relearner rework + HnS+ summary relearner | todo after UP-01 |
 | UP-04 | Lingering overworld weather after battle weather | M | RHH 1.16 dynamic weather | todo after UP-01 |
 
@@ -151,5 +153,6 @@ this). Measured 2026-10-26 on 0.1.0 (2.0.6 + QW-01, the engine fixes and the spr
 
 Unmodified 2.0.6 measured 31,706,804 with `make hns`. Megas alone measured 99.46% full in HnS+.
 Lead, unmeasured: 931 Emerald (Hoenn) map entries don't load in this build and nothing in HnS leads to them (TS-03), but their scripts and events are still linked in. Measure them before cutting art.
-Save: 22 spare bits per stored Pokémon. The space plan (keep or cut the Gen 4–9 randomizer art)
+Save: 22 spare bits per stored Pokémon.
+Options (2026-11-08): `ChallengeSettings` has 9 free bits at its tail; Pokérom's own toggles live in `MutagenSettings` at the end of SaveBlock3 (QW-29), 5 of its 256 bits used. The space plan (keep or cut the Gen 4–9 randomizer art)
 is open and blocks SG-10, SG-12, DP-11, DP-12, DP-20.

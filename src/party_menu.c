@@ -5189,6 +5189,67 @@ void ItemUseCB_AbilityPatch(u8 taskId, TaskFunc task)
 #undef tMonId
 #undef tOldFunc
 
+// SHINY TOKEN (Pokémon Mutagen, QW-14): flips the Pokémon's shiny bit either way. Shininess is one
+// pinned bit per Pokémon (shinyModifier), so the change holds whatever SHINY CHANCE is set to later.
+#define tState data[0]
+#define tMonId data[1]
+
+static void Task_ShinyToken(u8 taskId)
+{
+    static const u8 sText_Shimmer[] = _("{STR_VAR_1} began to shimmer!{PAUSE_UNTIL_PRESS}");
+    static const u8 sText_Faded[] = _("{STR_VAR_1}'s shine faded away.{PAUSE_UNTIL_PRESS}");
+    s16 *data = gTasks[taskId].data;
+    struct Pokemon *mon = &gPlayerParty[tMonId];
+
+    switch (tState)
+    {
+    case 0:
+        if (GetMonData(mon, MON_DATA_IS_EGG) || GetMonData(mon, MON_DATA_SPECIES) == SPECIES_NONE)
+        {
+            gPartyMenuUseExitCallback = FALSE;
+            PlaySE(SE_SELECT);
+            DisplayPartyMenuMessage(gText_WontHaveEffect, 1);
+            ScheduleBgCopyTilemapToVram(2);
+            gTasks[taskId].func = Task_ClosePartyMenuAfterText;
+            return;
+        }
+        else
+        {
+            bool32 shiny = !GetMonData(mon, MON_DATA_IS_SHINY);
+
+            SetMonData(mon, MON_DATA_IS_SHINY, &shiny);
+            gPartyMenuUseExitCallback = TRUE;
+            PlaySE(SE_USE_ITEM);
+            GetMonNickname(mon, gStringVar1);
+            StringExpandPlaceholders(gStringVar4, shiny ? sText_Shimmer : sText_Faded);
+            DisplayPartyMenuMessage(gStringVar4, 1);
+            ScheduleBgCopyTilemapToVram(2);
+            tState++;
+        }
+        break;
+    case 1:
+        if (!IsPartyMenuTextPrinterActive())
+        {
+            RemoveBagItem(gSpecialVar_ItemId, 1);
+            UpdateFollowingPokemon(); // a following lead changes colour at once
+            gTasks[taskId].func = Task_ClosePartyMenu;
+        }
+        break;
+    }
+}
+
+void ItemUseCB_ShinyToken(u8 taskId, TaskFunc task)
+{
+    s16 *data = gTasks[taskId].data;
+
+    tState = 0;
+    tMonId = gPartyMenu.slotId;
+    gTasks[taskId].func = Task_ShinyToken;
+}
+
+#undef tState
+#undef tMonId
+
 #define tState      data[0]
 #define tMonId      data[1]
 #define tOldNature  data[2]

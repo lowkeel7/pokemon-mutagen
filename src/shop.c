@@ -1,4 +1,5 @@
 #include "global.h"
+#include "mutagen.h"
 #include "bg.h"
 #include "data.h"
 #include "decompress.h"
@@ -525,6 +526,9 @@ static const u16 sShopInventory_EightBadges[] = {
     ITEM_NONE
 };
 
+// A badge-count list plus the SHINY TOKEN, built when the option is on (Pokémon Mutagen, QW-14).
+static EWRAM_DATA u16 sMutagenMartItems[64] = {0};
+
 static const u16 *const sShopInventories[] =
 {
     sShopInventory_ZeroBadges,
@@ -998,6 +1002,21 @@ static void SetShopItemsForSale(const u16 *items)
             sMartInfo.itemList = sShopInventories[badgeCount];
         else
             sMartInfo.itemList = sShopInventories_PC[badgeCount];
+
+        // Pokémon Mutagen (QW-14): with SHINY TOKENS on, every Poké Mart also sells the token.
+        if (AreShinyTokensSold())
+        {
+            u32 n = 0;
+
+            while (sMartInfo.itemList[n] != ITEM_NONE && n < ARRAY_COUNT(sMutagenMartItems) - 2)
+            {
+                sMutagenMartItems[n] = sMartInfo.itemList[n];
+                n++;
+            }
+            sMutagenMartItems[n++] = ITEM_SHINY_TOKEN;
+            sMutagenMartItems[n] = ITEM_NONE;
+            sMartInfo.itemList = sMutagenMartItems;
+        }
     }
     else
 #endif

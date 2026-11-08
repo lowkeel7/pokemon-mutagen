@@ -614,6 +614,7 @@ static void Task_NewGameHnsSpeech_FadeOutToChallengeMenu(u8 taskId)
         DestroyTask(taskId);
         savedOptions = gSaveBlock3Ptr->challengeSettings;
         memset(&gSaveBlock3Ptr->challengeSettings, 0, sizeof(struct ChallengeSettings));
+        memset(&gSaveBlock3Ptr->mutagenSettings, 0, sizeof(struct MutagenSettings)); // QW-29: a new game starts at HnS
         SetDefaultChallengeSettings();
         // Restore options-menu fields so pre-new-game changes survive
         gSaveBlock3Ptr->challengeSettings.followerEnable     = savedOptions.followerEnable;

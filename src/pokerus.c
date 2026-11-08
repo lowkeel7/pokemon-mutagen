@@ -5,6 +5,7 @@
 #include "pokerus.h"
 #include "random.h"
 #include "config/pokerus.h"
+#include "mutagen.h"
 
 u32 GetDaysLeftBasedOnStrain(u32 strain)
 {
@@ -33,7 +34,8 @@ void RandomlyGivePartyPokerus(void)
     if (P_POKERUS_FLAG_INFECTION && !FlagGet(P_POKERUS_FLAG_INFECTION))
         return;
 
-    if (RandomUniform(RNG_POKERUS_INFECTION, 0, MAX_u16) < P_POKERUS_INFECTION_ODDS)
+    // Pokémon Mutagen: the odds follow the POKÉRUS option; its zero is P_POKERUS_INFECTION_ODDS (QW-20).
+    if (RandomUniform(RNG_POKERUS_INFECTION, 0, MAX_u16) < GetPokerusInfectionOdds())
     {
         struct Pokemon *mon;
         u32 randomIndex;
@@ -66,6 +68,8 @@ void RandomlyGivePartyPokerus(void)
 
             SetMonData(mon, MON_DATA_POKERUS_STRAIN, &strain);
             SetMonData(mon, MON_DATA_POKERUS_DAYS_LEFT, &daysLeft);
+            if (ShouldAnnouncePokerus())
+                gPokerusNoticeSlot = validTargets[randomIndex] + 1;
         }
     }
 }

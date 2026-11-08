@@ -25,6 +25,17 @@ Heart & Soul's own history see its documentation, and for the engine see `CHANGE
 - Sandbox builds: the Pokémon stocked into the PC are now also seen and caught in the Pokédex.
 
 ### New
+- **A MUTAGEN tab** in the new-game and PC options, and **GAMEMODE → MUTAGEN** on the new-game
+  menu: the recommended settings plus every Mutagen feature switched on in one press. Every row's
+  first choice is Heart & Soul's behaviour, and older saves read every row as that.
+- **POKÉRUS odds** (MUTAGEN tab): RARE (the main games' 3 in 65,536 battles), UNCOMMON (1 in
+  1,024), COMMON (1 in 128) or EPIDEMIC (1 in 16). Above RARE, a wild battle in which a party
+  member catches it says so afterwards. It spreads through the party as it always did.
+- **TRAINER AI** (MUTAGEN tab): OFF, SMART (every trainer knows your moves and items and switches
+  with a plan, the set Emerald Imperium's bosses use) or EXPERT (SMART plus switch and move
+  prediction).
+- **SHINY TOKEN** (MUTAGEN tab, SHINY TOKENS ON): sold in every Poké Mart for ¥30,000; use one on a
+  Pokémon to make it shiny, or on a shiny Pokémon to take its shine away.
 - **DS-style sprites**: FEATURES → SPRITES switches every Pokémon's battle art between GBA (the
   default, Heart & Soul's look) and DS: DS-era art for the 393 Gen 1-3 species, Gen 4 shadows
   under foes, female forms and the DS-style Substitute doll. Older saves read GBA.

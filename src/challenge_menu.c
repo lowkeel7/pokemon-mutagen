@@ -35,6 +35,7 @@
 enum {
     TAB_MODE,
     TAB_FEATURES,
+    TAB_MUTAGEN, // Pokémon Mutagen's own options (QW-29)
     TAB_RANDOMIZER,
     TAB_NUZLOCKE,
     TAB_DIFFICULTY,
@@ -72,6 +73,14 @@ enum {
     ITEM_FEATURES_FRONTIER_BANS,
     ITEM_FEATURES_NEXT,
     ITEM_FEATURES_COUNT,
+};
+
+enum {
+    ITEM_MUTAGEN_POKERUS,
+    ITEM_MUTAGEN_TRAINER_AI,
+    ITEM_MUTAGEN_SHINY_TOKENS,
+    ITEM_MUTAGEN_NEXT,
+    ITEM_MUTAGEN_COUNT,
 };
 
 enum {
@@ -150,6 +159,7 @@ struct ChallengeMenuItem
     const u8 *const *descriptions;
     u8 numChoices;
     const u8 *const *choiceNames;
+    bool8 showOneChoice; // labels too long to sit side by side: draw only the current one (Mutagen)
 };
 
 // =============================================================================
@@ -347,6 +357,21 @@ static const u8 *const sChoices_OnOff[] = {
 static const u8 *const sChoices_Gamemode[] = {
     COMPOUND_STRING("RECOMMENDED"),
     COMPOUND_STRING("CUSTOM"),
+    COMPOUND_STRING("MUTAGEN"),
+};
+
+// MUTAGEN tab (QW-29). The first choice of every row is Heart & Soul's behaviour.
+static const u8 *const sChoices_PokerusOdds[] = {
+    COMPOUND_STRING("RARE"),
+    COMPOUND_STRING("UNCOMMON"),
+    COMPOUND_STRING("COMMON"),
+    COMPOUND_STRING("EPIDEMIC"),
+};
+
+static const u8 *const sChoices_TrainerAi[] = {
+    COMPOUND_STRING("OFF"),
+    COMPOUND_STRING("SMART"),
+    COMPOUND_STRING("EXPERT"),
 };
 
 static const u8 *const sChoices_OriginalModern[] = {
@@ -366,6 +391,29 @@ static const u8 sText_TopBar_Cancel[] = _("{B_BUTTON}CANCEL");
 static const u8 *const sDesc_Gamemode[] = {
     COMPOUND_STRING("Recommended settings."),
     COMPOUND_STRING("Choose your own rules."),
+    COMPOUND_STRING("Recommended settings, plus every\nPokémon Mutagen feature switched on."),
+};
+
+static const u8 *const sDesc_PokerusOdds[] = {
+    COMPOUND_STRING("Pokérus as in the main games:\n3 in 65,536 battles. Almost never."),
+    COMPOUND_STRING("1 in 1,024 battles. Most\nplayers meet it by the League."),
+    COMPOUND_STRING("1 in 128 battles. Within the\nfirst few routes."),
+    COMPOUND_STRING("1 in 16 battles. It spreads\nthrough your party in no time."),
+};
+
+static const u8 *const sDesc_TrainerAi[] = {
+    COMPOUND_STRING("Trainers fight as Heart & Soul\nmade them."),
+    COMPOUND_STRING("Every trainer sees your moves and\nitems and switches with a plan."),
+    COMPOUND_STRING("SMART, and trainers predict your\nswitches and moves."),
+};
+
+static const u8 *const sDesc_ShinyTokens[] = {
+    COMPOUND_STRING("No SHINY TOKENS for sale."),
+    COMPOUND_STRING("Every POKé MART sells SHINY TOKENS:\nuse one to make a Pokémon shiny."),
+};
+
+static const u8 *const sDesc_MutagenNext[] = {
+    COMPOUND_STRING("Continue to Randomizer options."),
 };
 static const u8 *const sDesc_ModernMoves[] = {
     COMPOUND_STRING("Generation 3 LEARNSETS and EGG\n MOVES with no changes."),
@@ -427,8 +475,9 @@ static const struct ChallengeMenuItem sTabItems_Mode[] = {
     [ITEM_MODE_GAMEMODE] = {
         .name         = COMPOUND_STRING("GAMEMODE"),
         .descriptions = sDesc_Gamemode,
-        .numChoices   = 2,
+        .numChoices   = 3,
         .choiceNames  = sChoices_Gamemode,
+        .showOneChoice = TRUE, // RECOMMENDED / CUSTOM / MUTAGEN don't fit side by side
     },
     [ITEM_MODE_MODERN_MOVES] = {
         .name         = COMPOUND_STRING("{PKMN} MOVEPOOL"),
@@ -707,6 +756,34 @@ static const struct ChallengeMenuItem sTabItems_Features[] = {
     [ITEM_FEATURES_NEXT] = {
         .name         = COMPOUND_STRING("NEXT"),
         .descriptions = sDesc_FeaturesNext,
+        .numChoices   = 0,
+        .choiceNames  = NULL,
+    },
+};
+
+static const struct ChallengeMenuItem sTabItems_Mutagen[] = {
+    [ITEM_MUTAGEN_POKERUS] = {
+        .name         = COMPOUND_STRING("POKéRUS"),
+        .descriptions = sDesc_PokerusOdds,
+        .numChoices   = 4,
+        .choiceNames  = sChoices_PokerusOdds,
+        .showOneChoice = TRUE,
+    },
+    [ITEM_MUTAGEN_TRAINER_AI] = {
+        .name         = COMPOUND_STRING("TRAINER AI"),
+        .descriptions = sDesc_TrainerAi,
+        .numChoices   = 3,
+        .choiceNames  = sChoices_TrainerAi,
+    },
+    [ITEM_MUTAGEN_SHINY_TOKENS] = {
+        .name         = COMPOUND_STRING("SHINY TOKENS"),
+        .descriptions = sDesc_ShinyTokens,
+        .numChoices   = 2,
+        .choiceNames  = sChoices_OffOn,
+    },
+    [ITEM_MUTAGEN_NEXT] = {
+        .name         = COMPOUND_STRING("NEXT"),
+        .descriptions = sDesc_MutagenNext,
         .numChoices   = 0,
         .choiceNames  = NULL,
     },
@@ -1224,6 +1301,7 @@ struct TabDef
 static const struct TabDef sTabs[TAB_COUNT] = {
     [TAB_MODE]       = { COMPOUND_STRING("MODE"),       sTabItems_Mode,       ITEM_MODE_COUNT },
     [TAB_FEATURES]   = { COMPOUND_STRING("FEATURES"),   sTabItems_Features,   ITEM_FEATURES_COUNT },
+    [TAB_MUTAGEN]    = { COMPOUND_STRING("MUTAGEN"),    sTabItems_Mutagen,    ITEM_MUTAGEN_COUNT },
     [TAB_RANDOMIZER] = { COMPOUND_STRING("RANDOMIZER"), sTabItems_Randomizer, ITEM_RANDOM_COUNT },
     [TAB_NUZLOCKE]   = { COMPOUND_STRING("NUZLOCKE"),   sTabItems_Nuzlocke,   ITEM_NUZLOCKE_COUNT },
     [TAB_DIFFICULTY] = { COMPOUND_STRING("DIFFICULTY"),  sTabItems_Difficulty, ITEM_DIFFICULTY_COUNT },
@@ -1306,6 +1384,8 @@ static bool8 CheckConditions(u8 tab, u8 itemIndex)
         default:
             return *GetSelectionPtr(TAB_MODE, ITEM_MODE_GAMEMODE) == 1; // CUSTOM
         }
+    case TAB_MUTAGEN: // every row free, at any time
+        return TRUE;
     case TAB_RANDOMIZER:
     {
         u8 masterOn = *GetSelectionPtr(TAB_RANDOMIZER, ITEM_RANDOM_OFF_ON);
@@ -1380,6 +1460,17 @@ static void ApplyRecommendedPresets(void)
     *GetSelectionPtr(TAB_MODE, ITEM_MODE_SURVIVE_POISON)     = 1; // ON
     *GetSelectionPtr(TAB_MODE, ITEM_MODE_SPLIT)              = 1; // ON
     *GetSelectionPtr(TAB_MODE, ITEM_MODE_GEN_ONE_RECHARGE)   = 0; // GEN 3
+}
+
+// GAMEMODE → MUTAGEN (QW-29): the recommended settings, plus every Pokémon Mutagen feature on.
+// TYPE ICONS lives in the option menu and is set when the choice is saved.
+static void ApplyMutagenPresets(void)
+{
+    ApplyRecommendedPresets();
+    *GetSelectionPtr(TAB_FEATURES, ITEM_FEATURES_SPRITE_STYLE)  = 1; // DS
+    *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_POKERUS)         = 2; // COMMON
+    *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_TRAINER_AI)      = 1; // SMART
+    *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_SHINY_TOKENS)    = 1; // ON
 }
 
 // =============================================================================
@@ -1543,6 +1634,14 @@ static void ChallengeMenu_ItemPrintFunc(u8 windowId, u32 itemId, u8 y)
 
     if (sel >= items[itemId].numChoices)
         sel = 0;
+
+    if (items[itemId].showOneChoice)
+    {
+        const u8 *choiceStr = items[itemId].choiceNames[sel];
+        u8 x = GetStringRightAlignXOffset(FONT_NORMAL, choiceStr, 198);
+        DrawRightSideChoiceText(choiceStr, x, y + 1, TRUE, active);
+        return;
+    }
 
     switch (items[itemId].numChoices)
     {
@@ -1836,6 +1935,8 @@ static void ProcessLeftRight(void)
         // When GAMEMODE changes to RECOMMENDED, apply presets
         if (sMenu->currentTab == TAB_MODE && itemIndex == ITEM_MODE_GAMEMODE && *sel == 0)
             ApplyRecommendedPresets();
+        else if (sMenu->currentTab == TAB_MODE && itemIndex == ITEM_MODE_GAMEMODE && *sel == 2)
+            ApplyMutagenPresets();
 
         // Nuzlocke OFF or EASY — reset sub-options to defaults
         if (sMenu->currentTab == TAB_NUZLOCKE && itemIndex == ITEM_NUZLOCKE_NUZLOCKE
@@ -1996,6 +2097,13 @@ static void Task_ConfirmSaveYes(u8 taskId)
     cs->tx_Features_FrontierBans   = *GetSelectionPtr(TAB_FEATURES, ITEM_FEATURES_FRONTIER_BANS);
     cs->tx_Features_ShinyColors    = *GetSelectionPtr(TAB_FEATURES, ITEM_FEATURES_SHINY_COLOR);
     cs->tx_Features_SpriteStyle    = *GetSelectionPtr(TAB_FEATURES, ITEM_FEATURES_SPRITE_STYLE);
+
+    // Mutagen tab (QW-29): zero is Heart & Soul
+    gSaveBlock3Ptr->mutagenSettings.pokerusOdds = *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_POKERUS);
+    gSaveBlock3Ptr->mutagenSettings.trainerAi   = *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_TRAINER_AI);
+    gSaveBlock3Ptr->mutagenSettings.shinyTokens = *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_SHINY_TOKENS);
+    if (*GetSelectionPtr(TAB_MODE, ITEM_MODE_GAMEMODE) == 2) // GAMEMODE MUTAGEN: type icons on too
+        cs->typeIcons = 3;
 
     // Randomizer tab — if master toggle is OFF, clear all sub-fields
     if (*GetSelectionPtr(TAB_RANDOMIZER, ITEM_RANDOM_OFF_ON) == 0)
@@ -2236,6 +2344,11 @@ void CB2_InitChallengeMenu(void)
             *GetSelectionPtr(TAB_FEATURES, ITEM_FEATURES_FRONTIER_BANS)= cs->tx_Features_FrontierBans;
             *GetSelectionPtr(TAB_FEATURES, ITEM_FEATURES_SHINY_COLOR)  = cs->tx_Features_ShinyColors;
             *GetSelectionPtr(TAB_FEATURES, ITEM_FEATURES_SPRITE_STYLE) = cs->tx_Features_SpriteStyle;
+
+            // Mutagen tab (QW-29)
+            *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_POKERUS)      = gSaveBlock3Ptr->mutagenSettings.pokerusOdds;
+            *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_TRAINER_AI)   = gSaveBlock3Ptr->mutagenSettings.trainerAi;
+            *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_SHINY_TOKENS) = gSaveBlock3Ptr->mutagenSettings.shinyTokens;
 
             // Randomizer tab — derive master toggle from whether any sub-field is active
             *GetSelectionPtr(TAB_RANDOMIZER, ITEM_RANDOM_OFF_ON) =

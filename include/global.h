@@ -343,6 +343,19 @@ struct ChallengeSettings
     u8 tx_Features_SpriteStyle:1; // SPRITES: 0 GBA style (HnS), 1 DS style (SG-23)
 };
 
+// Pokémon Mutagen's own options (BACKLOG QW-29), the MUTAGEN tab of the challenge menu. Appended
+// to the end of SaveBlock3: the save code zero-fills every sector before writing, so a save from
+// before a field existed reads it as zero, and zero is always Heart & Soul's behaviour. Pinned to
+// 32 bytes (src/save.c); add fields in the padding, never in front of an existing one.
+struct MutagenSettings
+{
+    u8 pokerusOdds:2;  // POKÉRUS: 0 RARE (HnS, 3/65536 per battle), 1 UNCOMMON 1/1024, 2 COMMON 1/128, 3 EPIDEMIC 1/16 (QW-20)
+    u8 trainerAi:2;    // TRAINER AI: 0 OFF (each trainer's own flags), 1 SMART, 2 EXPERT (QW-31)
+    u8 shinyTokens:1;  // SHINY TOKENS: 0 never sold (HnS), 1 sold in every Poké Mart (QW-14)
+    u8 unused_00:3;
+    u8 unused[31];
+};
+
 struct SaveBlock3
 {
     struct SiiRtcInfo fakeRTC;
@@ -361,6 +374,7 @@ struct SaveBlock3
 #endif
     struct ChallengeSettings challengeSettings;
     u16 registeredItemHold;
+    struct MutagenSettings mutagenSettings; // last, so older saves read it as zero (QW-29)
 }; /* max size 1624 bytes */
 
 extern struct SaveBlock3 *gSaveBlock3Ptr;

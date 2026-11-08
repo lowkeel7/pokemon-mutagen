@@ -39,5 +39,12 @@ Storage: `struct ChallengeSettings` bitfields, `include/global.h:253-341`, held 
 6. Add an accessor next to the existing ones (challenge_menu.c:2338-2476) and read it at the gameplay site.
 7. Check the size: debug menu → ROM Info → "Save Block space".
 
-A Pokerom toggle that is a mechanic (not a difficulty knob) goes in a POKEROM tab once one exists.
-Until then, FEATURES. Keep each tab under its `MAX_ITEMS_PER_TAB`.
+A Pokerom toggle that is a mechanic (not a difficulty knob) goes in the **MUTAGEN tab**
+(`TAB_MUTAGEN`, rows `ITEM_MUTAGEN_*`, table `sTabItems_Mutagen`), and its field in
+`struct MutagenSettings` (global.h, right after ChallengeSettings; 32 bytes pinned in save.c, 5 bits
+used): a new field goes in the padding, never in front of an existing one, and zero = HnS. Read it
+through an accessor in `src/mutagen.c` (`include/mutagen.h`), which returns the HnS value for a
+NULL `gSaveBlock3Ptr` so battle tests and early boot are safe. The block is cleared at new game in
+`oak_speech_hns.c` and carried across `ClearSav3()` in `NewGameInitData` beside ChallengeSettings.
+`GAMEMODE → MUTAGEN` (`ApplyMutagenPresets`) should switch a new mechanic on: add it there. Display
+options (TYPE ICONS) stay in the option menu. Keep each tab under its `MAX_ITEMS_PER_TAB`.
