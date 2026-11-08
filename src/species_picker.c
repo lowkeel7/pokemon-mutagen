@@ -49,7 +49,7 @@ static const struct WindowTemplate sListWindow = {
     .bg = 0, .tilemapLeft = 1, .tilemapTop = 1, .width = 14, .height = 2 * LIST_ROWS, .paletteNum = 15, .baseBlock = 170,
 };
 static const struct WindowTemplate sInfoWindow = {
-    .bg = 0, .tilemapLeft = PIC_X + 1, .tilemapTop = 11, .width = 8, .height = 4, .paletteNum = 15, .baseBlock = 170 + 14 * 2 * LIST_ROWS,
+    .bg = 0, .tilemapLeft = PIC_X + 1, .tilemapTop = 12, .width = 8, .height = 4, // a row below the picture box's frame .paletteNum = 15, .baseBlock = 170 + 14 * 2 * LIST_ROWS,
 };
 
 static const u8 sText_No[] = _("No.");
