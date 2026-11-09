@@ -2,11 +2,20 @@
 language = "en"
 src = "."
 title = "Pokémon Mutagen"
+description = "A Game Boy Advance Pokémon game: Heart & Soul with a mutant strain of Pokérus that opens a second line of evolution. Patch only."
 
 [output.html]
-git-repository-url = "https://github.com/rh-hideout/pokeemerald-expansion"
-edit-url-template = "https://github.com/rh-hideout/pokeemerald-expansion/edit/master/docs/{path}"
+git-repository-url = "https://github.com/lowkeel7/pokemon-mutagen"
+edit-url-template = "https://github.com/lowkeel7/pokemon-mutagen/edit/main/docs/{path}"
 site-url = "/pokemon-mutagen/"   # the repository's name on GitHub Pages (RELEASE.md)
+default-theme = "light"          # Mutagen on paper; the dark themes are Mutagen on ink (pokerom/brand/mutagen.css)
+preferred-dark-theme = "navy"
+additional-css = ["pokerom/brand/mutagen.css"]
+additional-js = ["pokerom/brand/wordmark-path.js", "pokerom/brand/mutagen.js"]
+
+[output.html.fold]
+enable = true
+level = 1
 
 [preprocessor.fix_links]
 command = "python3 fix_links.py"

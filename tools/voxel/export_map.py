@@ -35,6 +35,9 @@ import time
 
 from PIL import Image, ImageChops, ImageFilter
 
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "brand"))
+import brand  # noqa: E402  (tools/brand/brand.py: the HUD's fonts and colours)
+
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 NUM_TILES_IN_PRIMARY = 640
 NUM_METATILES_IN_PRIMARY = 640
@@ -424,6 +427,7 @@ def render_page(title, scene=None, atlas_png=None, live=False):
     scene_json = json.dumps(scene, separators=(",", ":")) if scene else "null"
     atlas = "data:image/png;base64," + base64.b64encode(atlas_png).decode("ascii") if atlas_png else ""
     return (TEMPLATE.replace("__TITLE__", title)
+            .replace("__FONTS__", brand.font_face_css())
             .replace("__LIVE__", "true" if live else "false")
             .replace("__SCENE__", scene_json)
             .replace("__ATLAS__", atlas))
@@ -514,15 +518,17 @@ TEMPLATE = r"""<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>__TITLE__ · voxel view</title>
 <style>
-  html, body { margin: 0; height: 100%; background: #0b0f1a; color: #dfe6f3; font: 14px system-ui, sans-serif; overflow: hidden; }
+__FONTS__
+  html, body { margin: 0; height: 100%; background: #181018; color: #EEEEEE; font: 14px "Space Grotesk", system-ui, sans-serif; overflow: hidden; }
   canvas { display: block; }
-  #hud { position: fixed; left: 12px; top: 10px; background: rgba(11,15,26,.72); padding: 8px 10px; border-radius: 8px; line-height: 1.5; }
-  #hud b { color: #fff; }
-  #hud .dim { color: #9aa7bd; }
+  #hud { position: fixed; left: 12px; top: 10px; background: rgba(24,16,24,.8); border: 1px solid #4A4A4A; padding: 8px 12px 9px; border-radius: 10px; line-height: 1.5; }
+  #hud .eyebrow { display: block; font: 700 9px/1 "Silkscreen", "Courier New", monospace; letter-spacing: .22em; color: #9C9C9C; margin-bottom: 5px; }
+  #hud b { color: #EEEEEE; font-weight: 600; }
+  #hud .dim { color: #9C9C9C; }
 </style>
 </head>
 <body>
-<div id="hud"><b id="title">__TITLE__</b><span id="status"></span><br><span class="dim">drag to orbit · wheel to zoom · right-drag to pan · F follows the player</span></div>
+<div id="hud"><span class="eyebrow">POKÉMON MUTAGEN · VOXEL VIEW</span><b id="title">__TITLE__</b><span id="status"></span><br><span class="dim">drag to orbit · wheel to zoom · right-drag to pan · F follows the player</span></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script>
@@ -683,7 +689,7 @@ async function poll() {
 
 function init() {
   scene3 = new THREE.Scene();
-  scene3.background = new THREE.Color(0x0b0f1a);
+  scene3.background = new THREE.Color(0x181018);   // the brand's ink
   scene3.add(new THREE.HemisphereLight(0xcfe3ff, 0x30261a, 0.6));
   sun = new THREE.DirectionalLight(0xfff1d6, 0.95);
   sun.castShadow = true;

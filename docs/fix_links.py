@@ -33,7 +33,7 @@ def proc_items(items):
     for item in items:
         if 'Chapter' in item:
             s = item['Chapter']['content']
-            s = s.replace('](README.md)', '](./)')
+            s = s.replace('](README.md)', '](project-readme.md)')   # docs/project-readme.md wraps the root README; index.md is the landing
             s = s.replace('](/INSTALL.md', '](INSTALL.md')
             s = s.replace('](docs/', '](')
             s = URL_RE.sub(handle_url, s)

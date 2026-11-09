@@ -1,19 +1,27 @@
 # Summary
 
-- [README](./README.md)
-- [FEATURES](./FEATURES.md)
-- [Pokémon Mutagen]()
-    - [Changelog](./pokerom/CHANGELOG.md)
-    - [Releasing](./pokerom/RELEASE.md)
-    - [Backlog](./pokerom/BACKLOG.md)
-    - [Contributing and Steak](./pokerom/CONTRIBUTING.md)
-    - [Provenance](./pokerom/PROVENANCE.md)
-    - [Design: type roots](./pokerom/design/type-roots.md)
-    - [Design: status escalation](./pokerom/design/statuses.md)
-    - [Design: species items](./pokerom/design/items.md)
-    - [Mutagen evolutions](./pokerom/evolutions.md)
-    - [Voxel view](./pokerom/VOXEL.md)
-    - [Heart & Soul's README](./hns/README.md)
+[Pokémon Mutagen](./index.md)
+
+# Mutagen
+
+- [Mutagen evolutions](./pokerom/evolutions.md)
+- [Changelog](./pokerom/CHANGELOG.md)
+- [Backlog](./pokerom/BACKLOG.md)
+- [Design notes]()
+    - [Brand](./pokerom/design/brand.md)
+    - [Type roots](./pokerom/design/type-roots.md)
+    - [Status escalation](./pokerom/design/statuses.md)
+    - [Species items](./pokerom/design/items.md)
+- [Voxel view](./pokerom/VOXEL.md)
+- [Releasing](./pokerom/RELEASE.md)
+- [Contributing and Steak](./pokerom/CONTRIBUTING.md)
+- [Provenance](./pokerom/PROVENANCE.md)
+- [The project README](./project-readme.md)
+
+# Heart & Soul and the engine
+
+- [Heart & Soul's README](./hns/README.md)
+- [Expansion features](./FEATURES.md)
 - [Installation](./INSTALL.md)
     - [Setting up WSL1 (Legacy Portion)](./legacy_WSL1_INSTALL.md)
     - [ChromeOS](./install/chromeos/CHROME_OS.md)

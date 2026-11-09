@@ -1,0 +1,190 @@
+/* Pokémon Mutagen: the documentation site's look. The rules are in docs/pokerom/design/brand.md;
+   the colours are the title screen's own greys plus the strain and the graft. Loaded after mdbook's
+   stylesheets, it only re-points mdbook's variables and adds the brand's few components. */
+
+@font-face { font-family: "Space Grotesk"; src: url(fonts/SpaceGrotesk-Variable.woff2) format("woff2"); font-weight: 300 700; font-display: swap; }
+@font-face { font-family: "Silkscreen"; src: url(fonts/Silkscreen-Regular.woff2) format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Silkscreen"; src: url(fonts/Silkscreen-Bold.woff2) format("woff2"); font-weight: 700; font-display: swap; }
+
+:root {
+  --m-ink: #181018; --m-pill: #292929; --m-seam: #4A4A4A; --m-ash: #9C9C9C; --m-bone: #EEEEEE;
+  --m-strain: #C43AD6; --m-strain-deep: #8A1E9C; --m-strain-soft: #E39BEE;
+  --m-graft: #A6F23A; --m-graft-deep: #3F7A0A;
+  --m-paper: #F7F4F8; --m-paper-2: #ECE6EE;
+  --m-sans: "Space Grotesk", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --m-pixel: "Silkscreen", "Courier New", monospace;
+  --m-radius: 10px;
+  --m-accent: var(--m-strain-deep);     /* the strain, as text on this theme's ground */
+}
+
+/* The two looks. mdbook keeps five theme names; the light ones become Mutagen on paper, the dark
+   ones Mutagen on ink, so the picker and the system preference both land on the brand. */
+html.light, html.rust {
+  --m-accent: var(--m-strain-deep);
+  --bg: var(--m-paper); --fg: var(--m-ink);
+  --sidebar-bg: #FFFFFF; --sidebar-fg: #3B3040; --sidebar-non-existant: #B9AEBC;
+  --sidebar-active: var(--m-strain-deep); --sidebar-spacer: #E4DCE6;
+  --scrollbar: #CFC5D2;
+  --icons: #6F6273; --icons-hover: var(--m-ink);
+  --links: var(--m-strain-deep);
+  --inline-code-color: #5A2F62;
+  --theme-popup-bg: #FFFFFF; --theme-popup-border: #DDD3E0; --theme-hover: var(--m-paper-2);
+  --quote-bg: var(--m-paper-2); --quote-border: #DCD2DF;
+  --warning-border: #E0A800;
+  --table-border-color: #DED5E1; --table-header-bg: var(--m-paper-2); --table-alternate-bg: #F2EDF3;
+  --searchbar-border-color: #CFC5D2; --searchbar-bg: #FFFFFF; --searchbar-fg: var(--m-ink);
+  --searchbar-shadow-color: #DED5E1; --searchresults-header-fg: #6F6273; --searchresults-border-color: #DED5E1;
+  --searchresults-li-bg: var(--m-paper-2); --search-mark-bg: #F0CCF5;
+  --color-scheme: light;
+  --copy-button-filter: invert(40%) sepia(8%) saturate(600%) hue-rotate(250deg) brightness(90%) contrast(85%);
+  --copy-button-filter-hover: invert(10%) sepia(10%) saturate(800%) hue-rotate(250deg) brightness(90%) contrast(100%);
+  --footnote-highlight: #F0CCF5;
+  --overlay-bg: rgba(24, 16, 24, 0.35);
+  --sidebar-header-border-color: var(--m-strain);
+}
+html.navy, html.coal, html.ayu {
+  --m-accent: var(--m-strain-soft);
+  --bg: var(--m-ink); --fg: #E8E2EA;
+  --sidebar-bg: #120C13; --sidebar-fg: #BFB4C2; --sidebar-non-existant: #5C505F;
+  --sidebar-active: var(--m-strain-soft); --sidebar-spacer: #2B222D;
+  --scrollbar: #4A3F4D;
+  --icons: #8C7F90; --icons-hover: var(--m-bone);
+  --links: var(--m-strain-soft);
+  --inline-code-color: #DCB2E3;
+  --theme-popup-bg: #221A24; --theme-popup-border: #3F3443; --theme-hover: #2B2030;
+  --quote-bg: #221A24; --quote-border: #342A37;
+  --warning-border: #E0A800;
+  --table-border-color: #2F2632; --table-header-bg: #2A2030; --table-alternate-bg: #1E161F;
+  --searchbar-border-color: #3F3443; --searchbar-bg: #221A24; --searchbar-fg: var(--m-bone);
+  --searchbar-shadow-color: #120C13; --searchresults-header-fg: #8C7F90; --searchresults-border-color: #3F3443;
+  --searchresults-li-bg: #221A24; --search-mark-bg: #6B2178;
+  --color-scheme: dark;
+  --copy-button-filter: invert(55%) sepia(8%) saturate(500%) hue-rotate(250deg) brightness(95%) contrast(85%);
+  --copy-button-filter-hover: invert(95%) sepia(2%) saturate(200%) hue-rotate(250deg) brightness(105%) contrast(95%);
+  --footnote-highlight: #6B2178;
+  --overlay-bg: rgba(24, 16, 24, 0.6);
+  --sidebar-header-border-color: var(--m-strain);
+}
+
+/* Type */
+html { font-family: var(--m-sans); }
+.content main { font-size: 1.0em; }
+.content p, .content li { line-height: 1.55; }
+h1, h2, h3, h4, h5, h6 { font-family: var(--m-sans); font-weight: 700; letter-spacing: -0.012em; line-height: 1.15; }
+.content h1 { font-size: 2.3em; margin-block-end: 0.5em; }
+.content h2 { font-size: 1.55em; padding-block-end: 0.25em; border-bottom: 1px solid var(--table-border-color); }
+.content h3 { font-size: 1.2em; }
+.content a:link, .content a:visited { color: var(--links); text-decoration: underline; text-decoration-thickness: 1px;
+  text-decoration-color: color-mix(in srgb, var(--links) 35%, transparent); text-underline-offset: 2px; }
+.content a:hover { text-decoration-color: var(--links); }
+code { border-radius: 4px; }
+pre > code { border-radius: var(--m-radius); }
+blockquote { border-left: 3px solid var(--m-strain); border-radius: 0 var(--m-radius) var(--m-radius) 0; }
+table { border-collapse: collapse; }
+table thead th { font-weight: 600; text-align: left; }
+.content img { border-radius: 4px; }
+
+/* The menu bar carries the lockup (mutagen.js replaces the title text). */
+.menu-title { display: flex; align-items: center; gap: 0.6em; overflow: visible; }
+.menu-title a { display: inline-flex; align-items: center; gap: 0.55em; color: var(--fg); text-decoration: none; }
+.menu-title svg.mark { height: 18px; width: 18px; }
+.menu-title svg.wordmark { height: 18px; width: auto; }
+.menu-title .eyebrow { font: 700 9px/1 var(--m-pixel); letter-spacing: 0.22em; color: var(--m-ash); padding-block-start: 2px; }
+@media only screen and (max-width: 420px) { .menu-title .eyebrow { display: none; } }
+
+/* The sidebar: part titles as pixel labels, the Mutagen part first. */
+.chapter li.part-title { font: 700 10px/1.3 var(--m-pixel); letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--m-accent); margin-block-start: 1.6em; margin-block-end: 0.3em; }
+.chapter li a { font-family: var(--m-sans); }
+.chapter li strong[aria-hidden="true"] { display: none; }   /* the sidebar carries names, not numbers */
+.chapter li a.active { font-weight: 600; }
+.sidebar-scrollbox { padding-block-start: 0.6em; }
+
+/* Components */
+.m-eyebrow { font: 700 11px/1 var(--m-pixel); letter-spacing: 0.25em; text-transform: uppercase; color: var(--m-ash); }
+.m-chip { display: inline-flex; align-items: center; height: 26px; padding: 0 12px; border: 1px solid var(--m-seam);
+  border-radius: 13px; font: 400 10px/1 var(--m-pixel); letter-spacing: 0.12em; text-transform: uppercase; color: var(--m-ash); white-space: nowrap; }
+.m-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.m-btn { display: inline-flex; align-items: center; gap: 0.5em; padding: 0.7em 1.2em; border-radius: var(--m-radius);
+  font: 600 1em/1 var(--m-sans); text-decoration: none !important; border: 1px solid transparent; }
+.m-btn.primary { background: var(--m-strain); color: var(--m-ink) !important; }
+.m-btn.primary:hover { background: var(--m-strain-soft); }
+.m-btn.ghost { color: var(--m-bone) !important; border-color: var(--m-seam); }
+.m-btn.ghost:hover { border-color: var(--m-bone); }
+.m-sprite { image-rendering: pixelated; image-rendering: crisp-edges; width: calc(64px * var(--s, 2)); height: calc(64px * var(--s, 2)); border-radius: 0 !important; }
+.m-type { display: inline-block; min-width: 64px; padding: 4px 8px; border-radius: 4px; background: var(--c, var(--m-seam));
+  color: #fff; font: 400 10px/1 var(--m-pixel); letter-spacing: 0.06em; text-align: center; text-shadow: 0 1px 0 rgba(0,0,0,.6); }
+
+/* The landing page's hero: always on ink, with the spore texture, whichever theme the page is in.
+   The landing page is wider than a reading page so the hero can hold its two columns. */
+main:has(.m-hero) { max-width: 1080px; }
+.m-hero > * { min-width: 0; }
+.m-hero { position: relative; margin: 0 0 2.2em; padding: clamp(28px, 5vw, 56px) clamp(22px, 4vw, 48px); border-radius: 16px;
+  background-color: var(--m-ink); color: var(--m-bone); overflow: hidden;
+  background-image: radial-gradient(circle at 82% 78%, rgba(196,58,214,.18), transparent 42%),
+    radial-gradient(2px 2px at 23% 31%, rgba(196,58,214,.35) 50%, transparent 51%),
+    radial-gradient(2px 2px at 61% 72%, rgba(196,58,214,.3) 50%, transparent 51%),
+    radial-gradient(2px 2px at 88% 22%, rgba(196,58,214,.25) 50%, transparent 51%),
+    radial-gradient(3px 3px at 71% 48%, rgba(196,58,214,.22) 50%, transparent 51%),
+    radial-gradient(2px 2px at 12% 84%, rgba(196,58,214,.2) 50%, transparent 51%),
+    radial-gradient(2px 2px at 44% 12%, rgba(196,58,214,.2) 50%, transparent 51%),
+    radial-gradient(3px 3px at 93% 61%, rgba(196,58,214,.28) 50%, transparent 51%),
+    radial-gradient(2px 2px at 35% 91%, rgba(196,58,214,.22) 50%, transparent 51%);
+  box-shadow: inset 0 0 0 1px rgba(238, 238, 238, 0.07);
+  display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 32px 32px; align-items: center; }
+.m-hero .m-eyebrow { margin-block-end: 14px; }
+.m-hero svg.wordmark { display: block; width: min(100%, 440px); height: auto; color: var(--m-bone); }
+.m-hero .m-tagline { margin: 22px 0 0; font: 500 clamp(1.25em, 2.4vw, 1.7em)/1.25 var(--m-sans); color: var(--m-strain-soft); }
+.m-hero .m-lede { margin: 14px 0 0; color: #CFC6D1; font-size: 1.02em; max-width: 46ch; }
+.m-hero .m-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-block-start: 24px; }
+.m-hero .m-chips { margin-block-start: 20px; }
+.m-tree { display: grid; grid-template-columns: auto auto auto; align-items: center; justify-content: center; gap: 0 10px; }
+.m-tree > * { min-width: 0; }
+.m-tree figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.m-tree figcaption { font: 400 10px/1 var(--m-pixel); letter-spacing: 0.12em; color: var(--m-ash); text-transform: uppercase; }
+.m-tree .twin figcaption { color: var(--m-strain-soft); }
+.m-tree .usual img { filter: saturate(.55); opacity: .7; }
+.m-tree svg.fork { width: 90px; height: auto; color: var(--m-bone); }
+.m-tree .lines { display: grid; gap: 18px; }
+.m-tree .twin { position: relative; }
+.m-tree .twin::before { content: ""; position: absolute; inset: 10% -10% 0; border-radius: 50%; background: radial-gradient(ellipse, rgba(196,58,214,.45), transparent 70%); z-index: 0; }
+.m-tree .twin > * { position: relative; }
+.m-tree .types { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; margin-block-start: 6px; max-width: 136px; }
+.m-tree .types .m-type { min-width: 56px; padding: 4px 6px; }
+@media only screen and (max-width: 760px) {
+  .m-hero { grid-template-columns: minmax(0, 1fr); }
+  .m-tree { gap: 0 8px; max-width: 100%; }
+  .m-tree svg.fork { width: 48px; }
+  .m-tree .types { max-width: 124px; }
+  .m-tree .types .m-type { min-width: 50px; padding: 4px 4px; }
+}
+
+/* Cards and link grids on the landing page */
+.m-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin: 1.2em 0 2em; }
+.m-card { padding: 18px 18px 16px; border-radius: var(--m-radius); background: var(--quote-bg); border: 1px solid var(--table-border-color); }
+.m-card .m-eyebrow { color: var(--m-accent); margin-block-end: 10px; }
+.m-card h3 { margin: 0 0 8px; font-size: 1.1em; }
+.m-card p { margin: 0; font-size: 0.95em; }
+.m-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin: 1em 0 2em; padding: 0; list-style: none; }
+.m-links li { margin: 0; }
+.m-links a { display: block; padding: 12px 14px; border-radius: var(--m-radius); border: 1px solid var(--table-border-color); text-decoration: none !important; }
+.m-links a:hover { border-color: var(--m-accent); }
+.m-links a b { display: block; }
+.m-links a span { display: block; font-size: 0.88em; color: var(--fg); opacity: 0.75; margin-block-start: 2px; }
+.m-foot { margin-block-start: 3em; padding-block-start: 1em; border-top: 1px solid var(--table-border-color); font-size: 0.88em; opacity: 0.85; }
+
+/* The evolution tree (docs/pokerom/evolutions.md, written by tools/site/evolutions.py) */
+.evo { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 0; margin: 16px 0; padding: 12px 14px;
+  border: 1px solid var(--table-border-color); border-radius: var(--m-radius); background: var(--quote-bg); }
+.evo .mon { display: inline-flex; flex-direction: column; align-items: center; width: 108px; font-size: .85em; text-align: center; }
+.evo .mon img { image-rendering: pixelated; width: 64px; height: 64px; border-radius: 0; }
+.evo .nosprite { display: block; width: 64px; height: 64px; }
+.evo .arrow { display: inline-flex; flex-direction: column; align-items: center; min-width: 96px; max-width: 150px; padding: 0 8px;
+  font-size: .74em; line-height: 1.2; text-align: center; opacity: .8; gap: 4px; }
+.evo .arrow::after { content: '→'; font-size: 1.5em; line-height: 1; }
+.evo .arrow.mutagen { color: var(--m-accent); opacity: 1; font-weight: 600; }
+.evo .arrow.mutagen::after { content: none; }
+.evo .arrow.mutagen svg { width: 28px; height: 28px; color: var(--fg); }
+.evo .lines { display: inline-flex; flex-direction: column; gap: 8px; }
+.evo .line { display: inline-flex; align-items: center; }
+.evo .line.mutagen .mon { outline: 2px solid var(--m-strain); outline-offset: 2px; border-radius: 8px; }

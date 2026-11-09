@@ -6,6 +6,15 @@ Heart & Soul's own history see its documentation, and for the engine see `CHANGE
 
 ## Unreleased
 
+### Brand and documentation (no change to the ROM)
+- Pokémon Mutagen has a look of its own: the MUTAGEN wordmark traced from the title screen's banner,
+  a fork mark for "one line becomes two", the banner's greys with a strain magenta and a graft lime,
+  Space Grotesk and Silkscreen (both OFL). The README opens on a cover composed from the game's own
+  sprites, the documentation site carries the theme with the Mutagen chapters first and a landing
+  page, the evolution tree shows the fork on the Mutagen's line, and the videos get title cards and
+  captions in the same type. Rules and files: `docs/pokerom/design/brand.md`; generator:
+  `tools/brand/brand.py`. Nothing in it is a generated image.
+
 ### Fixed
 - Day Care: with a LEVEL CAP set, a Pokémon deposited above the cap "grew by 2xx levels" and the
   fee ran to over ¥20,000 (a u8 underflow); the shown level and the fee now follow the capped

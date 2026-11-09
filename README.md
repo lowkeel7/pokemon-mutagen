@@ -1,12 +1,19 @@
-![Pokémon Mutagen title screen](docs/pokerom/title.png)
+![Pokémon Mutagen: a second line of evolution](docs/pokerom/brand/cover.png)
+
+[Website](https://lowkeel7.github.io/pokemon-mutagen/) ·
+[The evolutions](https://lowkeel7.github.io/pokemon-mutagen/pokerom/evolutions.html) ·
+[Changelog](docs/pokerom/CHANGELOG.md) · [Backlog](docs/pokerom/BACKLOG.md) ·
+[Releases](https://github.com/lowkeel7/pokemon-mutagen/releases)
 
 # Pokémon Mutagen
 
 A Game Boy Advance Pokémon game: a fork of [Pokémon Heart & Soul](docs/hns/README.md) 2.0.6, the
 GSC remake / HGSS demake. You get all of Heart & Soul's Johto and Kanto, its options and challenges,
-plus fixes and new options of our own. Everything new is an option, and switched off the game plays
-like Heart & Soul. Bigger systems (a third type, signature moves, new items) are planned, each behind
-its own option ([backlog](docs/pokerom/BACKLOG.md)).
+plus fixes and new options of our own. The Mutagen itself is a mutant strain of Pokérus: a Pokémon
+that catches it and outlives it can evolve along a second line, into its Paradox or regional twin
+([the evolutions](docs/pokerom/evolutions.md)), with a third type grafted on. Everything new is an
+option, and switched off the game plays like Heart & Soul. Bigger systems (signature moves, new
+items) are planned, each behind its own option ([backlog](docs/pokerom/BACKLOG.md)).
 
 Current version: **0.1.0** ([what changed](docs/pokerom/CHANGELOG.md)). It is made for real GBA
 hardware (a flash cart) and for RetroArch's mGBA core on a phone; each release's notes say how it
@@ -49,7 +56,11 @@ Most of the code changes in this fork were written with an AI coding assistant (
 the maintainer's direction, and tested with the automated checks below. The title banner's M, G and
 N and the version's 1 were drawn by that assistant in Heart & Soul's existing pixel font, at the
 maintainer's request; everything else in the art, and all music and story text, is Heart & Soul's
-or credited in PROVENANCE.md. Heart & Soul's own disclosure is in [its README](docs/hns/README.md).
+or credited in PROVENANCE.md. The brand (the cover above, the site's look, the icons) is composed by
+a script, `tools/brand/brand.py`, from the game's own pixels, the banner's letters, its sprites
+and type icons, and two open-licence fonts; nothing in it is a generated image
+([brand notes](docs/pokerom/design/brand.md)). Heart & Soul's own disclosure is in
+[its README](docs/hns/README.md).
 
 **Made with [Irie](https://github.com/irie-people/irie)**, the open-source Mac app that runs those
 assistant sessions side by side and keeps them in check.
@@ -59,4 +70,5 @@ assistant sessions side by side and keeps them in check.
 `make hns` builds the development ROM and `tools/release.sh` the release and its patch; setup,
 toolchain notes and the checks (battle-test gate, headless playtests, map and trainer sweeps) are in
 [CLAUDE.md](CLAUDE.md) §1 and [INSTALL.md](INSTALL.md). Releases follow
-[docs/pokerom/RELEASE.md](docs/pokerom/RELEASE.md).
+[docs/pokerom/RELEASE.md](docs/pokerom/RELEASE.md). The documentation site is the mdbook in `docs/`
+(`cd docs && mdbook build`), published at <https://lowkeel7.github.io/pokemon-mutagen/>.

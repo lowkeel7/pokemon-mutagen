@@ -6,13 +6,15 @@
 
 Drives a headless Chrome over its DevTools protocol: opens the page with ?record, asks it for one
 frame of the demo walk (/demo, see demo.py) at a time, takes a screenshot of each, and feeds them to
-ffmpeg (`brew install ffmpeg`), which writes an H.264 .mp4 with the map's name drawn on. A second
+ffmpeg (`brew install ffmpeg`), which writes an H.264 .mp4 with the brand's title card first and the
+map's name drawn on in the brand's type (tools/brand/brand.py, docs/pokerom/design/brand.md). A second
 Chrome with its own profile is started beside the one in use (and closed at the end) unless one
 already answers on the DevTools port. Chrome is needed: Mullvad Browser and Tor Browser refuse WebGL
 readback. About two minutes for the 30-second walk.
 """
 import argparse
 import base64
+import io
 import json
 import os
 import shutil
@@ -26,11 +28,15 @@ import urllib.parse
 import urllib.request
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "brand"))
 import export_map  # noqa: E402
+import brand  # noqa: E402
 
 ROOT = export_map.ROOT
 WIDTH, HEIGHT = 1920, 1080
-FONTS = ("/System/Library/Fonts/Helvetica.ttc", "/System/Library/Fonts/Supplemental/Arial.ttf")
+CARD_SECONDS = 2.5                      # the title card before the walk
+TITLE_FONT = os.path.join(brand.FONTS, "SpaceGrotesk-Bold.ttf")
+FOOTER_FONT = os.path.join(brand.FONTS, "SpaceGrotesk-Medium.ttf")
 
 
 # --- a small DevTools client (stdlib only) --------------------------------------------------------
@@ -150,22 +156,27 @@ def launch_chrome(port, profile):
 
 # --- the video ------------------------------------------------------------------------------------
 
-def caption_filters(out_dir, segments):
-    """drawtext filters: the map's name while the walk is on it, the title throughout. The texts go
-    through files, so no character needs escaping for the filter graph."""
-    font = next((p for p in FONTS if os.path.exists(p)), None)
-    if font is None:
+def caption_filters(out_dir, segments, offset):
+    """drawtext filters in the brand's type: the map's name (with the strain's bar at its left) while
+    the walk is on it, the footer line throughout; both after the title card's `offset` frames. The
+    texts go through files, so no character needs escaping for the filter graph."""
+    if not (os.path.exists(TITLE_FONT) and os.path.exists(FOOTER_FONT)):
         return []
-    texts = [(None, None, "Pokémon Mutagen · voxel view", 30, HEIGHT - 86)]
-    texts += [(s["start"], s["end"], s["map"], 56, 44) for s in segments]
+    bone, ash, ink, strain = (brand.C[k].lstrip("#") for k in ("bone", "ash", "ink", "strain"))
     filters = []
-    for i, (start, end, text, size, y) in enumerate(texts):
+    footer = os.path.join(out_dir, "caption-footer.txt")
+    with open(footer, "w") as f:
+        f.write("Pokémon Mutagen · voxel view")
+    filters.append(f"drawtext=fontfile={FOOTER_FONT}:textfile={footer}:fontsize=30:fontcolor=0x{ash}"
+                   f":box=1:boxcolor=0x{ink}@0.55:boxborderw=10:x=58:y={HEIGHT - 86}:enable='gte(n,{offset})'")
+    for i, segment in enumerate(segments):
         path = os.path.join(out_dir, f"caption-{i}.txt")
         with open(path, "w") as f:
-            f.write(text)
-        enable = f":enable='between(n,{start},{end - 1})'" if start is not None else ""
-        filters.append(f"drawtext=fontfile={font}:textfile={path}:fontsize={size}:fontcolor=white"
-                       f":borderw=3:bordercolor=black@0.55:x=48:y={y}{enable}")
+            f.write(segment["map"])
+        enable = f"enable='between(n,{segment['start'] + offset},{segment['end'] + offset - 1})'"
+        filters.append(f"drawbox=x=48:y=44:w=8:h=80:color=0x{strain}:t=fill:{enable}")
+        filters.append(f"drawtext=fontfile={TITLE_FONT}:textfile={path}:fontsize=56:fontcolor=0x{bone}"
+                       f":box=1:boxcolor=0x{ink}@0.55:boxborderw=12:x=72:y=56:{enable}")
     return filters
 
 
@@ -203,7 +214,10 @@ def main():
 
     out_dir = os.path.dirname(os.path.abspath(args.out))
     os.makedirs(out_dir, exist_ok=True)
-    filters = caption_filters(out_dir, demo["segments"])
+    card_frames = int(CARD_SECONDS * fps)
+    card = io.BytesIO()
+    brand.titlecard((WIDTH, HEIGHT), "voxel view").convert("RGB").save(card, "PNG")
+    filters = caption_filters(out_dir, demo["segments"], card_frames)
     command = [ffmpeg, "-y", "-loglevel", "error", "-f", "image2pipe", "-vcodec", "png", "-framerate", str(fps),
                "-i", "-", "-c:v", "libx264", "-preset", "medium", "-crf", "18", "-pix_fmt", "yuv420p",
                "-movflags", "+faststart", args.out]
@@ -213,6 +227,8 @@ def main():
     encoder = subprocess.Popen(command, stdin=subprocess.PIPE, stderr=log, stdout=log)
     started = time.time()
     print(f"record: {frames} frames at {fps} fps, {WIDTH}x{HEIGHT} → {args.out}", flush=True)
+    for _ in range(card_frames):
+        encoder.stdin.write(card.getvalue())
     for k in range(frames):
         tab.evaluate(f"demoStep({k})")
         shot = tab.call("Page.captureScreenshot", format="png", fromSurface=True)
@@ -230,7 +246,7 @@ def main():
     if code != 0:
         sys.exit(f"record: ffmpeg exited {code}, see {os.path.join(out_dir, 'ffmpeg.log')}")
     size = os.path.getsize(args.out)
-    print(f"record: wrote {args.out} ({size / 1e6:.1f} MB, {frames / fps:.1f} s) in {time.time() - started:.0f} s")
+    print(f"record: wrote {args.out} ({size / 1e6:.1f} MB, {(frames + card_frames) / fps:.1f} s) in {time.time() - started:.0f} s")
 
 
 if __name__ == "__main__":

@@ -16,11 +16,15 @@ import sys
 
 from PIL import Image
 
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "brand"))
+import brand  # noqa: E402  (tools/brand/brand.py: the fork mark)
+
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 SPECIES_INFO = os.path.join(ROOT, "src/data/pokemon/species_info")
 GRAPHICS = os.path.join(ROOT, "graphics/pokemon")
 OUT_MD = os.path.join(ROOT, "docs/pokerom/evolutions.md")
 OUT_SPRITES = os.path.join(ROOT, "docs/pokerom/sprites")
+MARK = brand.mark_svg("currentColor", brand.C["strain"]).strip()   # styled by docs/pokerom/brand/mutagen.css (.evo)
 MUTAGEN_CONDITIONS = {"IF_MUTAGEN": "Mutagen", "IF_MUTAGEN_ANCIENT": "Mutagen, even strain",
                       "IF_MUTAGEN_FUTURE": "Mutagen, odd strain"}
 NAMES = {"MR_RIME": "Mr. Rime", "MR_MIME": "Mr. Mime", "MIME_JR": "Mime Jr.", "SIRFETCHD": "Sirfetch'd",
@@ -151,7 +155,10 @@ def card(species):
 
 
 def arrow(label, mutagen=False):
-    return f'<div class="arrow{" mutagen" if mutagen else ""}"><span>{label}</span></div>'
+    """The usual line gets a plain arrow (CSS); the Mutagen's line the brand's fork mark."""
+    if mutagen:
+        return f'<div class="arrow mutagen"><span>{label}</span>{MARK}</div>'
+    return f'<div class="arrow"><span>{label}</span></div>'
 
 
 def main():
@@ -167,21 +174,9 @@ def main():
              "A Pokémon that carries the Mutagen, the mutant strain of Pokérus, and outlives it can evolve along",
              "a second line when it next levels up: the Mutagen's twin of its usual evolution, a form the game's",
              "data already held (the Paradox and regional relatives). The usual line stays open; the Mutagen",
-             "line is the highlighted one. The strain's parity decides Donphan's two twins. Generated from the",
-             f"species data by `tools/site/evolutions.py`: {len(families)} families.", "",
-             "<style>",
-             ".evo { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 0; margin: 18px 0; padding: 10px 12px;",
-             "       border: 1px solid rgba(128,128,128,.35); border-radius: 10px; }",
-             ".evo .mon { display: inline-flex; flex-direction: column; align-items: center; width: 108px; font-size: .85em; text-align: center; }",
-             ".evo .mon img { image-rendering: pixelated; width: 64px; height: 64px; }",
-             ".evo .nosprite { display: block; width: 64px; height: 64px; }",
-             ".evo .arrow { display: inline-flex; flex-direction: column; align-items: center; min-width: 90px; font-size: .75em; opacity: .8; }",
-             ".evo .arrow::after { content: '→'; font-size: 1.6em; line-height: 1; }",
-             ".evo .arrow.mutagen { color: #c43ad6; opacity: 1; font-weight: 600; }",
-             ".evo .lines { display: inline-flex; flex-direction: column; gap: 6px; }",
-             ".evo .line { display: inline-flex; align-items: center; }",
-             ".evo .line.mutagen .mon { outline: 2px solid #c43ad6; outline-offset: 2px; border-radius: 8px; }",
-             "</style>", ""]
+             "line is the one marked with the fork. The strain's parity decides Donphan's two twins. Generated",
+             f"from the species data by `tools/site/evolutions.py`: {len(families)} families.", "",
+             ""]
     for species in families:
         chain = []      # what evolves into this species, nearest first, up to two steps
         current = species
