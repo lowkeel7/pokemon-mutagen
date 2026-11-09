@@ -1,4 +1,5 @@
 #include "global.h"
+#include "mutagen.h"
 #include "main.h"
 #include "battle.h"
 #include "battle_anim.h"
@@ -4594,7 +4595,18 @@ static void SetMonTypeIcons(void)
     }
     else
     {
+        u32 third = GetMonThirdType(&sMonSummaryScreen->currentMon); // Pokémon Mutagen (SG-01)
+
         SetTypeSpritePosAndPal(GetSpeciesType(summary->species, 0), 120, 48, SPRITE_ARR_ID_TYPE);
+        if (third != TYPE_NONE && third != GetSpeciesType(summary->species, 0) && third != GetSpeciesType(summary->species, 1))
+        {
+            SetTypeSpritePosAndPal(third, 200, 48, SPRITE_ARR_ID_TYPE + 2);
+            SetSpriteInvisibility(SPRITE_ARR_ID_TYPE + 2, FALSE);
+        }
+        else
+        {
+            SetSpriteInvisibility(SPRITE_ARR_ID_TYPE + 2, TRUE);
+        }
         if (GetSpeciesType(summary->species, 0) != GetSpeciesType(summary->species, 1))
         {
             SetTypeSpritePosAndPal(GetSpeciesType(summary->species, 1), 160, 48, SPRITE_ARR_ID_TYPE + 1);

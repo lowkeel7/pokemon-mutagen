@@ -18,11 +18,11 @@ Anchors at HnS 2.0.6 (`167aa6d`). None of the `unused_*` fields below are refere
 | Where | Free | Notes |
 |---|---|---|
 | Substruct0 (:129) | `unused_02:6`, `unused_04:3`, `unused_0A:2` | `teraType:5` at :132; reusable only if Tera stays off |
-| Substruct1 | `unused_04:5`, `unused_06:3` | |
+| Substruct1 | `unused_06:2` | `thirdType:5` (SG-01) and `thirdTypePending:1` (SG-17) claimed, were `unused_04:5` and one bit of `unused_06` |
 | Substruct3 | (none) | `isMutagen:1` claimed by SG-17 (was `unused_0B`) |
 | BoxPokemon (:255) | `unused_13:1`, `unused_1E:1` | `shinyModifier:1` at :273 |
 
-Total about 21 bits free. Claimed: SG-17 `isMutagen` (Substruct3). Planned: third type (5 bits, SG-01's `teraType`), variant flags (1 each), equipment index.
+Total about 15 bits free. Claimed: SG-17 `isMutagen` (Substruct3), SG-01 `thirdType:5` + `thirdTypePending:1` (Substruct1; `teraType` was not usable: CreateBoxMon fills it for every Pokémon). Planned: variant flags (1 each), equipment index.
 Claim them in BACKLOG before writing code, so two features don't take the same bits.
 
 ## Option bits (`struct ChallengeSettings`)

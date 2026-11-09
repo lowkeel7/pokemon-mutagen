@@ -5193,9 +5193,13 @@ void DebugNative_Party_GiveMutagen(struct ScriptContext *ctx)
 
     if (gSpecialVar_0x8004 >= PARTY_SIZE || GetMonData(mon, MON_DATA_SPECIES) == SPECIES_NONE)
         return;
+    u32 graft = TYPE_DRAGON; // a type few of them have, so the third icon shows
+
     SetMonData(mon, MON_DATA_IS_MUTAGEN, &one);
     SetMonData(mon, MON_DATA_POKERUS_STRAIN, &strain);
     SetMonData(mon, MON_DATA_POKERUS_DAYS_LEFT, &zero);
+    SetMonData(mon, MON_DATA_THIRD_TYPE, &graft);
+    SetMonData(mon, MON_DATA_THIRD_TYPE_PENDING, &one);
     MutagenOnStrainEnd(mon);
 }
 

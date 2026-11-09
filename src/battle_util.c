@@ -1,4 +1,5 @@
 #include "global.h"
+#include "mutagen.h"
 #include "battle.h"
 #include "battle_anim.h"
 #include "battle_arena.h"
@@ -9611,6 +9612,13 @@ void CopyMonAbilityAndTypesToBattleMon(enum BattlerId battler, struct Pokemon *m
     gBattleMons[battler].types[0] = GetSpeciesType(gBattleMons[battler].species, 0);
     gBattleMons[battler].types[1] = GetSpeciesType(gBattleMons[battler].species, 1);
     gBattleMons[battler].types[2] = TYPE_MYSTERY;
+    {
+        // Pokémon Mutagen (SG-01): the grafted third type, in the slot Forest's Curse uses.
+        u32 third = GetMonThirdType(mon);
+
+        if (third != TYPE_NONE && third != gBattleMons[battler].types[0] && third != gBattleMons[battler].types[1])
+            gBattleMons[battler].types[2] = third;
+    }
 }
 
 void RecalcBattlerStats(enum BattlerId battler, struct Pokemon *mon, bool32 isDynamaxing)

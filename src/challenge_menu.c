@@ -84,6 +84,7 @@ enum {
     ITEM_MUTAGEN_MUTAGEN,
     ITEM_MUTAGEN_NEW_GAME_PLUS,
     ITEM_MUTAGEN_DISCOVERY,
+    ITEM_MUTAGEN_THIRD_TYPE,
     ITEM_MUTAGEN_NEXT,
     ITEM_MUTAGEN_COUNT,
 };
@@ -466,6 +467,11 @@ static const u8 *const sDesc_NewGamePlus[] = {
 static const u8 *const sDesc_Discovery[] = {
     COMPOUND_STRING("Wild Pokémon as in Heart & Soul."),
     COMPOUND_STRING("1 in 128 wild Pokémon is a boss, and\nmore lead abilities pull their type."),
+};
+
+static const u8 *const sDesc_ThirdType[] = {
+    COMPOUND_STRING("Two types, as in Heart & Soul."),
+    COMPOUND_STRING("The MUTAGEN grafts the type of the\nPokémon that passed it on, as a third."),
 };
 
 static const u8 *const sDesc_MutagenNext[] = {
@@ -864,6 +870,12 @@ static const struct ChallengeMenuItem sTabItems_Mutagen[] = {
     [ITEM_MUTAGEN_DISCOVERY] = {
         .name         = COMPOUND_STRING("DISCOVERY"),
         .descriptions = sDesc_Discovery,
+        .numChoices   = 2,
+        .choiceNames  = sChoices_OffOn,
+    },
+    [ITEM_MUTAGEN_THIRD_TYPE] = {
+        .name         = COMPOUND_STRING("THIRD TYPE"),
+        .descriptions = sDesc_ThirdType,
         .numChoices   = 2,
         .choiceNames  = sChoices_OffOn,
     },
@@ -1562,6 +1574,7 @@ static void ApplyMutagenPresets(void)
     *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_MUTAGEN)         = 1; // ON
     *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_NEW_GAME_PLUS)   = 1; // KEEP LV
     *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_DISCOVERY)       = 1; // ON
+    *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_THIRD_TYPE)      = 1; // ON
 }
 
 // =============================================================================
@@ -2198,6 +2211,7 @@ static void Task_ConfirmSaveYes(u8 taskId)
     gSaveBlock3Ptr->mutagenSettings.mutagen      = *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_MUTAGEN);
     gSaveBlock3Ptr->mutagenSettings.newGamePlus  = *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_NEW_GAME_PLUS);
     gSaveBlock3Ptr->mutagenSettings.discovery    = *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_DISCOVERY);
+    gSaveBlock3Ptr->mutagenSettings.thirdType    = *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_THIRD_TYPE);
     if (*GetSelectionPtr(TAB_MODE, ITEM_MODE_GAMEMODE) == 2) // GAMEMODE MUTAGEN: type icons on too
         cs->typeIcons = 3;
 
@@ -2450,6 +2464,7 @@ void CB2_InitChallengeMenu(void)
             *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_MUTAGEN)      = gSaveBlock3Ptr->mutagenSettings.mutagen;
             *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_NEW_GAME_PLUS)= gSaveBlock3Ptr->mutagenSettings.newGamePlus;
             *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_DISCOVERY)    = gSaveBlock3Ptr->mutagenSettings.discovery;
+            *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_THIRD_TYPE)   = gSaveBlock3Ptr->mutagenSettings.thirdType;
 
             // Randomizer tab — derive master toggle from whether any sub-field is active
             *GetSelectionPtr(TAB_RANDOMIZER, ITEM_RANDOM_OFF_ON) =

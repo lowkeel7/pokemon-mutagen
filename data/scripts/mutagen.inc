@@ -22,6 +22,17 @@ Mutagen_EventScript_MutagenNotice::
 Mutagen_Text_CaughtMutagen:
 	.string "{STR_VAR_1} caught the MUTAGEN strain\nof POKéRUS!$"
 
+@ After the next wild battle once the mutant strain has run its course (SG-17).
+Mutagen_EventScript_MutagenEnded::
+	lockall
+	callnative Mutagen_BufferPokerusNoticeMon
+	msgbox Mutagen_Text_MutagenEnded, MSGBOX_DEFAULT
+	releaseall
+	end
+
+Mutagen_Text_MutagenEnded:
+	.string "{STR_VAR_1}'s MUTAGEN strain ran its\ncourse!{STR_VAR_2}$"
+
 @ SHINY STARTER (SG-16), called from Elm's lab once the starter is confirmed.
 Mutagen_EventScript_AskShinyStarter::
 	msgbox Mutagen_Text_ShinyStarter, MSGBOX_YESNO

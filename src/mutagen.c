@@ -13,6 +13,9 @@
 #include "script.h"
 #include "string_util.h"
 #include "task.h"
+#include "constants/characters.h"
+#include "text.h"
+#include "battle_main.h"
 #include "species_picker.h"
 #include "coins.h"
 #include "item.h"
@@ -152,10 +155,36 @@ bool32 MutagenHasRunItsCourse(struct Pokemon *mon)
 void MutagenOnStrainEnd(struct Pokemon *mon)
 {
     u32 species = GetMonData(mon, MON_DATA_SPECIES);
-    u32 abilityNum = 2;
+    u32 abilityNum = 2, zero = 0;
 
     if (GetSpeciesAbility(species, abilityNum) != ABILITY_NONE)
         SetMonData(mon, MON_DATA_ABILITY_NUM, &abilityNum);
+    SetMonData(mon, MON_DATA_THIRD_TYPE_PENDING, &zero); // the graft sets (SG-01)
+    // Told after the next wild battle, unless another notice is already waiting.
+    if (gPokerusNoticeSlot == 0 && mon >= gPlayerParty && mon < gPlayerParty + PARTY_SIZE)
+    {
+        gPokerusNoticeSlot = (mon - gPlayerParty) + 1;
+        gPokerusNoticeKind = 3;
+    }
+}
+
+// THIRD TYPE (SG-01): the Mutagen grafts the first type of the Pokémon that passed the strain on;
+// it counts once the strain has run its course, and only while the option is on.
+bool32 IsThirdTypeOn(void)
+{
+    return gSaveBlock3Ptr != NULL && gSaveBlock3Ptr->mutagenSettings.thirdType;
+}
+
+u32 GetMonThirdType(struct Pokemon *mon)
+{
+    u32 third;
+
+    if (!IsThirdTypeOn() || GetMonData(mon, MON_DATA_THIRD_TYPE_PENDING))
+        return TYPE_NONE;
+    third = GetMonData(mon, MON_DATA_THIRD_TYPE);
+    if (third >= NUMBER_OF_MON_TYPES || third == TYPE_MYSTERY || third == TYPE_STELLAR)
+        return TYPE_NONE;
+    return third;
 }
 
 // NEW GAME+ (SG-15), after R.O.W.E.: NEW GAME on the title menu becomes NEW GAME+ once the game
@@ -341,10 +370,11 @@ void NewGamePlus_Finish(void *carry)
 // infects a party member and the option is above RARE; CB2_EndWildBattle then returns to the field
 // through this callback, which runs the notice script once the fade-in is done.
 EWRAM_DATA u8 gPokerusNoticeSlot = 0;
-EWRAM_DATA bool8 gPokerusNoticeMutant = FALSE;
+EWRAM_DATA u8 gPokerusNoticeKind = 0;
 
 extern const u8 Mutagen_EventScript_PokerusNotice[];
 extern const u8 Mutagen_EventScript_MutagenNotice[];
+extern const u8 Mutagen_EventScript_MutagenEnded[];
 
 static void Task_ReturnToFieldPokerusNotice(u8 taskId)
 {
@@ -353,7 +383,12 @@ static void Task_ReturnToFieldPokerusNotice(u8 taskId)
         DestroyTask(taskId);
         ScriptUnfreezeObjectEvents();
         UnlockPlayerFieldControls();
-        ScriptContext_SetupScript(gPokerusNoticeMutant ? Mutagen_EventScript_MutagenNotice : Mutagen_EventScript_PokerusNotice);
+        if (gPokerusNoticeKind == 3)
+            ScriptContext_SetupScript(Mutagen_EventScript_MutagenEnded);
+        else if (gPokerusNoticeKind == 2)
+            ScriptContext_SetupScript(Mutagen_EventScript_MutagenNotice);
+        else
+            ScriptContext_SetupScript(Mutagen_EventScript_PokerusNotice);
     }
 }
 
@@ -369,7 +404,24 @@ void Mutagen_BufferPokerusNoticeMon(struct ScriptContext *ctx)
 {
     u32 slot = gPokerusNoticeSlot ? gPokerusNoticeSlot - 1 : 0;
 
+    static const u8 sText_AbilityAwakened[] = _("\pIts hidden ability awakened.");
+    static const u8 sText_TookOnType[] = _("\pIt took on the ");
+    static const u8 sText_TypeSuffix[] = _(" type!");
+    struct Pokemon *mon = &gPlayerParty[slot];
+    u32 species = GetMonData(mon, MON_DATA_SPECIES);
+    u32 third = GetMonThirdType(mon);
+
     gPokerusNoticeSlot = 0;
-    gPokerusNoticeMutant = FALSE;
-    GetMonNickname(&gPlayerParty[slot], gStringVar1);
+    gPokerusNoticeKind = 0;
+    GetMonNickname(mon, gStringVar1);
+    // The strain-end notice: what the mutation gave (STR_VAR_2).
+    gStringVar2[0] = EOS;
+    if (GetSpeciesAbility(species, 2) != ABILITY_NONE)
+        StringAppend(gStringVar2, sText_AbilityAwakened);
+    if (third != TYPE_NONE)
+    {
+        StringAppend(gStringVar2, sText_TookOnType);
+        StringAppend(gStringVar2, gTypesInfo[third].name);
+        StringAppend(gStringVar2, sText_TypeSuffix);
+    }
 }

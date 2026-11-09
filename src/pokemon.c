@@ -4643,6 +4643,12 @@ u32 GetBoxMonData3(struct BoxPokemon *boxMon, s32 field, u8 *data)
         case MON_DATA_IS_MUTAGEN:
             retVal = GetSubstruct3(boxMon)->isMutagen;
             break;
+        case MON_DATA_THIRD_TYPE:
+            retVal = GetSubstruct1(boxMon)->thirdType;
+            break;
+        case MON_DATA_THIRD_TYPE_PENDING:
+            retVal = GetSubstruct1(boxMon)->thirdTypePending;
+            break;
         case MON_DATA_MET_LOCATION:
             retVal = GetSubstruct3(boxMon)->metLocation;
             break;
@@ -5160,6 +5166,12 @@ void SetBoxMonData(struct BoxPokemon *boxMon, s32 field, const void *dataArg)
             break;
         case MON_DATA_IS_MUTAGEN:
             GetSubstruct3(boxMon)->isMutagen = (*data != 0);
+            break;
+        case MON_DATA_THIRD_TYPE:
+            GetSubstruct1(boxMon)->thirdType = *data & 0x1F;
+            break;
+        case MON_DATA_THIRD_TYPE_PENDING:
+            GetSubstruct1(boxMon)->thirdTypePending = (*data != 0);
             break;
         case MON_DATA_MET_LOCATION:
             SET8(GetSubstruct3(boxMon)->metLocation);

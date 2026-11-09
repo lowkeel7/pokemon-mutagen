@@ -12,6 +12,8 @@ u64 GetMutagenTrainerAiFlags(void);    // added to every trainer's AI flags (QW-
 bool32 AreShinyTokensSold(void);       // SHINY TOKEN in every Poké Mart (QW-14)
 bool32 IsStarterPickAny(void);         // the lab's balls open a species list (SG-16)
 bool32 IsDiscoveryOn(void);            // wild bosses, lead-ability encounter pulls (QW-32)
+bool32 IsThirdTypeOn(void);            // the grafted third type is live (SG-01)
+u32 GetMonThirdType(struct Pokemon *mon); // the live third type, TYPE_NONE when off, pending or unset
 extern bool8 gWildBossPending;         // the wild Pokémon just created is a boss (QW-32)
 u32 GetShinyStarterMode(void);         // 0 chance, 1 ask, 2 always (SG-16)
 void Mutagen_StarterPicker(struct ScriptContext *ctx);
@@ -34,7 +36,7 @@ void NewGamePlus_Finish(void *carry);       // level reset, the loop count, free
 u32 ApplyNewGamePlusRamp(u32 level);        // +1 level per New Game+ loop for wild and trainer Pokémon
 
 extern u8 gPokerusNoticeSlot;          // party slot + 1 of the Pokémon that just caught Pokérus, 0 none
-extern bool8 gPokerusNoticeMutant;     // that infection was the mutant strain
+extern u8 gPokerusNoticeKind;          // 1 caught Pokérus, 2 caught the mutant strain, 3 the mutant strain ran its course
 void FieldCB_ReturnToFieldPokerusNotice(void);
 void Mutagen_BufferPokerusNoticeMon(struct ScriptContext *ctx);
 

@@ -68,6 +68,8 @@ enum MonData {
     MON_DATA_POKERUS_STRAIN,
     MON_DATA_POKERUS_DAYS_LEFT,
     MON_DATA_IS_MUTAGEN, // Pokémon Mutagen (SG-17)
+    MON_DATA_THIRD_TYPE, // Pokémon Mutagen (SG-01): raw, TYPE_NONE for none
+    MON_DATA_THIRD_TYPE_PENDING,
     MON_DATA_MET_LOCATION,
     MON_DATA_MET_LEVEL,
     MON_DATA_MET_GAME,
@@ -150,9 +152,10 @@ struct PokemonSubstruct1
     enum Move move2:11; // 2047 moves.
     u16 evolutionTracker2:5;
     enum Move move3:11; // 2047 moves.
-    u16 unused_04:5;
+    u16 thirdType:5;    // Pokémon Mutagen (SG-01): a grafted third type, TYPE_NONE for none
     enum Move move4:11; // 2047 moves.
-    u16 unused_06:3;
+    u16 thirdTypePending:1; // the graft waits for the mutant strain to run its course (SG-17)
+    u16 unused_06:2;
     u16 hyperTrainedHP:1;
     u16 hyperTrainedAttack:1;
     u8 pp1:7; // 127 PP.

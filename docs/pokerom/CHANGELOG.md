@@ -62,6 +62,10 @@ Heart & Soul's own history see its documentation, and for the engine see `CHANGE
   perfect IVs and its hidden ability, announced as "A powerful wild X appeared!"; and eighteen more
   abilities on your lead Pokémon pull wild Pokémon of their type, the way Static and Magnet Pull
   always have (Blaze for Fire, Torrent for Water, Overgrow for Grass, Swarm for Bug…).
+- **Third type** (MUTAGEN tab, THIRD TYPE → ON): when the Mutagen strain runs its course, the
+  Pokémon takes on the first type of the Pokémon that passed the strain on as a third type, shown
+  as a third icon in its summary and counted in battle. The strain's end is announced after the
+  next wild battle, with what it awakened.
 - **DS-style sprites**: FEATURES → SPRITES switches every Pokémon's battle art between GBA (the
   default, Heart & Soul's look) and DS: DS-era art for the 393 Gen 1-3 species, Gen 4 shadows
   under foes, female forms and the DS-style Substitute doll. Older saves read GBA.
