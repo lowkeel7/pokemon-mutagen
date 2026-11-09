@@ -8,7 +8,7 @@ wait 90                                 # main menu fade-in eats an early A
 press A                                 # NEW GAME
 mashuntil A MainCB2 5000                # professor's speech up to the challenge menu (MainCB2 there)
 wait 60                                 # its fade-in ignores input
-press R; press R; press R; press R; press R; press R   # last tab, CHALLENGES (MUTAGEN is the third)
+press R; press R; press R; press R; press R; press R; press R   # last tab, CHALLENGES (MUTAGEN third, CHEATS fourth)
 wait 30
 press DOWN 4 8; press DOWN 4 8; press DOWN 4 8; press DOWN 4 8; press DOWN 4 8
 press DOWN 4 8; press DOWN 4 8; press DOWN 4 8; press DOWN 4 8; press DOWN 4 8

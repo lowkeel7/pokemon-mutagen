@@ -333,6 +333,7 @@ void NewGameInitData(void)
 
     if (newGamePlus)
         NewGamePlus_Finish(newGamePlusCarry);
+    Mutagen_ApplyCheats(); // the CHEATS rows chosen in the new-game menu, after the flag reset
     // Sync engine flags from restored challenge settings
     if (!gSaveBlock3Ptr->challengeSettings.tx_Mode_Mints)
         FlagSet(FLAG_MINTS_DISABLED);

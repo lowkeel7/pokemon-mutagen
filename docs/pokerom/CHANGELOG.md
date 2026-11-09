@@ -66,6 +66,10 @@ Heart & Soul's own history see its documentation, and for the engine see `CHANGE
   Pokémon takes on the first type of the Pokémon that passed the strain on as a third type, shown
   as a third icon in its summary and counted in battle. The strain's end is announced after the
   next wild battle, with what it awakened.
+- **A CHEATS tab** (fourth tab of the new-game and PC options), every row off by default: CHEAT
+  SHELF (every Poké Mart also sells Rare Candies, Master Balls, stones, caps…), INFINITE PP, CATCH
+  ALWAYS (any ball, its own look), MOBILE PC (the POKéMON BOX LINK in your bag), WALK ANYWHERE,
+  WILD BATTLES OFF, TRAINERS SEE OFF, POKéDEX COMPLETE.
 - **DS-style sprites**: FEATURES → SPRITES switches every Pokémon's battle art between GBA (the
   default, Heart & Soul's look) and DS: DS-era art for the 393 Gen 1-3 species, Gen 4 shadows
   under foes, female forms and the DS-style Substitute doll. Older saves read GBA.

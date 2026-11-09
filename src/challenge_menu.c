@@ -1,4 +1,5 @@
 #include "global.h"
+#include "mutagen.h"
 #include "bg.h"
 #include "event_data.h"
 #include "gpu_regs.h"
@@ -36,6 +37,7 @@ enum {
     TAB_MODE,
     TAB_FEATURES,
     TAB_MUTAGEN, // Pokémon Mutagen's own options (QW-29)
+    TAB_CHEATS,  // player cheats, each zero = HnS (QW-16)
     TAB_RANDOMIZER,
     TAB_NUZLOCKE,
     TAB_DIFFICULTY,
@@ -87,6 +89,19 @@ enum {
     ITEM_MUTAGEN_THIRD_TYPE,
     ITEM_MUTAGEN_NEXT,
     ITEM_MUTAGEN_COUNT,
+};
+
+enum {
+    ITEM_CHEATS_SHELF,
+    ITEM_CHEATS_INFINITE_PP,
+    ITEM_CHEATS_CATCH_ALWAYS,
+    ITEM_CHEATS_MOBILE_PC,
+    ITEM_CHEATS_WALLS,
+    ITEM_CHEATS_WILD_BATTLES,
+    ITEM_CHEATS_TRAINERS_SEE,
+    ITEM_CHEATS_DEX_COMPLETE,
+    ITEM_CHEATS_NEXT,
+    ITEM_CHEATS_COUNT,
 };
 
 enum {
@@ -475,6 +490,53 @@ static const u8 *const sDesc_ThirdType[] = {
 };
 
 static const u8 *const sDesc_MutagenNext[] = {
+    COMPOUND_STRING("Continue to Cheats."),
+};
+
+// CHEATS tab (QW-16). The first choice of every row is Heart & Soul.
+static const u8 *const sChoices_CheatOnOff[] = {
+    COMPOUND_STRING("ON"),
+    COMPOUND_STRING("OFF"),
+};
+
+static const u8 *const sChoices_DexComplete[] = {
+    COMPOUND_STRING("NORMAL"),
+    COMPOUND_STRING("COMPLETE"),
+};
+
+static const u8 *const sDesc_CheatShelf[] = {
+    COMPOUND_STRING("Poké Marts sell their usual stock."),
+    COMPOUND_STRING("Every Poké Mart also sells Rare\nCandies, Master Balls, stones…"),
+};
+static const u8 *const sDesc_InfinitePp[] = {
+    COMPOUND_STRING("Moves use PP as usual."),
+    COMPOUND_STRING("Your Pokémon's moves never\nrun out of PP."),
+};
+static const u8 *const sDesc_CatchAlways[] = {
+    COMPOUND_STRING("Catching works as usual."),
+    COMPOUND_STRING("Every ball catches a wild Pokémon,\nand keeps its own look."),
+};
+static const u8 *const sDesc_MobilePc[] = {
+    COMPOUND_STRING("The PC is in Pokémon Centers."),
+    COMPOUND_STRING("The POKéMON BOX LINK in your bag\nopens the PC anywhere."),
+};
+static const u8 *const sDesc_Walls[] = {
+    COMPOUND_STRING("Walls are walls."),
+    COMPOUND_STRING("Walk through walls and over\nwater, trees and ledges."),
+};
+static const u8 *const sDesc_WildBattles[] = {
+    COMPOUND_STRING("Wild Pokémon appear as usual."),
+    COMPOUND_STRING("No wild battles, as if a Repel\nnever ran out."),
+};
+static const u8 *const sDesc_TrainersSee[] = {
+    COMPOUND_STRING("Trainers challenge you on sight."),
+    COMPOUND_STRING("Trainers only battle when you\ntalk to them."),
+};
+static const u8 *const sDesc_DexComplete[] = {
+    COMPOUND_STRING("The Pokédex fills as you play."),
+    COMPOUND_STRING("Every Pokémon seen and caught in\nthe Pokédex when you save this."),
+};
+static const u8 *const sDesc_CheatsNext[] = {
     COMPOUND_STRING("Continue to Randomizer options."),
 };
 static const u8 *const sDesc_ModernMoves[] = {
@@ -885,6 +947,18 @@ static const struct ChallengeMenuItem sTabItems_Mutagen[] = {
         .numChoices   = 0,
         .choiceNames  = NULL,
     },
+};
+
+static const struct ChallengeMenuItem sTabItems_Cheats[] = {
+    [ITEM_CHEATS_SHELF]        = { .name = COMPOUND_STRING("CHEAT SHELF"),   .descriptions = sDesc_CheatShelf,  .numChoices = 2, .choiceNames = sChoices_OffOn },
+    [ITEM_CHEATS_INFINITE_PP]  = { .name = COMPOUND_STRING("INFINITE PP"),   .descriptions = sDesc_InfinitePp,  .numChoices = 2, .choiceNames = sChoices_OffOn },
+    [ITEM_CHEATS_CATCH_ALWAYS] = { .name = COMPOUND_STRING("CATCH ALWAYS"),  .descriptions = sDesc_CatchAlways, .numChoices = 2, .choiceNames = sChoices_OffOn },
+    [ITEM_CHEATS_MOBILE_PC]    = { .name = COMPOUND_STRING("MOBILE PC"),     .descriptions = sDesc_MobilePc,    .numChoices = 2, .choiceNames = sChoices_OffOn },
+    [ITEM_CHEATS_WALLS]        = { .name = COMPOUND_STRING("WALK ANYWHERE"), .descriptions = sDesc_Walls,       .numChoices = 2, .choiceNames = sChoices_OffOn },
+    [ITEM_CHEATS_WILD_BATTLES] = { .name = COMPOUND_STRING("WILD BATTLES"),  .descriptions = sDesc_WildBattles, .numChoices = 2, .choiceNames = sChoices_CheatOnOff },
+    [ITEM_CHEATS_TRAINERS_SEE] = { .name = COMPOUND_STRING("TRAINERS SEE"),  .descriptions = sDesc_TrainersSee, .numChoices = 2, .choiceNames = sChoices_CheatOnOff },
+    [ITEM_CHEATS_DEX_COMPLETE] = { .name = COMPOUND_STRING("POKéDEX"),       .descriptions = sDesc_DexComplete, .numChoices = 2, .choiceNames = sChoices_DexComplete },
+    [ITEM_CHEATS_NEXT]         = { .name = COMPOUND_STRING("NEXT"),          .descriptions = sDesc_CheatsNext,  .numChoices = 0, .choiceNames = NULL },
 };
 
 // =============================================================================
@@ -1400,6 +1474,7 @@ static const struct TabDef sTabs[TAB_COUNT] = {
     [TAB_MODE]       = { COMPOUND_STRING("MODE"),       sTabItems_Mode,       ITEM_MODE_COUNT },
     [TAB_FEATURES]   = { COMPOUND_STRING("FEATURES"),   sTabItems_Features,   ITEM_FEATURES_COUNT },
     [TAB_MUTAGEN]    = { COMPOUND_STRING("MUTAGEN"),    sTabItems_Mutagen,    ITEM_MUTAGEN_COUNT },
+    [TAB_CHEATS]     = { COMPOUND_STRING("CHEATS"),     sTabItems_Cheats,     ITEM_CHEATS_COUNT },
     [TAB_RANDOMIZER] = { COMPOUND_STRING("RANDOMIZER"), sTabItems_Randomizer, ITEM_RANDOM_COUNT },
     [TAB_NUZLOCKE]   = { COMPOUND_STRING("NUZLOCKE"),   sTabItems_Nuzlocke,   ITEM_NUZLOCKE_COUNT },
     [TAB_DIFFICULTY] = { COMPOUND_STRING("DIFFICULTY"),  sTabItems_Difficulty, ITEM_DIFFICULTY_COUNT },
@@ -1483,6 +1558,7 @@ static bool8 CheckConditions(u8 tab, u8 itemIndex)
             return *GetSelectionPtr(TAB_MODE, ITEM_MODE_GAMEMODE) == 1; // CUSTOM
         }
     case TAB_MUTAGEN: // every row free, at any time
+    case TAB_CHEATS:
         return TRUE;
     case TAB_RANDOMIZER:
     {
@@ -2212,6 +2288,17 @@ static void Task_ConfirmSaveYes(u8 taskId)
     gSaveBlock3Ptr->mutagenSettings.newGamePlus  = *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_NEW_GAME_PLUS);
     gSaveBlock3Ptr->mutagenSettings.discovery    = *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_DISCOVERY);
     gSaveBlock3Ptr->mutagenSettings.thirdType    = *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_THIRD_TYPE);
+
+    // Cheats tab (QW-16): zero is Heart & Soul; the state-like ones are applied right away
+    gSaveBlock3Ptr->mutagenSettings.cheatShelf       = *GetSelectionPtr(TAB_CHEATS, ITEM_CHEATS_SHELF);
+    gSaveBlock3Ptr->mutagenSettings.infinitePp       = *GetSelectionPtr(TAB_CHEATS, ITEM_CHEATS_INFINITE_PP);
+    gSaveBlock3Ptr->mutagenSettings.catchAlways      = *GetSelectionPtr(TAB_CHEATS, ITEM_CHEATS_CATCH_ALWAYS);
+    gSaveBlock3Ptr->mutagenSettings.mobilePc         = *GetSelectionPtr(TAB_CHEATS, ITEM_CHEATS_MOBILE_PC);
+    gSaveBlock3Ptr->mutagenSettings.walkThroughWalls = *GetSelectionPtr(TAB_CHEATS, ITEM_CHEATS_WALLS);
+    gSaveBlock3Ptr->mutagenSettings.noWildBattles    = *GetSelectionPtr(TAB_CHEATS, ITEM_CHEATS_WILD_BATTLES);
+    gSaveBlock3Ptr->mutagenSettings.trainersDontSee  = *GetSelectionPtr(TAB_CHEATS, ITEM_CHEATS_TRAINERS_SEE);
+    gSaveBlock3Ptr->mutagenSettings.dexComplete      = *GetSelectionPtr(TAB_CHEATS, ITEM_CHEATS_DEX_COMPLETE);
+    Mutagen_ApplyCheats();
     if (*GetSelectionPtr(TAB_MODE, ITEM_MODE_GAMEMODE) == 2) // GAMEMODE MUTAGEN: type icons on too
         cs->typeIcons = 3;
 
@@ -2465,6 +2552,16 @@ void CB2_InitChallengeMenu(void)
             *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_NEW_GAME_PLUS)= gSaveBlock3Ptr->mutagenSettings.newGamePlus;
             *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_DISCOVERY)    = gSaveBlock3Ptr->mutagenSettings.discovery;
             *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_THIRD_TYPE)   = gSaveBlock3Ptr->mutagenSettings.thirdType;
+
+            // Cheats tab (QW-16)
+            *GetSelectionPtr(TAB_CHEATS, ITEM_CHEATS_SHELF)        = gSaveBlock3Ptr->mutagenSettings.cheatShelf;
+            *GetSelectionPtr(TAB_CHEATS, ITEM_CHEATS_INFINITE_PP)  = gSaveBlock3Ptr->mutagenSettings.infinitePp;
+            *GetSelectionPtr(TAB_CHEATS, ITEM_CHEATS_CATCH_ALWAYS) = gSaveBlock3Ptr->mutagenSettings.catchAlways;
+            *GetSelectionPtr(TAB_CHEATS, ITEM_CHEATS_MOBILE_PC)    = gSaveBlock3Ptr->mutagenSettings.mobilePc;
+            *GetSelectionPtr(TAB_CHEATS, ITEM_CHEATS_WALLS)        = gSaveBlock3Ptr->mutagenSettings.walkThroughWalls;
+            *GetSelectionPtr(TAB_CHEATS, ITEM_CHEATS_WILD_BATTLES) = gSaveBlock3Ptr->mutagenSettings.noWildBattles;
+            *GetSelectionPtr(TAB_CHEATS, ITEM_CHEATS_TRAINERS_SEE) = gSaveBlock3Ptr->mutagenSettings.trainersDontSee;
+            *GetSelectionPtr(TAB_CHEATS, ITEM_CHEATS_DEX_COMPLETE) = gSaveBlock3Ptr->mutagenSettings.dexComplete;
 
             // Randomizer tab — derive master toggle from whether any sub-field is active
             *GetSelectionPtr(TAB_RANDOMIZER, ITEM_RANDOM_OFF_ON) =

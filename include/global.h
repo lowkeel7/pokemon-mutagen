@@ -360,7 +360,16 @@ struct MutagenSettings
     u8 thirdType:1;    // THIRD TYPE: 0 OFF (HnS), 1 the Mutagen's graft counts as a third type in battle (SG-01)
     u8 unused_01:2;
     u8 newGamePlusCount; // how many New Game+ runs this save has started (SG-15)
-    u8 unused[29];
+    // CHEATS tab (QW-16): each zero is Heart & Soul
+    u8 cheatShelf:1;       // every Poké Mart also sells Rare Candies, Master Balls, stones… (QW-17)
+    u8 infinitePp:1;       // your Pokémon's moves never lose PP (QW-18)
+    u8 catchAlways:1;      // every ball catches a wild Pokémon, the ball's own look kept (QW-18)
+    u8 mobilePc:1;         // the POKéMON BOX LINK is in your bag: the PC anywhere (QW-13)
+    u8 walkThroughWalls:1; // OW_FLAG_NO_COLLISION (QW-18)
+    u8 noWildBattles:1;    // OW_FLAG_NO_ENCOUNTER
+    u8 trainersDontSee:1;  // OW_FLAG_NO_TRAINER_SEE
+    u8 dexComplete:1;      // every species seen and caught (QW-26)
+    u8 unused[28];
 };
 
 struct SaveBlock3

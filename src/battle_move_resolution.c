@@ -1,4 +1,5 @@
 #include "global.h"
+#include "mutagen.h"
 #include "battle.h"
 #include "battle_environment.h"
 #include "battle_hold_effects.h"
@@ -967,6 +968,8 @@ static enum CancelerResult CancelerPPDeduction(struct BattleContext *ctx)
     if (ctx->move != gLastResultingMoves[ctx->battlerAtk] || gBattleStruct->unableToUseMove)
         gBattleMons[ctx->battlerAtk].volatiles.metronomeItemCounter = 0;
 
+    if (CheatInfinitePp() && IsOnPlayerSide(ctx->battlerAtk))
+        ppToDeduct = 0; // Pokémon Mutagen (QW-18): INFINITE PP
     if (gBattleMons[ctx->battlerAtk].pp[movePosition] > ppToDeduct)
         gBattleMons[ctx->battlerAtk].pp[movePosition] -= ppToDeduct;
     else

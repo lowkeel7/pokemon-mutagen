@@ -1,4 +1,5 @@
 #include "global.h"
+#include "mutagen.h"
 #include "battle.h"
 #include "battle_hold_effects.h"
 #include "battle_message.h"
@@ -11025,6 +11026,8 @@ static void Cmd_handleballthrow(void)
         if (gTestRunnerEnabled)
             TestRunner_Battle_RecordCatchChance(odds);
 
+        if (CheatCatchAlways() && !(gBattleTypeFlags & BATTLE_TYPE_TRAINER))
+            odds = CAPTURE_GUARANTEED; // Pokémon Mutagen (QW-18): CATCH ALWAYS, the ball's own look
         u32 ballId = ItemIdToBallId(gLastUsedItem);
         if (gBattleResults.catchAttempts[ballId] < 255)
             gBattleResults.catchAttempts[ballId]++;

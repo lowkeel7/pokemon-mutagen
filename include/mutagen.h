@@ -13,6 +13,10 @@ bool32 AreShinyTokensSold(void);       // SHINY TOKEN in every Poké Mart (QW-14
 bool32 IsStarterPickAny(void);         // the lab's balls open a species list (SG-16)
 bool32 IsDiscoveryOn(void);            // wild bosses, lead-ability encounter pulls (QW-32)
 bool32 IsThirdTypeOn(void);            // the grafted third type is live (SG-01)
+bool32 CheatShelfOn(void);             // CHEATS tab (QW-16/17/18/26/13)
+bool32 CheatInfinitePp(void);
+bool32 CheatCatchAlways(void);
+void Mutagen_ApplyCheats(void);        // flags, the Box Link and the Pokédex follow the CHEATS rows
 u32 GetMonThirdType(struct Pokemon *mon); // the live third type, TYPE_NONE when off, pending or unset
 extern bool8 gWildBossPending;         // the wild Pokémon just created is a boss (QW-32)
 u32 GetShinyStarterMode(void);         // 0 chance, 1 ask, 2 always (SG-16)

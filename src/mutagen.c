@@ -19,6 +19,8 @@
 #include "species_picker.h"
 #include "coins.h"
 #include "item.h"
+#include "pokedex.h"
+#include "config/overworld.h"
 #include "load_save.h"
 #include "malloc.h"
 #include "money.h"
@@ -76,6 +78,62 @@ bool32 IsDiscoveryOn(void)
 }
 
 EWRAM_DATA bool8 gWildBossPending = FALSE;
+
+// CHEATS tab (QW-16). The toggles that are read at their sites:
+bool32 CheatShelfOn(void)
+{
+    return gSaveBlock3Ptr != NULL && gSaveBlock3Ptr->mutagenSettings.cheatShelf;
+}
+
+bool32 CheatInfinitePp(void)
+{
+    return gSaveBlock3Ptr != NULL && gSaveBlock3Ptr->mutagenSettings.infinitePp;
+}
+
+bool32 CheatCatchAlways(void)
+{
+    return gSaveBlock3Ptr != NULL && gSaveBlock3Ptr->mutagenSettings.catchAlways;
+}
+
+// ... and the ones that are state: the engine's own flags, the Box Link key item and the Pokédex.
+// Called when the options are saved and at the end of a new game's set-up (the flags live in
+// SaveBlock1, which a new game clears).
+void Mutagen_ApplyCheats(void)
+{
+    struct MutagenSettings *ms = &gSaveBlock3Ptr->mutagenSettings;
+
+    if (ms->walkThroughWalls)
+        FlagSet(OW_FLAG_NO_COLLISION);
+    else
+        FlagClear(OW_FLAG_NO_COLLISION);
+    if (ms->noWildBattles)
+        FlagSet(OW_FLAG_NO_ENCOUNTER);
+    else
+        FlagClear(OW_FLAG_NO_ENCOUNTER);
+    if (ms->trainersDontSee)
+        FlagSet(OW_FLAG_NO_TRAINER_SEE);
+    else
+        FlagClear(OW_FLAG_NO_TRAINER_SEE);
+    if (ms->mobilePc)
+    {
+        if (!CheckBagHasItem(ITEM_POKEMON_BOX_LINK, 1))
+            AddBagItem(ITEM_POKEMON_BOX_LINK, 1);
+    }
+    else if (CheckBagHasItem(ITEM_POKEMON_BOX_LINK, 1))
+    {
+        RemoveBagItem(ITEM_POKEMON_BOX_LINK, 1);
+    }
+    if (ms->dexComplete)
+    {
+        for (u32 nat = 1; nat <= NATIONAL_DEX_COUNT; nat++)
+        {
+            GetSetPokedexFlag(nat, FLAG_SET_SEEN);
+            GetSetPokedexFlag(nat, FLAG_SET_CAUGHT);
+        }
+        EnableNationalPokedex();
+        FlagSet(FLAG_SYS_POKEDEX_GET);
+    }
+}
 
 // STARTER and SHINY STARTER (SG-16), read by Elm's lab script.
 bool32 IsStarterPickAny(void)

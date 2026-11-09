@@ -1009,18 +1009,31 @@ static void SetShopItemsForSale(const u16 *items)
         sMartInfo.itemList = items;
     }
 
-    // Pokémon Mutagen (QW-14): with SHINY TOKENS on, every Poké Mart also sells the token, whether
-    // the script passed its own list (the early-game marts do) or took the badge-count one.
-    if (sMartInfo.martType == MART_TYPE_NORMAL && AreShinyTokensSold())
+    // Pokémon Mutagen: with SHINY TOKENS on, every Poké Mart also sells the token (QW-14), and with
+    // the CHEAT SHELF on, the shelf below (QW-17); whether the script passed its own list (the
+    // early-game marts do) or took the badge-count one.
+    if (sMartInfo.martType == MART_TYPE_NORMAL && (AreShinyTokensSold() || CheatShelfOn()))
     {
+        static const u16 sCheatShelf[] = {
+            ITEM_RARE_CANDY, ITEM_MASTER_BALL, ITEM_FULL_RESTORE, ITEM_MAX_REVIVE, ITEM_PP_MAX,
+            ITEM_ABILITY_CAPSULE, ITEM_ABILITY_PATCH, ITEM_BOTTLE_CAP, ITEM_GOLD_BOTTLE_CAP,
+            ITEM_FIRE_STONE, ITEM_WATER_STONE, ITEM_THUNDER_STONE, ITEM_LEAF_STONE, ITEM_MOON_STONE,
+            ITEM_SUN_STONE, ITEM_SHINY_STONE, ITEM_DUSK_STONE, ITEM_DAWN_STONE, ITEM_ICE_STONE,
+        };
         u32 n = 0;
 
-        while (sMartInfo.itemList[n] != ITEM_NONE && n < ARRAY_COUNT(sMutagenMartItems) - 2)
+        while (sMartInfo.itemList[n] != ITEM_NONE && n < ARRAY_COUNT(sMutagenMartItems) - 2 - ARRAY_COUNT(sCheatShelf))
         {
             sMutagenMartItems[n] = sMartInfo.itemList[n];
             n++;
         }
-        sMutagenMartItems[n++] = ITEM_SHINY_TOKEN;
+        if (AreShinyTokensSold())
+            sMutagenMartItems[n++] = ITEM_SHINY_TOKEN;
+        if (CheatShelfOn())
+        {
+            for (u32 i = 0; i < ARRAY_COUNT(sCheatShelf); i++)
+                sMutagenMartItems[n++] = sCheatShelf[i];
+        }
         sMutagenMartItems[n] = ITEM_NONE;
         sMartInfo.itemList = sMutagenMartItems;
     }
