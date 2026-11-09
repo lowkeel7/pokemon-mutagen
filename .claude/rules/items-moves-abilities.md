@@ -56,9 +56,17 @@ hold for every part: reversible (a part writes nothing but its index, nothing is
 4. The item as above with `.fieldUseFunc = ItemUseOutOfBattle_Relic`, `ITEM_USE_PARTY_MENU`,
    `.iconPalette = gMonPalette_<Donor>`; `RelicFromItem` finds the row by the item.
 5. The row in `src/data/relics.h`: `RELIC(NAME, ITEM_X, SPECIES_DONOR, ABILITY_Y, RELIC_ANCHOR_Z, dy, Sym)`.
-   One donor per part (`RelicOfDonor` is the drop lookup; `test/relic.c` checks both lookups).
+   A move-family part instead: `ABILITY_NONE` and, after `Sym`, `FAM(STAB, 2)` (stab moves ×1.2),
+   then `.rider = RELIC_RIDER_CRIT` / `RELIC_RIDER_POISON` or `.poached = TRUE` (no wild drop) as
+   needed. One donor per part (`RelicOfDonor` is the drop lookup; `test/relic.c` checks both lookups
+   and every row's family against the move flags). A new family is a flag in `include/move.h`
+   (spare bits, `padding1`), its moves flagged in `src/data/moves_info.h`, one case in
+   `IsMoveOfRelicFamily` (relic.c) and one row in `sFamilyMove` (test/relic.c); the battle reads
+   `GetBattlerRelic` (a byte cached by `SetBattlerThirdType`) in `CalcMoveBasePowerAfterModifiers`,
+   `CalcCritChanceStage` and the attacker's move end (battle_util.c).
 6. `tools/relics/cut.py --docs` regenerates the parts' page. `test/battle/relic/abilities.c` covers
-   every part's ability from the list; a part with a second effect gets its own test there.
+   every part's ability from the list, `family.c` one part per move family and the riders; a part
+   with a second effect gets its own test there.
 
 ## Move
 1. Enum at `include/constants/moves.h:908` ("Add any custom moves here"); bump `MOVES_COUNT`.

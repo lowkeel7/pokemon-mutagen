@@ -11650,6 +11650,9 @@ static void Cmd_setnonvolatilestatus(void)
     case TRIGGER_ON_PROTECT:
         SetNonVolatileStatus(gBattlerAttacker, gBattleScripting.moveEffect, cmd->nextInstr, TRIGGER_ON_PROTECT);
         break;
+    case TRIGGER_ON_RELIC: // Pokémon Mutagen (SG-09): a worn part's venom poisons the target, with the plain message
+        SetNonVolatileStatus(gEffectBattler, gBattleScripting.moveEffect, cmd->nextInstr, TRIGGER_ON_RELIC);
+        break;
     }
 }
 

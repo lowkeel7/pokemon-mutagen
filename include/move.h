@@ -132,7 +132,9 @@ struct MoveInfo
     bool32 alwaysHitsOnSameType:1; // Always hits if user is of same type as move
     bool32 noAffectOnSameTypeTarget:1; // Fails if target is of same type as move
     bool32 accIncreaseByTenOnSameType:1; // Accuracy is increased by 10% if user is of same type as move
-    bool32 padding1:15;
+    bool32 stabbingMove:1; // Pokémon Mutagen (SG-09): horns, drills, stings, needles, spears and jabs, a move family a worn part strengthens
+    bool32 bluntMove:1;    // Pokémon Mutagen (SG-09): hammers, clubs, slams, head and tail blows; the punches count as blunt too
+    bool32 padding1:13;
     // end of word
 
     // Ban flags
@@ -383,6 +385,17 @@ static inline bool32 IsWindMove(enum Move moveId)
 static inline bool32 IsSlicingMove(enum Move moveId)
 {
     return gMovesInfo[SanitizeMoveId(moveId)].slicingMove;
+}
+
+// Pokémon Mutagen (SG-09): two move families of our own, for the species parts (relic.h)
+static inline bool32 IsStabbingMove(enum Move moveId)
+{
+    return gMovesInfo[SanitizeMoveId(moveId)].stabbingMove;
+}
+
+static inline bool32 IsBluntMove(enum Move moveId)
+{
+    return gMovesInfo[SanitizeMoveId(moveId)].bluntMove || gMovesInfo[SanitizeMoveId(moveId)].punchingMove;
 }
 
 static inline bool32 IsHealingMove(enum Move moveId)

@@ -1,16 +1,18 @@
 # Species items (SG-09): draft
 
-Status: **draft for review; slices 1, 2 and 3 built 2026-11-09** (RELICS option, the worn-part field, the bag
+Status: **draft for review; slices 1 to 4 built 2026-11-09** (RELICS option, the worn-part field, the bag
 flow, the ability hook, the overlay sprite placed by anchor; all 24 ability parts as data rows with art
 cut by `tools/relics/cut.py`; wild donors drop their part; the type a part lends while worn, with the
-player's pick when the Pokémon has a third type of its own; `src/relic.c`, the parts' page
-[relics.md](../relics.md)). Decided: about 6 effect templates; each item is a data row.
+player's pick when the Pokémon has a third type of its own; the 17 move-family parts on two move flags
+of ours; `src/relic.c`, the parts' page [relics.md](../relics.md)). Decided: about 6 effect templates;
+each item is a data row.
 
 ## Two rules every slice keeps (owner, 2026-11-09)
 - **Reversible by construction** ("Toffoli", nothing destroyed). Every Mutagen action on a Pokémon has
   an exact inverse, so an undo is always one action away and no information is lost: a part writes
-  nothing to the Pokémon but its own index, its ability (and, next, its type) are *read while worn*, so
-  taking it off restores the Pokémon exactly; the part returns to the bag; no part is ever used up.
+  nothing to the Pokémon but its own index, its ability, its type and the move family it strengthens
+  are *read while worn*, so taking it off restores the Pokémon exactly; the part returns to the bag; no
+  part is ever used up.
   A third type a part lends is never written over the Pokémon's own: it shows while worn and the own
   one comes back after (the one bit the choice needs records the player's pick, not a type). Where a
   mechanic cannot be inverted in place (evolution), the inverse is a later feature (DP-10 devolution),
@@ -22,7 +24,9 @@ player's pick when the Pokémon has a third type of its own; `src/relic.c`, the 
   view that is not shown stays in ROM), one palette per kind of part. CPU: placing a part reads the
   wearer's frame once, two pixels a step and one test for a blank byte (about 2,000 steps), at
   send-out; each frame after that the overlay copies five fields from the wearer's sprite; reading
-  the worn part costs one `GetMonData`, and nothing at all with RELICS off.
+  the worn part costs one `GetMonData`, and nothing at all with RELICS off. In battle the part is
+  cached in one byte per battler as its types are filled, so the damage, critical-hit and move-end
+  paths read a byte, and with nothing worn do one test; the two move flags sit in spare bits.
 
 ## The idea: hold one way, use another
 Every species part has two sides:
@@ -40,15 +44,16 @@ obtainable in HnS (Gen 4+: Haxorus, Tinkaton, Hoopa, Torterra…) sell at the Ro
 | Code | Hold effect | Engine hook |
 |---|---|---|
 | ABIL | grants an ability (replaces the holder's while held) | one new hook where the battler's ability is resolved; build first |
-| FAM | a move family ×1.2 (punch, slash, stab, bite, sound, wind, ballistic, blunt) | `CalcMoveBasePowerAfterModifiers`, the Punching Glove case |
+| FAM | a move family ×1.2 (punch, slash, stab, bite, sound, wind, ballistic, blunt) | `CalcMoveBasePowerAfterModifiers`, after the hold effects, from the battler's cached part; riders in `CalcCritChanceStage` and the move's end (built) |
 | SPEC | big boost for its own species line only (like Thick Club) | `GetAttackerItemsModifier` / defender equivalent |
 | STAT | a stat ×1.2 for holders of a matching type | stat modifier |
 | EVO | evolves or changes form (held at a level, or used) | evolution / form-change tables |
 | ING | crafting ingredient only (DP-07) | crafting recipe table |
 | MISC | a one-off effect, written by hand | per item; keep these few |
 
-New move flag needed: `stabbingMove` (horn, drill, sting moves). Blunt = `punchingMove` plus a short
-list of hammer/body moves. Every non-ING item is also an ingredient.
+Move flags, built (`include/move.h`, spare bits): `stabbingMove` on 19 moves (horns, drills, stings,
+needles, spears, jabs, pecks) and `bluntMove` on 26 (hammers, clubs, slams, head and tail blows,
+Pound); blunt counts the punches too. Every non-ING item is also an ingredient.
 
 ## The items
 | # | Item | Donor (use → type) | Hold | Effect |
@@ -173,8 +178,36 @@ on); CHEAT SHELF → ALL sells them; the sandbox bag starts with one of each. Pa
 wild in Johto and Kanto (Charizard, Bastiodon, Skuntank, Metagross…) wait for the black market
 (DP-18/19). A new part is one row and one cut (`tools/relics/cut.py`, the repo's items rule).
 
+## Built: the 17 move-family parts (slice 4, 2026-11-09)
+Each is a cut of the donor's own sprite, like the ability parts; the row says the family and the boost
+(`FAM(SLASH, 2)` is slash moves ×1.2), a rider what else those moves do. The boost multiplies the base
+power after the held item's (a Punching Glove and the gloves stack). Owner's rows not in this slice:
+**Donphan Tusk** (its GBA sprite shows two white flecks for tusks; the part waits for the black market
+and a better source), **Starmie Gem** (consumed on use: against the reversible rule; rethink it as an
+effect that holds while worn), **Leek** (an existing item; its extra slash boost is not done).
+
+| Part | Donor | Worn | What shows | Where |
+|---|---|---|---|---|
+| KABUTOPS CLEAVERS | Kabutops | slash ×1.2 | both cleavers, raised (cut from the back sprite, where one is raised) | back |
+| PINSIR HORNS | Pinsir | stab ×1.2 | the two horns (one, mirrored) | head |
+| BEEDRILL STINGER | Beedrill | stab ×1.2; a stab that hits poisons 1 in 10 | the two arm stingers | body |
+| PIDGEOT FEATHERS | Pidgeot | wind ×1.2 | the head crest | head |
+| PREDATOR TEETH | Feraligatr | bite ×1.2 | the jaws | face |
+| SANDSLASH CLAWS | Sandslash | slash ×1.1, +1 critical-hit stage | the claws | body |
+| DRILL HORN | Rhydon | stab ×1.2 | the horn | face |
+| BAYLEEF LEAF BLADE | Bayleef | slash ×1.2 | the head leaf | head |
+| LOUDRED EARS | Loudred | sound ×1.2 | the speaker ears | head |
+| SEVIPER VENOM | Seviper | bite ×1.1; a bite that hits poisons 1 in 10 | the fangs | face |
+| ABSOL BLADE | Absol | slash ×1.1, +1 critical-hit stage | the scythe horn | head |
+| EMPOLEON TRIDENT | Empoleon | stab ×1.2 | the three-pronged crest | head |
+| MAMOSWINE TUSK (poached) | Mamoswine | stab ×1.2 | the tusks; no wild drop | face |
+| OCTILLERY CANNON | Octillery | ballistic ×1.2 | the siphon | face |
+| HAXORUS BLADE | Haxorus | slash ×1.2 | the axe tusks | face |
+| TINKATON HAMMER | Tinkaton | blunt ×1.2 | the hammer, at half size | back |
+| BOXING GLOVES | Hitmonchan | punch ×1.1 | the two gloves | body |
+
 ## Build order
-1. ~~ABIL hook~~ (built) + FAM flags (unlocks the FAM rows as data).
+1. ~~ABIL hook~~ (built) + ~~FAM flags and the FAM rows~~ (built 2026-11-09).
 2. ~~Third-type USE~~ → ~~the type a part lends while worn~~ (built 2026-11-09: a worn part's donor type
    shows as the third type while THIRD TYPE is on, read, never written; a Pokémon with a third type of its
    own is asked which to show, the pick is one bit, `relicTypeOff`; off comes the part, back comes the own).
@@ -211,4 +244,5 @@ wild in Johto and Kanto (Charizard, Bastiodon, Skuntank, Metagross…) wait for 
 
 ## Open for review
 The ❓ rows; any item you meant differently; whether a worn ABIL part should replace the
-holder's ability or add a second one (proposal: replace, which the engine already understands).
+holder's ability or add a second one (proposal: replace, which the engine already understands);
+the Starmie Gem's effect, now that nothing is consumed; whether "Feathers" meant Pidgeot's crest.

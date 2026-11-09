@@ -6936,6 +6936,12 @@ BattleScript_AbilityStatusEffect::
 	setnonvolatilestatus TRIGGER_ON_ABILITY
 	return
 
+@ Pokémon Mutagen (SG-09): a worn part's venom, with the plain "was poisoned" message
+BattleScript_RelicStatusEffect::
+	waitstate
+	setnonvolatilestatus TRIGGER_ON_RELIC
+	return
+
 BattleScript_BattleBondActivatesOnMoveEndAttacker::
 	pause 5
 	copybyte gBattlerAbility, gBattlerAttacker

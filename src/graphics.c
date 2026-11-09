@@ -1515,6 +1515,23 @@ const u32 gRelicGfx_LaprasShell[] = INCBIN_U32("graphics/relics/lapras_shell.4bp
 const u32 gRelicGfx_MareepWool[] = INCBIN_U32("graphics/relics/mareep_wool.4bpp.smol");
 const u32 gRelicGfx_SneaselFeather[] = INCBIN_U32("graphics/relics/sneasel_feather.4bpp.smol");
 const u32 gRelicGfx_MagcargoShell[] = INCBIN_U32("graphics/relics/magcargo_shell.4bpp.smol");
+const u32 gRelicGfx_KabutopsCleavers[] = INCBIN_U32("graphics/relics/kabutops_cleavers.4bpp.smol");
+const u32 gRelicGfx_PinsirHorns[] = INCBIN_U32("graphics/relics/pinsir_horns.4bpp.smol");
+const u32 gRelicGfx_BeedrillStinger[] = INCBIN_U32("graphics/relics/beedrill_stinger.4bpp.smol");
+const u32 gRelicGfx_PidgeotFeathers[] = INCBIN_U32("graphics/relics/pidgeot_feathers.4bpp.smol");
+const u32 gRelicGfx_PredatorTeeth[] = INCBIN_U32("graphics/relics/predator_teeth.4bpp.smol");
+const u32 gRelicGfx_SandslashClaws[] = INCBIN_U32("graphics/relics/sandslash_claws.4bpp.smol");
+const u32 gRelicGfx_DrillHorn[] = INCBIN_U32("graphics/relics/drill_horn.4bpp.smol");
+const u32 gRelicGfx_BayleefLeafBlade[] = INCBIN_U32("graphics/relics/bayleef_leaf_blade.4bpp.smol");
+const u32 gRelicGfx_LoudredEars[] = INCBIN_U32("graphics/relics/loudred_ears.4bpp.smol");
+const u32 gRelicGfx_SeviperVenom[] = INCBIN_U32("graphics/relics/seviper_venom.4bpp.smol");
+const u32 gRelicGfx_AbsolBlade[] = INCBIN_U32("graphics/relics/absol_blade.4bpp.smol");
+const u32 gRelicGfx_EmpoleonTrident[] = INCBIN_U32("graphics/relics/empoleon_trident.4bpp.smol");
+const u32 gRelicGfx_MamoswineTusk[] = INCBIN_U32("graphics/relics/mamoswine_tusk.4bpp.smol");
+const u32 gRelicGfx_OctilleryCannon[] = INCBIN_U32("graphics/relics/octillery_cannon.4bpp.smol");
+const u32 gRelicGfx_HaxorusBlade[] = INCBIN_U32("graphics/relics/haxorus_blade.4bpp.smol");
+const u32 gRelicGfx_TinkatonHammer[] = INCBIN_U32("graphics/relics/tinkaton_hammer.4bpp.smol");
+const u32 gRelicGfx_BoxingGloves[] = INCBIN_U32("graphics/relics/boxing_gloves.4bpp.smol");
 // Gen 3 shadow — per-game
 #if IS_HNS
 const u32 gEnemyMonShadow_GfxGen3[] = INCBIN_U32("graphics/battle_interface/hns/enemy_mon_shadow.4bpp.smol");

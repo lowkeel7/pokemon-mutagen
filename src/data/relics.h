@@ -1,9 +1,12 @@
 // Pokémon Mutagen (SG-09): the species parts, one row each: the bag item; the donor species, whose
 // own sprite the art is cut from (tools/relics/cut.py), whose palette colours it in the ROM and whose
-// wild form may drop it; the ability worn; where the part sits on the wearer (relic.h). Twelve bytes
-// a row. The art is in graphics/relics/, each part's provenance in docs/pokerom/PROVENANCE.md.
-#define RELIC(part, itemId, species, abil, anc, nudge, sym) \
-    [RELIC_##part] = { .item = itemId, .donor = species, .ability = abil, .anchor = anc, .dy = nudge, .gfx = gRelicGfx_##sym }
+// wild form may drop it; the ability worn; where the part sits on the wearer (relic.h); and, after
+// those, the effect designators a row needs: FAM(SLASH, 2) is slash moves x1.2, a `.rider` is what
+// else those moves do, `.poached = TRUE` keeps a part off the wild drops. Twelve bytes a row. The art
+// is in graphics/relics/, each part's provenance in docs/pokerom/PROVENANCE.md.
+#define RELIC(part, itemId, species, abil, anc, nudge, sym, ...) \
+    [RELIC_##part] = { .item = itemId, .donor = species, .ability = abil, .anchor = anc, .dy = nudge, .gfx = gRelicGfx_##sym, ##__VA_ARGS__ }
+#define FAM(fam, tenths) .family = RELIC_FAMILY_##fam, .boost = tenths
 
 const struct RelicInfo gRelicsInfo[RELICS_COUNT] =
 {
@@ -32,6 +35,25 @@ const struct RelicInfo gRelicsInfo[RELICS_COUNT] =
     RELIC(MAREEP_WOOL,      ITEM_MAREEP_WOOL,      SPECIES_MAREEP,    ABILITY_STATIC,        RELIC_ANCHOR_BODY, 0, MareepWool),
     RELIC(SNEASEL_FEATHER,  ITEM_SNEASEL_FEATHER,  SPECIES_SNEASEL,   ABILITY_PICKPOCKET,    RELIC_ANCHOR_HEAD, 0, SneaselFeather),
     RELIC(MAGCARGO_SHELL,   ITEM_MAGCARGO_SHELL,   SPECIES_MAGCARGO,  ABILITY_FLAME_BODY,    RELIC_ANCHOR_BACK, 0, MagcargoShell),
+    // The move-family parts: a move of the family hits harder while the part is worn (battle_util.c)
+    RELIC(KABUTOPS_CLEAVERS,  ITEM_KABUTOPS_CLEAVERS,  SPECIES_KABUTOPS,   ABILITY_NONE, RELIC_ANCHOR_BACK, 0, KabutopsCleavers, FAM(SLASH, 2)),
+    RELIC(PINSIR_HORNS,       ITEM_PINSIR_HORNS,       SPECIES_PINSIR,     ABILITY_NONE, RELIC_ANCHOR_HEAD, 0, PinsirHorns,      FAM(STAB, 2)),
+    RELIC(BEEDRILL_STINGER,   ITEM_BEEDRILL_STINGER,   SPECIES_BEEDRILL,   ABILITY_NONE, RELIC_ANCHOR_BODY, 0, BeedrillStinger,  FAM(STAB, 2), .rider = RELIC_RIDER_POISON),
+    RELIC(PIDGEOT_FEATHERS,   ITEM_PIDGEOT_FEATHERS,   SPECIES_PIDGEOT,    ABILITY_NONE, RELIC_ANCHOR_HEAD, 0, PidgeotFeathers,  FAM(WIND, 2)),
+    RELIC(PREDATOR_TEETH,     ITEM_PREDATOR_TEETH,     SPECIES_FERALIGATR, ABILITY_NONE, RELIC_ANCHOR_FACE, 4, PredatorTeeth,    FAM(BITE, 2)),
+    RELIC(SANDSLASH_CLAWS,    ITEM_SANDSLASH_CLAWS,    SPECIES_SANDSLASH,  ABILITY_NONE, RELIC_ANCHOR_BODY, 6, SandslashClaws,   FAM(SLASH, 1), .rider = RELIC_RIDER_CRIT),
+    RELIC(DRILL_HORN,         ITEM_DRILL_HORN,         SPECIES_RHYDON,     ABILITY_NONE, RELIC_ANCHOR_FACE, 0, DrillHorn,        FAM(STAB, 2)),
+    RELIC(BAYLEEF_LEAF_BLADE, ITEM_BAYLEEF_LEAF_BLADE, SPECIES_BAYLEEF,    ABILITY_NONE, RELIC_ANCHOR_HEAD, 0, BayleefLeafBlade, FAM(SLASH, 2)),
+    RELIC(LOUDRED_EARS,       ITEM_LOUDRED_EARS,       SPECIES_LOUDRED,    ABILITY_NONE, RELIC_ANCHOR_HEAD, 0, LoudredEars,      FAM(SOUND, 2)),
+    RELIC(SEVIPER_VENOM,      ITEM_SEVIPER_VENOM,      SPECIES_SEVIPER,    ABILITY_NONE, RELIC_ANCHOR_FACE, 4, SeviperVenom,     FAM(BITE, 1), .rider = RELIC_RIDER_POISON),
+    RELIC(ABSOL_BLADE,        ITEM_ABSOL_BLADE,        SPECIES_ABSOL,      ABILITY_NONE, RELIC_ANCHOR_HEAD, 0, AbsolBlade,       FAM(SLASH, 1), .rider = RELIC_RIDER_CRIT),
+    RELIC(EMPOLEON_TRIDENT,   ITEM_EMPOLEON_TRIDENT,   SPECIES_EMPOLEON,   ABILITY_NONE, RELIC_ANCHOR_HEAD, 0, EmpoleonTrident,  FAM(STAB, 2)),
+    RELIC(MAMOSWINE_TUSK,     ITEM_MAMOSWINE_TUSK,     SPECIES_MAMOSWINE,  ABILITY_NONE, RELIC_ANCHOR_FACE, 6, MamoswineTusk,    FAM(STAB, 2), .poached = TRUE),
+    RELIC(OCTILLERY_CANNON,   ITEM_OCTILLERY_CANNON,   SPECIES_OCTILLERY,  ABILITY_NONE, RELIC_ANCHOR_FACE, 4, OctilleryCannon,  FAM(BALLISTIC, 2)),
+    RELIC(HAXORUS_BLADE,      ITEM_HAXORUS_BLADE,      SPECIES_HAXORUS,    ABILITY_NONE, RELIC_ANCHOR_FACE, 2, HaxorusBlade,     FAM(SLASH, 2)),
+    RELIC(TINKATON_HAMMER,    ITEM_TINKATON_HAMMER,    SPECIES_TINKATON,   ABILITY_NONE, RELIC_ANCHOR_BACK, 0, TinkatonHammer,   FAM(BLUNT, 2)),
+    RELIC(BOXING_GLOVES,      ITEM_BOXING_GLOVES,      SPECIES_HITMONCHAN, ABILITY_NONE, RELIC_ANCHOR_BODY, 4, BoxingGloves,     FAM(PUNCH, 1)),
 };
 
+#undef FAM
 #undef RELIC

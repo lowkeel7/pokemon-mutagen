@@ -3,7 +3,9 @@
 // A part is one index per Pokémon (PokemonSubstruct0.relic, 6 bits). Put on from the bag
 // (party_menu.c, ItemUseCB_Relic), it grants its ability whatever the species (pokemon.c,
 // GetMonAbility) and is drawn over the Pokémon's sprite in battle and in the summary: a 32x32 cell
-// that follows the Pokémon's sprite, placed by the shape of its first frame. MUTAGEN → RELICS
+// that follows the Pokémon's sprite, placed by the shape of its first frame. A part may instead
+// strengthen one family of moves (relic.h, enum RelicFamily): battle_util.c asks the helpers below
+// with the battler's cached part on its damage, critical-hit and move-end paths. MUTAGEN → RELICS
 // (zero = Heart & Soul) gates every effect; the field itself is kept either way.
 //
 // Cost: twelve bytes of ROM a part plus its compressed art (about half a kilobyte); no palette of
@@ -17,6 +19,7 @@
 #include "decompress.h"
 #include "graphics.h"
 #include "malloc.h"
+#include "move.h"
 #include "mutagen.h"
 #include "pokemon.h"
 #include "relic.h"
@@ -27,6 +30,7 @@
 #include "data/relics.h"
 
 STATIC_ASSERT(RELICS_COUNT <= 64, RelicIndexMustFitSixBits);
+STATIC_ASSERT(sizeof(struct RelicInfo) == 12, RelicRowIsTwelveBytes);
 
 #define TAG_RELIC_GFX 0x5E1C   // plus twice the part's index, plus one for the back view: one tile block per view on screen
 #define TAG_RELIC_PAL 0x5E1C   // plus the part's index: one palette per kind of part on screen
@@ -90,7 +94,7 @@ u32 RelicOfDonor(u16 species)
         return RELIC_NONE;
     for (i = RELIC_NONE + 1; i < RELICS_COUNT; i++)
     {
-        if (gRelicsInfo[i].donor == species)
+        if (gRelicsInfo[i].donor == species && !gRelicsInfo[i].poached) // a poached part is the black market's, never a drop
             return i;
     }
     return RELIC_NONE;
@@ -101,11 +105,15 @@ enum Ability GetRelicAbility(u32 relic)
     return relic < RELICS_COUNT ? gRelicsInfo[relic].ability : ABILITY_NONE;
 }
 
+// The donor's first type, or its second when the first is Normal: a bird's part lends Flying.
 u32 GetRelicType(u32 relic)
 {
+    const struct SpeciesInfo *donor;
+
     if (relic == RELIC_NONE || relic >= RELICS_COUNT || gRelicsInfo[relic].donor == SPECIES_NONE)
         return TYPE_NONE;
-    return gSpeciesInfo[gRelicsInfo[relic].donor].types[0];
+    donor = &gSpeciesInfo[gRelicsInfo[relic].donor];
+    return donor->types[0] == TYPE_NORMAL ? donor->types[1] : donor->types[0];
 }
 
 // Read while worn, never written: the part's type shows as the wearer's third type (MUTAGEN →
@@ -129,6 +137,62 @@ u32 GetMonRelic(struct Pokemon *mon)
         return RELIC_NONE;
     relic = GetMonData(mon, MON_DATA_RELIC);
     return relic < RELICS_COUNT ? relic : RELIC_NONE;
+}
+
+// Battle: the part each battler wears, cached by SetBattlerThirdType (battle_util.c) as its types
+// are filled, so the hot paths below read one byte. Zero, RELIC_NONE, with RELICS off.
+u32 GetBattlerRelic(u32 battler)
+{
+    u32 relic;
+
+    if (battler >= MAX_BATTLERS_COUNT || gBattleStruct == NULL)
+        return RELIC_NONE;
+    relic = gBattleStruct->relic[battler];
+    return relic < RELICS_COUNT ? relic : RELIC_NONE;
+}
+
+// The move families a part can strengthen: the engine's own flags, and two of ours (move.h).
+bool32 IsMoveOfRelicFamily(u32 move, u32 family)
+{
+    switch (family)
+    {
+    case RELIC_FAMILY_PUNCH:     return IsPunchingMove(move);
+    case RELIC_FAMILY_SLASH:     return IsSlicingMove(move);
+    case RELIC_FAMILY_STAB:      return IsStabbingMove(move);
+    case RELIC_FAMILY_BITE:      return IsBitingMove(move);
+    case RELIC_FAMILY_SOUND:     return IsSoundMove(move);
+    case RELIC_FAMILY_WIND:      return IsWindMove(move);
+    case RELIC_FAMILY_BALLISTIC: return IsBallisticMove(move);
+    case RELIC_FAMILY_BLUNT:     return IsBluntMove(move);
+    default:                     return FALSE;
+    }
+}
+
+static bool32 IsRelicFamilyMove(u32 relic, u32 move)
+{
+    return relic != RELIC_NONE && relic < RELICS_COUNT
+        && gRelicsInfo[relic].family != RELIC_FAMILY_NONE
+        && IsMoveOfRelicFamily(move, gRelicsInfo[relic].family);
+}
+
+// x1.1, x1.2 or x1.3 for a move of the part's family (the row's boost, in tenths), x1.0 for any other.
+uq4_12_t GetRelicMovePowerModifier(u32 relic, u32 move)
+{
+    static const uq4_12_t sBoost[] = { UQ_4_12(1.0), UQ_4_12(1.1), UQ_4_12(1.2), UQ_4_12(1.3) };
+
+    if (!IsRelicFamilyMove(relic, move))
+        return UQ_4_12(1.0);
+    return sBoost[gRelicsInfo[relic].boost];
+}
+
+u32 GetRelicCritStageIncrease(u32 relic, u32 move)
+{
+    return (IsRelicFamilyMove(relic, move) && gRelicsInfo[relic].rider == RELIC_RIDER_CRIT) ? 1 : 0;
+}
+
+bool32 RelicPoisonsOnHit(u32 relic, u32 move)
+{
+    return IsRelicFamilyMove(relic, move) && gRelicsInfo[relic].rider == RELIC_RIDER_POISON;
 }
 
 // Where the part sits on this frame, as the cell's bottom centre. One pass over the 64x64 4bpp

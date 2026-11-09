@@ -35,7 +35,8 @@ MIRROR = "mirror"  # the back view is the front cut flipped: a part the camera s
 # anchor HEAD (on the head line), FACE (over the face), BODY (the middle), BACK (the shoulders, behind
 # the Pokémon in the front view); dy nudges in pixels (positive is down). Boxes are x0, y0, x1, y1
 # in the 64x64 frame, x1 and y1 exclusive. pair=N puts the cut beside its mirror image, N px apart, overlapping
-# when N is negative (one eye or wing makes two). Recolour: the part's pixels mapped, colour by colour,
+# when N is negative (one eye or wing makes two). front_from="back" cuts the front view from the back sprite instead
+# (Kabutops raises a cleaver only there). Recolour: the part's pixels mapped, colour by colour,
 # to the nearest luminance in another species' palette (the Charizard skull is Cubone's skull in
 # Charizard's colours; still Game Freak's pixels and colours, nothing drawn).
 PARTS = {
@@ -87,6 +88,42 @@ PARTS = {
                              anchor="HEAD", ability="Pickpocket", lends="Dark", name="SNEASEL FEATHER"),
     "magcargo_shell":   dict(donor="magcargo",  front=((28, 10, 60, 42), {9, 10, 11, 12, 13, 14, 15}), back=((26, 18, 58, 50), {9, 10, 11, 12, 13, 14, 15}),
                              anchor="BACK", ability="Flame Body", lends="Fire", name="MAGCARGO SHELL"),
+    # The move-family parts (slice 4, 2026-11-09): what each strengthens is the row in src/data/relics.h;
+    # `effect` is the docs' wording of it, `poached` marks a part no wild donor drops (the black market's).
+    "kabutops_cleavers":  dict(donor="kabutops",   front=((45, 36, 57, 59), {1, 2, 3, 4, 5}), front_from="back", back=MIRROR, pair=8,
+                             anchor="BACK", effect="slash moves ×1.2", lends="Rock", name="KABUTOPS CLEAVERS"),
+    "pinsir_horns":       dict(donor="pinsir",     front=((15, 4, 30, 28), {1, 2, 3, 4, 5}), back=MIRROR, pair=2,
+                             anchor="HEAD", effect="stab moves ×1.2", lends="Bug", name="PINSIR HORNS"),
+    "beedrill_stinger":   dict(donor="beedrill",   front=((5, 32, 19, 50), {1, 6, 7, 8, 9}), back=MIRROR, pair=4,
+                             anchor="BODY", effect="stab moves ×1.2; a stab that hits poisons one time in ten", lends="Bug", name="BEEDRILL STINGER"),
+    "pidgeot_feathers":   dict(donor="pidgeot",    front=((5, 5, 37, 24), {3, 4, 5, 6, 7, 8, 9}), back=MIRROR,
+                             anchor="HEAD", effect="wind moves ×1.2", lends="Flying", name="PIDGEOT FEATHERS"),
+    "predator_teeth":     dict(donor="feraligatr", front=((5, 16, 27, 29), {1, 11, 12, 13, 14}), back=((42, 29, 60, 40), {1, 11, 12, 13, 14}),
+                             anchor="FACE", dy=4, effect="bite moves ×1.2", lends="Water", name="PREDATOR TEETH"),
+    "sandslash_claws":    dict(donor="sandslash",  front=((20, 29, 42, 50), {1, 6, 7, 8, 9}), back=((33, 36, 59, 53), {1, 6, 7, 8, 9}),
+                             anchor="BODY", dy=6, effect="slash moves ×1.1 and a critical-hit stage", lends="Ground", name="SANDSLASH CLAWS"),
+    "drill_horn":         dict(donor="rhydon",     front=((4, 19, 16, 28), {1, 2, 3, 4, 5}), back=((49, 16, 57, 27), {1, 2, 3, 4, 5}),
+                             anchor="FACE", effect="stab moves ×1.2", lends="Ground", name="DRILL HORN"),
+    "bayleef_leaf_blade": dict(donor="bayleef",    front=((25, 6, 57, 18), {7, 8, 9, 10}), back=((23, 8, 55, 28), {7, 8, 9, 10}),
+                             anchor="HEAD", effect="slash moves ×1.2", lends="Grass", name="BAYLEEF LEAF BLADE"),
+    "loudred_ears":       dict(donor="loudred",    front=((6, 5, 24, 24), {2, 3, 4, 5, 9, 10, 11, 12, 15}), back=MIRROR, pair=-4,
+                             anchor="HEAD", effect="sound moves ×1.2", lends="Normal", name="LOUDRED EARS"),
+    "seviper_venom":      dict(donor="seviper",    front=((7, 25, 17, 38), {1, 6, 7, 8}), back=MIRROR,
+                             anchor="FACE", dy=4, effect="bite moves ×1.1; a bite that hits poisons one time in ten", lends="Poison", name="SEVIPER VENOM"),
+    "absol_blade":        dict(donor="absol",      front=((27, 1, 52, 31), {11, 12, 13, 14, 15}), back=MIRROR,
+                             anchor="HEAD", effect="slash moves ×1.1 and a critical-hit stage", lends="Dark", name="ABSOL BLADE"),
+    "empoleon_trident":   dict(donor="empoleon",   front=((28, 0, 46, 14), {1, 2, 3, 4, 5}), back=MIRROR,
+                             anchor="HEAD", effect="stab moves ×1.2", lends="Water", name="EMPOLEON TRIDENT"),
+    "mamoswine_tusk":     dict(donor="mamoswine",  front=((0, 24, 19, 47), {4, 7, 8}), back=MIRROR, pair=-6,
+                             anchor="FACE", dy=6, effect="stab moves ×1.2", lends="Ice", poached=True, name="MAMOSWINE TUSK"),
+    "octillery_cannon":   dict(donor="octillery",  front=((10, 34, 20, 46), {2, 3, 4, 5, 7, 8, 9, 10, 15}), back=MIRROR,
+                             anchor="FACE", dy=4, effect="ballistic moves ×1.2", lends="Water", name="OCTILLERY CANNON"),
+    "haxorus_blade":      dict(donor="haxorus",    front=((4, 0, 25, 31), {3, 5}), back=MIRROR,
+                             anchor="FACE", dy=2, effect="slash moves ×1.2", lends="Dragon", name="HAXORUS BLADE"),
+    "tinkaton_hammer":    dict(donor="tinkaton",   front=((2, 7, 64, 61), {6, 7, 8, 9, 10, 15}), front_from="back", back=MIRROR,
+                             anchor="BACK", effect="blunt moves ×1.2", lends="Fairy", name="TINKATON HAMMER"),
+    "boxing_gloves":      dict(donor="hitmonchan", front=((36, 20, 50, 32), {6, 7, 8, 9}), back=MIRROR, pair=4,
+                             anchor="BODY", dy=4, effect="punch moves ×1.1", lends="Fighting", name="BOXING GLOVES"),
 }
 
 
@@ -95,6 +132,8 @@ def donor_files(donor):
     front = os.path.join(d, "anim_front_gba.png")
     if not os.path.exists(front):
         front = os.path.join(d, "anim_front.png")
+    if not os.path.exists(front):
+        front = os.path.join(d, "front.png")  # a species with a still front sprite only
     back = os.path.join(d, "back_gba.png")
     if not os.path.exists(back):
         back = os.path.join(d, "back.png")
@@ -212,7 +251,8 @@ def write_indexed(path, cell, pal):
 def build(part, spec):
     front_path, back_path, pal_path = donor_files(spec["donor"])
     pal = read_pal(pal_path)
-    front = cut(frame(front_path), *spec["front"])
+    # front_from="back": the front view is cut from the back sprite, where the donor shows the part better
+    front = cut(frame(back_path if spec.get("front_from") == "back" else front_path), *spec["front"])
     if "pair" in spec:
         front = pair(front, spec["pair"])
     back = mirror(front) if spec["back"] == MIRROR else cut(frame(back_path), *spec["back"])

@@ -65,7 +65,17 @@ Heart & Soul's own history see its documentation, and for the engine see `CHANGE
   counted in battle, for as long as it is worn. A Pokémon that already has a third type of its own
   is asked which to show; its own type is never written over and comes back when the part comes
   off. A worn part also comes off from the party menu (the Pokémon → ITEM → TAKE OFF), so a single
-  part is never stuck on. The parts' page: `docs/pokerom/relics.md`.
+  part is never stuck on. **Seventeen move-family parts** join them: worn, each makes one family of
+  moves hit harder (KABUTOPS CLEAVERS, BAYLEEF LEAF BLADE and HAXORUS BLADE: slash ×1.2; PINSIR
+  HORNS, DRILL HORN, EMPOLEON TRIDENT and MAMOSWINE TUSK: stab ×1.2; PREDATOR TEETH: bite ×1.2;
+  PIDGEOT FEATHERS: wind ×1.2; LOUDRED EARS: sound ×1.2; OCTILLERY CANNON: ballistic ×1.2; TINKATON
+  HAMMER: blunt ×1.2, punches included; BOXING GLOVES: punch ×1.1), and a few add something to
+  those moves (SANDSLASH CLAWS and ABSOL BLADE: slash ×1.1 and a critical-hit stage; BEEDRILL
+  STINGER: stab ×1.2 and SEVIPER VENOM: bite ×1.1, each poisoning one hit in ten). Stab (horns,
+  drills, stings, needles, spears, jabs, pecks) and blunt (hammers, clubs, slams, head and tail
+  blows) are two move families of Mutagen's own. The Mamoswine tusk is poached: no wild Pokémon
+  drops it (it waits for the black market; the sandbox bag and CHEAT SHELF → ALL have it). A part's
+  type is its donor's, Flying rather than Normal for a bird. The parts' page: `docs/pokerom/relics.md`.
 - **A MUTAGEN tab** in the new-game and PC options, and **GAMEMODE → MUTAGEN** on the new-game
   menu: the recommended settings plus every Mutagen feature switched on in one press. Every row's
   first choice is Heart & Soul's behaviour, and older saves read every row as that.

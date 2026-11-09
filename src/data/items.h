@@ -16927,6 +16927,312 @@ const struct ItemInfo gItemsInfo[] =
         .iconPic = gItemIcon_MagcargoShell,
         .iconPalette = gMonPalette_Magcargo,
     },
+
+    [ITEM_KABUTOPS_CLEAVERS] =
+    {
+        .name = ITEM_NAME("KABUTOPS CLEAVERS"),
+        .pluralName = ITEM_PLURAL_NAME("Kabutops Cleavers"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "KABUTOPS's blades,\n"
+            "to wear. Slash moves\n"
+            "hit 20% harder."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_KabutopsCleavers,
+        .iconPalette = gMonPalette_Kabutops,
+    },
+
+    [ITEM_PINSIR_HORNS] =
+    {
+        .name = ITEM_NAME("PINSIR HORNS"),
+        .pluralName = ITEM_PLURAL_NAME("Pinsir Horns"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "PINSIR's horns, to\n"
+            "wear. Stab moves\n"
+            "hit 20% harder."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_PinsirHorns,
+        .iconPalette = gMonPalette_Pinsir,
+    },
+
+    [ITEM_BEEDRILL_STINGER] =
+    {
+        .name = ITEM_NAME("BEEDRILL STINGER"),
+        .pluralName = ITEM_PLURAL_NAME("Beedrill Stingers"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "BEEDRILL's stingers,\n"
+            "to wear. Stab moves\n"
+            "hit +20%, may poison."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_BeedrillStinger,
+        .iconPalette = gMonPalette_Beedrill,
+    },
+
+    [ITEM_PIDGEOT_FEATHERS] =
+    {
+        .name = ITEM_NAME("PIDGEOT FEATHERS"),
+        .pluralName = ITEM_PLURAL_NAME("Pidgeot Feathers"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "PIDGEOT's crest, to\n"
+            "wear. Wind moves\n"
+            "hit 20% harder."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_PidgeotFeathers,
+        .iconPalette = gMonPalette_Pidgeot,
+    },
+
+    [ITEM_PREDATOR_TEETH] =
+    {
+        .name = ITEM_NAME("PREDATOR TEETH"),
+        .pluralName = ITEM_PLURAL_NAME("Predator Teeth"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "FERALIGATR's jaws,\n"
+            "to wear. Bite moves\n"
+            "hit 20% harder."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_PredatorTeeth,
+        .iconPalette = gMonPalette_Feraligatr,
+    },
+
+    [ITEM_SANDSLASH_CLAWS] =
+    {
+        .name = ITEM_NAME("SANDSLASH CLAWS"),
+        .pluralName = ITEM_PLURAL_NAME("Sandslash Claws"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "SANDSLASH's claws,\n"
+            "to wear. Slash moves\n"
+            "hit harder, crit more."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_SandslashClaws,
+        .iconPalette = gMonPalette_Sandslash,
+    },
+
+    [ITEM_DRILL_HORN] =
+    {
+        .name = ITEM_NAME("DRILL HORN"),
+        .pluralName = ITEM_PLURAL_NAME("Drill Horns"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "RHYDON's horn, to\n"
+            "wear. Stab moves\n"
+            "hit 20% harder."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_DrillHorn,
+        .iconPalette = gMonPalette_Rhydon,
+    },
+
+    [ITEM_BAYLEEF_LEAF_BLADE] =
+    {
+        .name = ITEM_NAME("BAYLEEF LEAF BLADE"),
+        .pluralName = ITEM_PLURAL_NAME("Bayleef Leaf Blades"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "BAYLEEF's leaf, to\n"
+            "wear. Slash moves\n"
+            "hit 20% harder."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_BayleefLeafBlade,
+        .iconPalette = gMonPalette_Bayleef,
+    },
+
+    [ITEM_LOUDRED_EARS] =
+    {
+        .name = ITEM_NAME("LOUDRED EARS"),
+        .pluralName = ITEM_PLURAL_NAME("Loudred Ears"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "LOUDRED's ears, to\n"
+            "wear. Sound moves\n"
+            "hit 20% harder."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_LoudredEars,
+        .iconPalette = gMonPalette_Loudred,
+    },
+
+    [ITEM_SEVIPER_VENOM] =
+    {
+        .name = ITEM_NAME("SEVIPER VENOM"),
+        .pluralName = ITEM_PLURAL_NAME("Seviper Venoms"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "SEVIPER's fangs, to\n"
+            "wear. Bite moves hit\n"
+            "+10%, may poison."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_SeviperVenom,
+        .iconPalette = gMonPalette_Seviper,
+    },
+
+    [ITEM_ABSOL_BLADE] =
+    {
+        .name = ITEM_NAME("ABSOL BLADE"),
+        .pluralName = ITEM_PLURAL_NAME("Absol Blades"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "ABSOL's blade, to\n"
+            "wear. Slash moves\n"
+            "hit harder, crit more."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_AbsolBlade,
+        .iconPalette = gMonPalette_Absol,
+    },
+
+    [ITEM_EMPOLEON_TRIDENT] =
+    {
+        .name = ITEM_NAME("EMPOLEON TRIDENT"),
+        .pluralName = ITEM_PLURAL_NAME("Empoleon Tridents"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "EMPOLEON's crest, to\n"
+            "wear. Stab moves\n"
+            "hit 20% harder."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_EmpoleonTrident,
+        .iconPalette = gMonPalette_Empoleon,
+    },
+
+    [ITEM_MAMOSWINE_TUSK] =
+    {
+        .name = ITEM_NAME("MAMOSWINE TUSK"),
+        .pluralName = ITEM_PLURAL_NAME("Mamoswine Tusks"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "MAMOSWINE's tusks,\n"
+            "to wear. Stab moves\n"
+            "hit 20% harder."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_MamoswineTusk,
+        .iconPalette = gMonPalette_Mamoswine,
+    },
+
+    [ITEM_OCTILLERY_CANNON] =
+    {
+        .name = ITEM_NAME("OCTILLERY CANNON"),
+        .pluralName = ITEM_PLURAL_NAME("Octillery Cannons"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "OCTILLERY's cannon,\n"
+            "to wear. Ballistic\n"
+            "moves hit +20%."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_OctilleryCannon,
+        .iconPalette = gMonPalette_Octillery,
+    },
+
+    [ITEM_HAXORUS_BLADE] =
+    {
+        .name = ITEM_NAME("HAXORUS BLADE"),
+        .pluralName = ITEM_PLURAL_NAME("Haxorus Blades"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "HAXORUS's blades, to\n"
+            "wear. Slash moves\n"
+            "hit 20% harder."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_HaxorusBlade,
+        .iconPalette = gMonPalette_Haxorus,
+    },
+
+    [ITEM_TINKATON_HAMMER] =
+    {
+        .name = ITEM_NAME("TINKATON HAMMER"),
+        .pluralName = ITEM_PLURAL_NAME("Tinkaton Hammers"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "TINKATON's hammer,\n"
+            "to wear. Blunt moves\n"
+            "hit 20% harder."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_TinkatonHammer,
+        .iconPalette = gMonPalette_Tinkaton,
+    },
+
+    [ITEM_BOXING_GLOVES] =
+    {
+        .name = ITEM_NAME("BOXING GLOVES"),
+        .pluralName = ITEM_PLURAL_NAME("Boxing Gloves"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "HITMONCHAN's gloves,\n"
+            "to wear. Punch moves\n"
+            "hit 10% harder."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_BoxingGloves,
+        .iconPalette = gMonPalette_Hitmonchan,
+    },
 };
 
 #undef ITEM_NAME

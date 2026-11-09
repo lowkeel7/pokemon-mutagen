@@ -408,6 +408,7 @@ enum StatusTrigger
     TRIGGER_ON_MOVE,
     TRIGGER_ON_ABILITY,
     TRIGGER_ON_PROTECT,
+    TRIGGER_ON_RELIC, // Pokémon Mutagen (SG-09): a worn part's venom, on gEffectBattler, the plain message
 };
 
 enum TriggerOnFieldStatus

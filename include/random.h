@@ -163,6 +163,7 @@ enum RandomTag
     RNG_PICKUP,
     RNG_POISON_POINT,
     RNG_POISON_TOUCH,
+    RNG_RELIC_POISON, // Pokémon Mutagen (SG-09): a worn part's venom
     RNG_RAMPAGE_TURNS,
     RNG_RANDOM_STAT_UP,
     RNG_SECONDARY_EFFECT,

@@ -21,6 +21,7 @@
 #include "util.h"
 #include "battle_scripts.h"
 #include "random.h"
+#include "relic.h"
 #include "text.h"
 #include "safari_zone.h"
 #include "sound.h"
@@ -4399,6 +4400,23 @@ u32 AbilityBattleEffects(enum AbilityEffect caseID, enum BattlerId battler, enum
         default:
             break;
         }
+        // Pokémon Mutagen (SG-09): a worn part's venom (Beedrill's stingers, Seviper's fangs) poisons the
+        // target one time in ten when a move of the part's family hits. Not an ability: no popup, the
+        // plain message. Only when no ability of the attacker took this move's end.
+        if (effect == 0 && RelicPoisonsOnHit(GetBattlerRelic(battler), move)
+         && IsBattlerAlive(gBattlerTarget)
+         && !gBattleStruct->unableToUseMove
+         && !IsMoveEffectBlockedByTarget(GetBattlerAbility(gBattlerTarget))
+         && CanBePoisoned(gBattlerAttacker, gBattlerTarget, GetBattlerAbility(gBattlerAttacker), GetBattlerAbility(gBattlerTarget))
+         && IsBattlerTurnDamaged(gBattlerTarget, EXCLUDING_SUBSTITUTES)
+         && RandomPercentage(RNG_RELIC_POISON, 10))
+        {
+            gEffectBattler = gBattlerTarget;
+            gBattleScripting.battler = gBattlerAttacker;
+            gBattleScripting.moveEffect = MOVE_EFFECT_POISON;
+            BattleScriptCall(BattleScript_RelicStatusEffect);
+            effect++;
+        }
         break;
     case ABILITYEFFECT_FORM_CHANGE_ON_HIT:
         speciesForm = gBattleMons[gBattlerTarget].species;
@@ -6854,6 +6872,10 @@ static inline u32 CalcMoveBasePowerAfterModifiers(struct BattleContext *ctx)
         break;
     }
 
+    // Pokémon Mutagen (SG-09): a worn species part strengthens the moves of its family (one byte read; nothing with RELICS off)
+    if (GetBattlerRelic(battlerAtk) != RELIC_NONE)
+        modifier = uq4_12_multiply(modifier, GetRelicMovePowerModifier(GetBattlerRelic(battlerAtk), move));
+
     // Terastallization boosts weak, non-priority, non-multi hit moves after modifiers to 60 BP.
     if (GetActiveGimmick(battlerAtk) == GIMMICK_TERA
         && (moveType == GetBattlerTeraType(battlerAtk)
@@ -8046,6 +8068,7 @@ s32 CalcCritChanceStage(struct BattleContext *ctx)
                     + (gBattleMons[ctx->battlerAtk].volatiles.dragonCheer != 0 ? 1 : 0)
                     + GetMoveCriticalHitStage(ctx->move)
                     + GetHoldEffectCritChanceIncrease(ctx->battlerAtk, ctx->holdEffectAtk)
+                    + GetRelicCritStageIncrease(GetBattlerRelic(ctx->battlerAtk), ctx->move) // Pokémon Mutagen (SG-09): a worn part's rider
                     + ((B_AFFECTION_MECHANICS == TRUE && GetBattlerAffectionHearts(ctx->battlerAtk) == AFFECTION_FIVE_HEARTS) ? 2 : 0)
                     + (ctx->abilityAtk == ABILITY_SUPER_LUCK ? 1 : 0)
                     + gBattleMons[ctx->battlerAtk].volatiles.bonusCritStages;
@@ -9621,6 +9644,7 @@ void SetBattlerThirdType(enum BattlerId battler, struct Pokemon *mon)
 {
     u32 third = GetMonThirdType(mon);
 
+    gBattleStruct->relic[battler] = GetMonRelic(mon); // Pokémon Mutagen (SG-09): the worn part, cached for the move-family hooks
     gBattleMons[battler].types[2] = TYPE_MYSTERY;
     if (third != TYPE_NONE && third != gBattleMons[battler].types[0] && third != gBattleMons[battler].types[1])
         gBattleMons[battler].types[2] = third;

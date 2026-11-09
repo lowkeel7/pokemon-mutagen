@@ -1,17 +1,18 @@
 #ifndef GUARD_RELIC_H
 #define GUARD_RELIC_H
 
+#include "fpmath.h"
 #include "constants/relics.h"
 
 // Pokémon Mutagen (SG-09): species parts worn by a Pokémon. A part is put on from the bag, shows on
 // the Pokémon's battle sprite and in its summary, and grants its ability whatever the species is.
 // Everything is behind MUTAGEN → RELICS (zero = Heart & Soul: the field is kept but does nothing).
 //
-// Reversible by construction: wearing a part writes nothing but the part's index. Its ability is
-// read while it is worn, so taking the part off gives the Pokémon back exactly as it was, and the
-// part goes back to the bag; no part is ever used up. The art is each donor's own pixels, cut by
-// tools/relics/cut.py, stored compressed and coloured by the donor's palette, which the ROM holds
-// once already.
+// Reversible by construction: wearing a part writes nothing but the part's index. Its ability, the
+// type it lends and the move family it strengthens are read while it is worn, so taking the part
+// off gives the Pokémon back exactly as it was, and the part goes back to the bag; no part is ever
+// used up. The art is each donor's own pixels, cut by tools/relics/cut.py, stored compressed and
+// coloured by the donor's palette, which the ROM holds once already.
 
 enum RelicAnchor
 {
@@ -21,14 +22,39 @@ enum RelicAnchor
     RELIC_ANCHOR_BACK,  // on the back: rising over the shoulders behind the Pokémon when it faces us, on its back when it faces away
 };
 
-struct RelicInfo
+// The move families a part can strengthen (FAM rows): the engine's own flags, and two of ours in move.h.
+enum RelicFamily
+{
+    RELIC_FAMILY_NONE,
+    RELIC_FAMILY_PUNCH,      // punching moves
+    RELIC_FAMILY_SLASH,      // slicing moves
+    RELIC_FAMILY_STAB,       // stabbing moves: horns, drills, stings, needles, spears, jabs (stabbingMove)
+    RELIC_FAMILY_BITE,       // biting moves
+    RELIC_FAMILY_SOUND,      // sound moves
+    RELIC_FAMILY_WIND,       // wind moves
+    RELIC_FAMILY_BALLISTIC,  // ballistic moves
+    RELIC_FAMILY_BLUNT,      // the punches, and hammers, clubs, slams, head and tail blows (bluntMove)
+};
+
+// What else a part's family moves do while it is worn.
+enum RelicRider
+{
+    RELIC_RIDER_NONE,
+    RELIC_RIDER_CRIT,    // one critical-hit stage more
+    RELIC_RIDER_POISON,  // a hit poisons the target one time in ten
+};
+
+struct RelicInfo  // twelve bytes
 {
     u16 item;        // the bag item that puts the part on (and comes back when it is taken off)
     u16 donor;       // the species the part is cut from: its palette colours the art, and a wild one may drop the part
     u16 ability;     // enum Ability, granted while worn whatever the species; ABILITY_NONE grants nothing
     u8 anchor:2;     // enum RelicAnchor
-    u8 padding:6;
-    s8 dy;           // nudge in pixels, down from the anchor
+    u8 family:4;     // enum RelicFamily, the moves the part strengthens; RELIC_FAMILY_NONE for none
+    u8 boost:2;      // by how much, in tenths: 1 = x1.1, 2 = x1.2, 3 = x1.3
+    s8 dy:5;         // nudge in pixels, down from the anchor
+    u8 rider:2;      // enum RelicRider
+    u8 poached:1;    // no wild donor drops it: the black market's (DP-18)
     const u32 *gfx;  // 32x64 4bpp, smol-compressed: the front view in the top 32x32 cell, the back view below it
 };
 
@@ -40,6 +66,15 @@ u32 GetMonRelic(struct Pokemon *mon);        // the worn part, RELIC_NONE when t
 enum Ability GetRelicAbility(u32 relic);
 u32 GetRelicType(u32 relic);                 // the type a worn part lends: its donor's first type; TYPE_NONE for none
 u32 GetMonRelicType(struct Pokemon *mon);    // the type the worn part lends this Pokémon, TYPE_NONE when none shows (options off, nothing worn, or the own type kept)
+
+// The move family a part strengthens (battle_util.c reads these on its hot paths). The battler's
+// part is cached by SetBattlerThirdType with its types, so each is one byte read and, with
+// RELICS off or nothing worn, one test.
+u32 GetBattlerRelic(u32 battler);
+bool32 IsMoveOfRelicFamily(u32 move, u32 family);
+uq4_12_t GetRelicMovePowerModifier(u32 relic, u32 move);  // x1.1, x1.2 or x1.3 for a move of the part's family, x1.0 for any other
+u32 GetRelicCritStageIncrease(u32 relic, u32 move);       // 1 when the part's rider is a critical-hit stage and the move is of its family
+bool32 RelicPoisonsOnHit(u32 relic, u32 move);            // the part's rider is venom and the move is of its family (one hit in ten poisons; the caller rolls)
 
 // The overlay sprite: `frame` is the wearer's decompressed first frame (64x64 4bpp), which places
 // the part. Returns SPRITE_NONE when nothing is worn or nothing can be drawn.
@@ -75,5 +110,22 @@ extern const u16 gMonPalette_Lapras[];
 extern const u16 gMonPalette_Mareep[];
 extern const u16 gMonPalette_Sneasel[];
 extern const u16 gMonPalette_Magcargo[];
+extern const u16 gMonPalette_Kabutops[];
+extern const u16 gMonPalette_Pinsir[];
+extern const u16 gMonPalette_Beedrill[];
+extern const u16 gMonPalette_Pidgeot[];
+extern const u16 gMonPalette_Feraligatr[];
+extern const u16 gMonPalette_Sandslash[];
+extern const u16 gMonPalette_Rhydon[];
+extern const u16 gMonPalette_Bayleef[];
+extern const u16 gMonPalette_Loudred[];
+extern const u16 gMonPalette_Seviper[];
+extern const u16 gMonPalette_Absol[];
+extern const u16 gMonPalette_Empoleon[];
+extern const u16 gMonPalette_Mamoswine[];
+extern const u16 gMonPalette_Octillery[];
+extern const u16 gMonPalette_Haxorus[];
+extern const u16 gMonPalette_Tinkaton[];
+extern const u16 gMonPalette_Hitmonchan[];
 
 #endif // GUARD_RELIC_H

@@ -710,6 +710,7 @@ struct BattleStruct
     u8 dancerSavedAttacker:3;
     u8 dancerSavedTarget:3;
     u8 padding:2;
+    u8 relic[MAX_BATTLERS_COUNT]; // Pokémon Mutagen (SG-09): the species part each battler wears, cached with its types (SetBattlerThirdType)
 };
 
 struct AiBattleData

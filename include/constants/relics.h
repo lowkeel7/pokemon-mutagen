@@ -28,7 +28,24 @@
     X(LAPRAS_SHELL)         \
     X(MAREEP_WOOL)          \
     X(SNEASEL_FEATHER)      \
-    X(MAGCARGO_SHELL)
+    X(MAGCARGO_SHELL)       \
+    X(KABUTOPS_CLEAVERS)    \
+    X(PINSIR_HORNS)         \
+    X(BEEDRILL_STINGER)     \
+    X(PIDGEOT_FEATHERS)     \
+    X(PREDATOR_TEETH)       \
+    X(SANDSLASH_CLAWS)      \
+    X(DRILL_HORN)           \
+    X(BAYLEEF_LEAF_BLADE)   \
+    X(LOUDRED_EARS)         \
+    X(SEVIPER_VENOM)        \
+    X(ABSOL_BLADE)          \
+    X(EMPOLEON_TRIDENT)     \
+    X(MAMOSWINE_TUSK)       \
+    X(OCTILLERY_CANNON)     \
+    X(HAXORUS_BLADE)        \
+    X(TINKATON_HAMMER)      \
+    X(BOXING_GLOVES)
 
 #define RELIC_ENUM(name) RELIC_##name,
 enum Relic
