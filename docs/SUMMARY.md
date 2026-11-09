@@ -1,6 +1,6 @@
 # Summary
 
-[Pokémon Mutagen](./index.md)
+[A second line of evolution](./index.md)
 
 # Mutagen
 
