@@ -26,6 +26,7 @@ import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import demo  # noqa: E402
 import export_map  # noqa: E402
 
 ROOT = export_map.ROOT
@@ -211,6 +212,15 @@ class State:
 
 STATE = State()
 
+_demo = None
+
+
+def demo_timeline():
+    global _demo
+    if _demo is None:
+        _demo = demo.timeline()
+    return _demo
+
 
 def bind_sync(port):
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -260,12 +270,16 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(body)
 
     def do_GET(self):
-        if self.path in ("/", "/index.html"):
+        path = self.path.split("?", 1)[0]     # /?record=1 is the page too
+        if path in ("/", "/index.html"):
             page = export_map.render_page("Pokémon Mutagen", live=True).encode()
             return self.send(200, page, "text/html; charset=utf-8")
-        if self.path.startswith("/state"):
+        if path == "/state":
             return self.send(200, json.dumps(STATE.snapshot()).encode(), "application/json")
-        match = re.match(r"^/scene/(\d+)/(\d+)$", self.path)
+        if path == "/demo":
+            timeline = {k: v for k, v in demo_timeline().items() if k != "steps"}
+            return self.send(200, json.dumps(timeline, separators=(",", ":")).encode(), "application/json")
+        match = re.match(r"^/scene/(\d+)/(\d+)$", path)
         if match:
             body = STATE.scene(int(match.group(1)), int(match.group(2)))
             if body is None:
@@ -290,7 +304,8 @@ def main():
           f"0x{symbols['gObjectEvents'][0]:08X}, {size} bytes each)")
     threading.Thread(target=sync_listener, args=(sync,), daemon=True).start()
     print(f"serve: 1. open {os.path.relpath(args.rom, ROOT)} in mGBA, Tools → Scripting… → File → Load script → {lua}")
-    print(f"serve: 2. open http://127.0.0.1:{args.http}/  (F toggles following the player)", flush=True)
+    print(f"serve: 2. open http://127.0.0.1:{args.http}/  (F toggles following the player)")
+    print("serve: demo video: tools/voxel/record.py (tools/voxel/README.md)", flush=True)
     ThreadingHTTPServer(("127.0.0.1", args.http), Handler).serve_forever()
 
 

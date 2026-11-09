@@ -7,12 +7,14 @@ tileset layout: 640 primary tiles and metatiles, 7 primary palettes, 13 in all),
 behaviours for water and doors.
 
 Every metatile becomes a block. Passable ground is a thin slab (water too). An impassable block
-joins the impassable blocks above and below it in its column into one run, and the run stands as
-one box: a run with over-the-player pixels (trees) two levels; a run of one repeated metatile (a
-hedge, a fence, a cliff line) one; anything else (a building: roof rows over a wall row, the door
-counted in) up to three. The box's front face shows the run's own rows stacked, bottom row at the
-bottom, which is the 2D art standing up, and its top faces keep each row's own art: the look of
-the voxel mods for the 2D games.
+joins the impassable blocks above and below it in its column into one run. Trees and bushes (the
+solid blocks drawn in the ground's own palette, which buildings, cliffs and signs never are) are
+not boxes: their canopy pixels stand as columns, higher the further from the canopy's edge, so
+they are stepped domes with their own leaves on every face. Any other run stands as one box: a run of one
+repeated metatile (a hedge, a fence, a cliff line) one level; anything else (a building: roof rows
+over a wall row, the door counted in) up to three. The box's front face shows the run's own rows
+stacked, bottom row at the bottom, which is the 2D art standing up, and its top faces keep each
+row's own art: the look of the voxel mods for the 2D games.
 
     tools/voxel/export_map.py LAYOUT_NEW_BARK_TOWN_HNS out/new-bark-town.html [--png out/new-bark-town.png]
     tools/voxel/export_map.py --list | grep -i cherry
@@ -31,7 +33,7 @@ import struct
 import sys
 import time
 
-from PIL import Image
+from PIL import Image, ImageChops, ImageFilter
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 NUM_TILES_IN_PRIMARY = 640
@@ -42,7 +44,19 @@ TILE = 8
 METATILE = 16
 ATLAS_COLUMNS = 32
 MAX_LEVELS = 3        # a building's box
-TREE_LEVELS = 2       # a run with over-the-player pixels
+TREE_LEVELS = 2       # a tree's height, in blocks
+SLAB_HEIGHT, LEVEL_HEIGHT = 3, 16   # the page's SLAB and LEVEL, in pixels of the map
+DOME_RADIUS = 6       # pixels from the canopy's edge over which a tree rises to its full height
+DOME_EDGE = 0.5       # the canopy's edge stands at this share of the tree's height
+# The palette that draws the trees and bushes of a tileset: for the outdoor primary tilesets the
+# one most of their over-the-player solid blocks use; for a town's own tileset, its trees' (looked
+# up by hand: `metatile_palettes`). Indoor tilesets are left out, so nothing indoors is a tree.
+TREE_PALETTES = {
+    "gTileset_Johto_General_Hns": 0, "gTileset_Johto_NorthEast_Hns": 0, "gTileset_Johto_NorthWest_Hns": 0,
+    "gTileset_Johto_South_Hns": 0, "gTileset_Kanto_General_Hns": 0, "gTileset_MtSilver_Exp_Hns": 0,
+    "gTileset_AlolaIsland": 0,
+    "gTileset_CherrygroveCity_Hns": 12,     # the pink flowering trees
+}
 
 # map.bin and metatile_attributes.bin bit layout (include/global.fieldmap.h)
 METATILE_ID_MASK = 0x03FF
@@ -230,14 +244,15 @@ def draw_tile(canvas, tileset_for, palettes, entry, x, y):
 
 
 def compose_metatile(primary, secondary, palettes, metatile_id):
-    """-> (16x16 RGBA image, top layer has pixels, layer type, behaviour)."""
+    """-> (16x16 RGBA image, the top layer's mask (an L image, 255 where it has pixels), layer type,
+    behaviour)."""
     if metatile_id < NUM_METATILES_IN_PRIMARY:
         source, local = primary, metatile_id
     else:
         source, local = secondary, metatile_id - NUM_METATILES_IN_PRIMARY
     blank = Image.new("RGBA", (METATILE, METATILE), (0, 0, 0, 0))
     if local >= len(source.metatiles):
-        return blank, False, LAYER_NORMAL, 0
+        return blank, Image.new("L", (METATILE, METATILE), 0), LAYER_NORMAL, 0
     entries = source.metatiles[local]
     attributes = source.attributes[local] if local < len(source.attributes) else 0
     layer_type = (attributes >> ATTR_LAYER_SHIFT) & 0x3
@@ -249,13 +264,55 @@ def compose_metatile(primary, secondary, palettes, metatile_id):
         return secondary, tile - NUM_TILES_IN_PRIMARY
 
     canvas = blank
+    top = Image.new("RGBA", (METATILE, METATILE), (0, 0, 0, 0))
     positions = [(0, 0), (TILE, 0), (0, TILE), (TILE, TILE)]
     for i, (x, y) in enumerate(positions):
         draw_tile(canvas, tileset_for, palettes, entries[i], x, y)
-    top_opaque = 0
-    for i, (x, y) in enumerate(positions):
-        top_opaque += draw_tile(canvas, tileset_for, palettes, entries[4 + i], x, y)
-    return canvas, top_opaque > 0, layer_type, behavior
+        draw_tile(top, tileset_for, palettes, entries[4 + i], x, y)
+    canvas.alpha_composite(top)
+    return canvas, top.getchannel("A").point(lambda a: 255 if a else 0), layer_type, behavior
+
+
+def metatile_palettes(primary, secondary, metatile_id):
+    """-> (palettes of the bottom layer's tiles, of the top layer's), blank tiles left out."""
+    if metatile_id < NUM_METATILES_IN_PRIMARY:
+        source, local = primary, metatile_id
+    else:
+        source, local = secondary, metatile_id - NUM_METATILES_IN_PRIMARY
+    if local >= len(source.metatiles):
+        return set(), set()
+    entries = source.metatiles[local]
+    return ({(e >> 12) & 0xF for e in entries[:4] if e & 0x3FF},
+            {(e >> 12) & 0xF for e in entries[4:] if e & 0x3FF})
+
+
+def tree_relief(width, height, tree_blocks, ids, masks):
+    """Per-pixel heights for the tree blocks: the canopy's own pixels (the top layer's, or the whole
+    block where the canopy sits in the bottom layer) stand as columns, higher the further they are
+    from the canopy's edge, so trees come out as stepped domes instead of boxes.
+    -> [[block index, base64 of 256 height bytes (0 = no column)], ...]"""
+    if not tree_blocks:
+        return []
+    mask = Image.new("L", (width * METATILE, height * METATILE), 0)
+    full = Image.new("L", (METATILE, METATILE), 255)
+    for i in tree_blocks:
+        m = masks[ids[i]]
+        mask.paste(m if m.getbbox() else full, ((i % width) * METATILE, (i // width) * METATILE))
+    inside = mask.point(lambda v: 1 if v else 0)
+    distance = inside
+    eroded = mask
+    for _ in range(DOME_RADIUS - 1):
+        eroded = eroded.filter(ImageFilter.MinFilter(3))
+        distance = ImageChops.add(distance, eroded.point(lambda v: 1 if v else 0))
+    span = LEVEL_HEIGHT * TREE_LEVELS
+    table = [0] + [SLAB_HEIGHT + round(span * (DOME_EDGE + (1 - DOME_EDGE) * (d - 1) / (DOME_RADIUS - 1)))
+                   for d in range(1, DOME_RADIUS + 1)]
+    heights = distance.point(lambda d: table[min(d, DOME_RADIUS)])
+    out = []
+    for i in sorted(tree_blocks):
+        x, y = (i % width) * METATILE, (i // width) * METATILE
+        out.append([i, base64.b64encode(heights.crop((x, y, x + METATILE, y + METATILE)).tobytes()).decode("ascii")])
+    return out
 
 
 def build_scene(layout_id):
@@ -278,50 +335,66 @@ def build_scene(layout_id):
     flat = behavior_set(r"WATER|CURRENT|WATERFALL|PUDDLE|DIVE")
     doors = behavior_set(r"DOOR")
 
-    cells = {}      # metatile id -> (atlas cell, top over the player, flat, door)
+    cells = {}      # metatile id -> (atlas cell, flat, door, pixels over the player)
+    masks = {}      # metatile id -> the top layer's mask
+    pals = {}       # metatile id -> (bottom layer's palettes, top layer's)
     images = []
-    kinds = []      # per block: 0 ground, 1 solid, 2 tree
+    solid = []      # per block: impassable (or a door)
     ids = []
     for value in grid:
         metatile_id = value & METATILE_ID_MASK
         if metatile_id not in cells:
-            image, top_opaque, layer_type, behavior = compose_metatile(primary, secondary, palettes, metatile_id)
-            cells[metatile_id] = (len(images), top_opaque and layer_type != LAYER_COVERED,
-                                  behavior in flat, behavior in doors)
+            image, top_mask, layer_type, behavior = compose_metatile(primary, secondary, palettes, metatile_id)
+            cells[metatile_id] = (len(images), behavior in flat, behavior in doors,
+                                  top_mask.getbbox() is not None and layer_type != LAYER_COVERED)
+            masks[metatile_id] = top_mask
+            pals[metatile_id] = metatile_palettes(primary, secondary, metatile_id)
             images.append(image)
-        cell, top_over, is_flat, is_door = cells[metatile_id]
-        impassable = (value & COLLISION_MASK) != 0 and not is_flat
-        if impassable:
-            kinds.append(2 if top_over else 1)
-        elif is_door:
-            kinds.append(1)
-        else:
-            kinds.append(0)
+        cell, is_flat, is_door, _ = cells[metatile_id]
+        solid.append(((value & COLLISION_MASK) != 0 and not is_flat) or is_door)
         ids.append(metatile_id)
 
-    levels = [0] * (width * height)
-    stacks = [None] * (width * height)
+    # Trees and bushes are drawn in one palette of their tileset (TREE_PALETTES), which buildings,
+    # cliffs, signs and poles never use alone: a solid block whose drawn layer uses that palette
+    # alone is vegetation, and stands as a dome of its pixels (tree_relief).
+    tree_palettes = (TREE_PALETTES.get(layout["primary_tileset"]), TREE_PALETTES.get(layout["secondary_tileset"]))
+
+    def is_tree(metatile_id):
+        bottom, top = pals[metatile_id]
+        palette = tree_palettes[0 if metatile_id < NUM_METATILES_IN_PRIMARY else 1]
+        return palette is not None and (top or bottom) == {palette}
+
+    tree_blocks = {i for i in range(width * height) if solid[i] and is_tree(ids[i])}
+
+    runs = []       # each a column's run of solid, non-tree blocks, north to south
     for x in range(width):
         y = 0
         while y < height:
-            if kinds[y * width + x] == 0:
+            i = y * width + x
+            if not solid[i] or i in tree_blocks:
                 y += 1
                 continue
             start = y
-            while y < height and kinds[y * width + x] != 0:
+            while y < height and solid[y * width + x] and (y * width + x) not in tree_blocks:
                 y += 1
-            run = [row * width + x for row in range(start, y)]      # north to south
-            run_ids = {ids[i] for i in run}
-            if any(kinds[i] == 2 for i in run):
-                lv = TREE_LEVELS            # trees repeat down a column and still stand tall
-            elif len(run_ids) == 1:
-                lv = 1                      # a hedge, a fence, a cliff line
-            else:
-                lv = min(len(run), MAX_LEVELS)
-            for i in run:
-                levels[i] = lv
-            bottom = run[-1]
-            stacks[bottom] = [cells[ids[i]][0] for i in reversed(run)][:lv]
+            runs.append([row * width + x for row in range(start, y)])
+
+    levels = [0] * (width * height)
+    stacks = [None] * (width * height)
+    for i in tree_blocks:
+        levels[i] = TREE_LEVELS
+    for run in runs:
+        run_ids = {ids[i] for i in run}
+        if any(cells[ids[i]][3] for i in run):
+            lv = TREE_LEVELS                # over-the-player pixels (a roof): a tall box
+        elif len(run_ids) == 1:
+            lv = 1                          # a hedge, a fence, a cliff line
+        else:
+            lv = min(len(run), MAX_LEVELS)  # a building: roof rows over a wall row
+        for i in run:
+            levels[i] = lv
+        bottom = run[-1]
+        stacks[bottom] = [cells[ids[i]][0] for i in reversed(run)][:lv]
 
     blocks = []
     for i, metatile_id in enumerate(ids):
@@ -342,6 +415,7 @@ def build_scene(layout_id):
         "atlasColumns": ATLAS_COLUMNS,
         "atlasRows": max(rows, 1),
         "blocks": [[c, l, s] for c, l, s in blocks],
+        "relief": tree_relief(width, height, tree_blocks, ids, masks),
     }
     return scene, buffer.getvalue(), images, blocks
 
@@ -453,31 +527,73 @@ TEMPLATE = r"""<!doctype html>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script>
 const LIVE = __LIVE__;
+const RECORD = LIVE && new URLSearchParams(location.search).has("record");  // ?record: render the demo walk for the video
 const SIZE = 16, LEVEL = 16, SLAB = 3;
+const VIDEO_WIDTH = 1920, VIDEO_HEIGHT = 1080;
+const FOLLOW_OFFSET = [130, 220, 280];   // the camera from the player when a map opens in the video
 let scene3, renderer, camera, controls, sun, mapMesh = null, mapTexture = null, current = null, heights = null;
-let follow = LIVE, marker = null, lastState = null, lastSeen = 0;
+let follow = LIVE, marker = null, lastState = null, lastSeen = 0, textureReady = Promise.resolve();
 
 function heightAt(sc, x, y) {
+  x = Math.round(x); y = Math.round(y);   // the demo walk puts the player between tiles
   if (x < 0 || y < 0 || x >= sc.width || y >= sc.height) return 0;
   return heights[y * sc.width + x];
 }
 
-// One merged mesh: for every block the top face and the side faces a lower neighbour leaves open.
+// One merged mesh: for every block the top face and the side faces a lower neighbour leaves open;
+// a tree block is a slab under per-pixel columns (sc.relief: 256 heights a block, 0 = no column).
 function buildGeometry(sc) {
-  heights = sc.blocks.map(b => SLAB + b[1] * LEVEL);
+  const relief = new Map();
+  for (const [i, b64] of sc.relief || []) relief.set(i, Uint8Array.from(atob(b64), c => c.charCodeAt(0)));
+  heights = sc.blocks.map((b, i) => relief.has(i) ? SLAB : SLAB + b[1] * LEVEL);
   const positions = [], normals = [], uvs = [], indices = [];
-  const cw = 1 / sc.atlasColumns, ch = 1 / sc.atlasRows;
+  const cw = 1 / sc.atlasColumns, ch = 1 / sc.atlasRows, pw = cw / SIZE, ph = ch / SIZE;
   function cellUV(cell) {
     return [(cell % sc.atlasColumns) * cw, 1 - Math.floor(cell / sc.atlasColumns) * ch];
   }
-  // p: top-left, top-right, bottom-right, bottom-left as seen from outside; v0..v1: the cell's v span to show
-  function quad(p, n, cell, vTop = 1, vBottom = 0) {
+  // p: top-left, top-right, bottom-right, bottom-left as seen from outside; uv: that corner order
+  function face(p, n, uv) {
     const base = positions.length / 3;
-    const [u0, v0] = cellUV(cell);
     for (let i = 0; i < 4; i++) { positions.push(...p[i]); normals.push(...n); }
-    const top = v0 - ch * (1 - vTop), bottom = v0 - ch * (1 - vBottom);
-    uvs.push(u0, top, u0 + cw, top, u0 + cw, bottom, u0, bottom);
+    uvs.push(...uv);
     indices.push(base, base + 2, base + 1, base, base + 3, base + 2);
+  }
+  // a block face showing the cell's art; v0..v1: the cell's v span to show
+  function quad(p, n, cell, vTop = 1, vBottom = 0) {
+    const [u0, v0] = cellUV(cell);
+    const top = v0 - ch * (1 - vTop), bottom = v0 - ch * (1 - vBottom);
+    face(p, n, [u0, top, u0 + cw, top, u0 + cw, bottom, u0, bottom]);
+  }
+  // the height of the map at one of its pixels: a tree's column, else its block's top
+  function pixelHeight(gx, gy) {
+    if (gx < 0 || gy < 0 || gx >= sc.width * SIZE || gy >= sc.height * SIZE) return 0;
+    const i = (gy >> 4) * sc.width + (gx >> 4), r = relief.get(i);
+    if (r) return r[(gy & 15) * SIZE + (gx & 15)] || SLAB;
+    return heights[i];
+  }
+  for (const [i, r] of relief) {
+    const bx = (i % sc.width) * SIZE, by = Math.floor(i / sc.width) * SIZE;
+    const [u0, v0] = cellUV(sc.blocks[i][0]);
+    for (let py = 0; py < SIZE; py++) {
+      const z0 = by + py, z1 = z0 + 1, va = v0 - py * ph, vb = va - ph;
+      for (let px = 0; px < SIZE;) {
+        const h = r[py * SIZE + px];
+        if (!h) { px++; continue; }
+        let end = px + 1;
+        while (end < SIZE && r[py * SIZE + end] === h) end++;
+        const x0 = bx + px, x1 = bx + end, ua = u0 + px * pw, ub = u0 + end * pw;
+        face([[x0, h, z0], [x1, h, z0], [x1, h, z1], [x0, h, z1]], [0, 1, 0], [ua, va, ub, va, ub, vb, ua, vb]);
+        for (let k = px; k < end; k++) {   // the walls down to each lower neighbour, in the pixel's own colour
+          const gx = bx + k, uc = u0 + (k + 0.5) * pw, vc = va - ph / 2, flat = [uc, vc, uc, vc, uc, vc, uc, vc];
+          const s = pixelHeight(gx, z1), n = pixelHeight(gx, z0 - 1);
+          if (s < h) face([[gx, h, z1], [gx + 1, h, z1], [gx + 1, s, z1], [gx, s, z1]], [0, 0, 1], flat);
+          if (n < h) face([[gx + 1, h, z0], [gx, h, z0], [gx, n, z0], [gx + 1, n, z0]], [0, 0, -1], flat);
+          if (k === end - 1) { const e = pixelHeight(gx + 1, z0); if (e < h) face([[gx + 1, h, z1], [gx + 1, h, z0], [gx + 1, e, z0], [gx + 1, e, z1]], [1, 0, 0], flat); }
+          if (k === px) { const w = pixelHeight(gx - 1, z0); if (w < h) face([[gx, h, z0], [gx, h, z1], [gx, w, z1], [gx, w, z0]], [-1, 0, 0], flat); }
+        }
+        px = end;
+      }
+    }
   }
   for (let y = 0; y < sc.height; y++) for (let x = 0; x < sc.width; x++) {
     const [cell, levels, stack] = sc.blocks[y * sc.width + x];
@@ -485,7 +601,7 @@ function buildGeometry(sc) {
     const x0 = x * SIZE, x1 = x0 + SIZE, z0 = y * SIZE, z1 = z0 + SIZE;
     quad([[x0, h, z0], [x1, h, z0], [x1, h, z1], [x0, h, z1]], [0, 1, 0], cell);
     if (heightAt(sc, x, y + 1) < h) {
-      if (stack && stack.length) {
+      if (stack && stack.length && !relief.has(y * sc.width + x)) {
         // the front face: the run's rows standing up, bottom row at the bottom, the slab under it
         quad([[x0, SLAB, z1], [x1, SLAB, z1], [x1, 0, z1], [x0, 0, z1]], [0, 0, 1], stack[0], SLAB / 16, 0);
         for (let i = 0; i < stack.length; i++) {
@@ -512,7 +628,7 @@ function setScene(sc, atlasUrl, recenter) {
   if (mapMesh) { scene3.remove(mapMesh); mapMesh.geometry.dispose(); mapMesh.material.dispose(); }
   if (mapTexture) mapTexture.dispose();
   current = sc;
-  mapTexture = new THREE.TextureLoader().load(atlasUrl);
+  textureReady = new Promise(resolve => { mapTexture = new THREE.TextureLoader().load(atlasUrl, resolve, undefined, resolve); });
   mapTexture.magFilter = THREE.NearestFilter;
   mapTexture.minFilter = THREE.NearestFilter;
   mapMesh = new THREE.Mesh(buildGeometry(sc), new THREE.MeshLambertMaterial({ map: mapTexture }));
@@ -585,22 +701,63 @@ function init() {
   controls.maxPolarAngle = Math.PI / 2 - 0.05;
   marker = makeMarker(); marker.visible = false; scene3.add(marker);
   addEventListener("resize", () => {
+    if (RECORD) return;
     camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight);
   });
   addEventListener("keydown", e => { if (e.key === "f" || e.key === "F") follow = !follow; });
   const SCENE = __SCENE__;
   if (SCENE) setScene(SCENE, "__ATLAS__", true);
+  if (RECORD) { record(); return; }
   if (LIVE) { poll(); setInterval(poll, 100); }
   (function frame() {
-    if (follow && lastState && marker.visible) {
-      const offset = new THREE.Vector3().subVectors(camera.position, controls.target);
-      controls.target.lerp(marker.position, 0.12);
-      camera.position.copy(controls.target).add(offset);
-    }
+    followStep();
     controls.update();
     renderer.render(scene3, camera);
     requestAnimationFrame(frame);
   })();
+}
+
+function followStep() {
+  if (follow && lastState && marker.visible) {
+    const offset = new THREE.Vector3().subVectors(camera.position, controls.target);
+    controls.target.lerp(marker.position, 0.12);
+    camera.position.copy(controls.target).add(offset);
+  }
+}
+
+// The demo video (tools/voxel/record.py): the page draws the server's /demo walk one frame at a time
+// at the video's size, each time record.py calls demoStep(k) over DevTools and takes a screenshot.
+async function record() {
+  const demo = await (await fetch("/demo", { cache: "no-store" })).json();
+  document.getElementById("hud").hidden = true;   // the map's name goes on in ffmpeg
+  renderer.setPixelRatio(1);
+  renderer.setSize(VIDEO_WIDTH, VIDEO_HEIGHT);
+  camera.aspect = VIDEO_WIDTH / VIDEO_HEIGHT; camera.updateProjectionMatrix();
+  controls.autoRotate = true; controls.autoRotateSpeed = 1.5;   // a slow turn around the player
+  follow = true;
+  let map = null;
+  window.demoFrames = demo.frames.length;
+  window.demoStep = async k => {
+    const [group, num, x, y, dir] = demo.frames[k];
+    const st = { group, num, x, y, dir };
+    if (map !== `${group}/${num}`) {
+      const sc = await (await fetch(`/scene/${group}/${num}`, { cache: "no-store" })).json();
+      setScene(sc, sc.atlas, false);
+      await textureReady;
+      lastState = st; placeMarker(st);
+      // the camera keeps its angle from the last map and opens on the player
+      const offset = map === null ? new THREE.Vector3(...FOLLOW_OFFSET) : new THREE.Vector3().subVectors(camera.position, controls.target);
+      controls.target.copy(marker.position);
+      camera.position.copy(marker.position).add(offset);
+      map = `${group}/${num}`;
+    }
+    lastState = st; placeMarker(st);
+    followStep();
+    controls.update();
+    renderer.render(scene3, camera);
+    return k;
+  };
+  document.title = "ready";
 }
 init();
 </script>
