@@ -698,6 +698,10 @@ extern const u32 gItemIcon_ShiftryBark[];
 extern const u32 gItemIcon_SpoinkPearl[];
 extern const u32 gItemIcon_ShinxStar[];
 extern const u32 gItemIcon_ShuckleShell[];
+extern const u32 gItemIcon_BeautiflyProboscis[];
+extern const u32 gItemIcon_HypnoPendulum[];
+extern const u32 gItemIcon_SunfloraPetals[];
+extern const u32 gItemIcon_ShedinjaShell[];
 // Mints
 extern const u32 gItemIcon_Mint[];
 extern const u16 gItemIconPalette_RedMint[];
@@ -3446,6 +3450,10 @@ extern const u32 gRelicGfx_ShiftryBark[];
 extern const u32 gRelicGfx_SpoinkPearl[];
 extern const u32 gRelicGfx_ShinxStar[];
 extern const u32 gRelicGfx_ShuckleShell[];
+extern const u32 gRelicGfx_BeautiflyProboscis[];
+extern const u32 gRelicGfx_HypnoPendulum[];
+extern const u32 gRelicGfx_SunfloraPetals[];
+extern const u32 gRelicGfx_ShedinjaShell[];
 extern const u32 gEnemyMonShadowsSized_GfxGen3[];
 
 extern const u32 gBattleAnimFogTilemap[];

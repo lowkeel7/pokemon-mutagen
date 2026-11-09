@@ -1539,6 +1539,10 @@ const u32 gRelicGfx_ShiftryBark[] = INCBIN_U32("graphics/relics/shiftry_bark.4bp
 const u32 gRelicGfx_SpoinkPearl[] = INCBIN_U32("graphics/relics/spoink_pearl.4bpp.smol");
 const u32 gRelicGfx_ShinxStar[] = INCBIN_U32("graphics/relics/shinx_star.4bpp.smol");
 const u32 gRelicGfx_ShuckleShell[] = INCBIN_U32("graphics/relics/shuckle_shell.4bpp.smol");
+const u32 gRelicGfx_BeautiflyProboscis[] = INCBIN_U32("graphics/relics/beautifly_proboscis.4bpp.smol");
+const u32 gRelicGfx_HypnoPendulum[] = INCBIN_U32("graphics/relics/hypno_pendulum.4bpp.smol");
+const u32 gRelicGfx_SunfloraPetals[] = INCBIN_U32("graphics/relics/sunflora_petals.4bpp.smol");
+const u32 gRelicGfx_ShedinjaShell[] = INCBIN_U32("graphics/relics/shedinja_shell.4bpp.smol");
 // Gen 3 shadow — per-game
 #if IS_HNS
 const u32 gEnemyMonShadow_GfxGen3[] = INCBIN_U32("graphics/battle_interface/hns/enemy_mon_shadow.4bpp.smol");

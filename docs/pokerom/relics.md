@@ -5,7 +5,8 @@ on the Pokémon's battle sprite, front and back, and in its summary, and the Pok
 gives, whatever its species: an ability; a family of moves that hits harder (slash, stab, bite,
 punch, sound, wind, ballistic or blunt; a few parts add a critical-hit stage or venom to those
 moves); or a stat raised by a fifth while a wearer of the part's type has it on (Shuckle's shell:
-both defenses by a tenth, for any wearer). Using another part asks to swap; the party menu's ITEM → TAKE OFF (or using the same part
+both defenses by a tenth, for any wearer); or one thing of its own (the misc parts: more HP from
+draining moves, surer sleep moves, HP back in the sun, a hit lived through once a battle). Using another part asks to swap; the party menu's ITEM → TAKE OFF (or using the same part
 again) takes it off, and the part goes back to the bag. Nothing is written to the Pokémon but the
 part's index, so taking a part off gives it back exactly as it was. Every part is the donor
 species' own pixels, cut by `tools/relics/cut.py` (nothing is drawn); the ROM colours it with the
@@ -13,7 +14,7 @@ donor's palette.
 
 Where they come from: a wild Pokémon of the donor species drops its part one time in four when it
 faints (RELICS on). **CHEAT SHELF → ALL** sells every part in every Poké Mart, and the sandbox build
-starts with one of each. Generated from the same table the ROM is built from: 48 parts.
+starts with one of each. Generated from the same table the ROM is built from: 52 parts.
 
 <table class="relics">
 <thead><tr><th></th><th>Part</th><th>Worn, it gives</th><th>Type lent</th><th>Where it sits</th><th>Front and back</th></tr></thead>
@@ -66,6 +67,10 @@ starts with one of each. Generated from the same table the ROM is built from: 48
 <tr><td><img src="relics/spoink_pearl-icon.png" alt="" width="48" height="48"></td><td><b>SPOINK PEARL</b><br><span class="sub">cut from Spoink's own sprites</span></td><td>Sp. Atk ×1.2 for a Psychic-type wearer</td><td>Psychic</td><td>on the head</td><td><img src="relics/spoink_pearl-front.png" alt="front view" width="64" height="64"><img src="relics/spoink_pearl-back.png" alt="back view" width="64" height="64"></td></tr>
 <tr><td><img src="relics/shinx_star-icon.png" alt="" width="48" height="48"></td><td><b>SHINX STAR</b><br><span class="sub">cut from Shinx's own sprites</span></td><td>Speed ×1.2 for an Electric-type wearer</td><td>Electric</td><td>on the head</td><td><img src="relics/shinx_star-front.png" alt="front view" width="64" height="64"><img src="relics/shinx_star-back.png" alt="back view" width="64" height="64"></td></tr>
 <tr><td><img src="relics/shuckle_shell-icon.png" alt="" width="48" height="48"></td><td><b>SHUCKLE SHELL</b><br><span class="sub">cut from Shuckle's own sprites</span></td><td>Defense and Sp. Def ×1.1 for any wearer</td><td>Bug</td><td>around the body</td><td><img src="relics/shuckle_shell-front.png" alt="front view" width="64" height="64"><img src="relics/shuckle_shell-back.png" alt="back view" width="64" height="64"></td></tr>
+<tr><td><img src="relics/beautifly_proboscis-icon.png" alt="" width="48" height="48"></td><td><b>BEAUTIFLY PROBOSCIS</b><br><span class="sub">cut from Beautifly's own sprites</span></td><td>draining moves heal 30% more</td><td>Bug</td><td>over the face</td><td><img src="relics/beautifly_proboscis-front.png" alt="front view" width="64" height="64"><img src="relics/beautifly_proboscis-back.png" alt="back view" width="64" height="64"></td></tr>
+<tr><td><img src="relics/hypno_pendulum-icon.png" alt="" width="48" height="48"></td><td><b>HYPNO PENDULUM</b><br><span class="sub">cut from Hypno's own sprites</span></td><td>sleep moves' accuracy ×1.2</td><td>Psychic</td><td>around the body</td><td><img src="relics/hypno_pendulum-front.png" alt="front view" width="64" height="64"><img src="relics/hypno_pendulum-back.png" alt="back view" width="64" height="64"></td></tr>
+<tr><td><img src="relics/sunflora_petals-icon.png" alt="" width="48" height="48"></td><td><b>SUNFLORA PETALS</b><br><span class="sub">cut from Sunflora's own sprites</span></td><td>1/16 of its HP back each turn in harsh sunlight</td><td>Grass</td><td>on the back (behind the Pokémon when it faces you)</td><td><img src="relics/sunflora_petals-front.png" alt="front view" width="64" height="64"><img src="relics/sunflora_petals-back.png" alt="back view" width="64" height="64"></td></tr>
+<tr><td><img src="relics/shedinja_shell-icon.png" alt="" width="48" height="48"></td><td><b>SHEDINJA SHELL</b><br><span class="sub">cut from Shedinja's own sprites</span></td><td>once a battle, lives through a hit that isn't super effective with 1 HP</td><td>Bug</td><td>on the back (behind the Pokémon when it faces you)</td><td><img src="relics/shedinja_shell-front.png" alt="front view" width="64" height="64"><img src="relics/shedinja_shell-back.png" alt="back view" width="64" height="64"></td></tr>
 </tbody>
 </table>
 

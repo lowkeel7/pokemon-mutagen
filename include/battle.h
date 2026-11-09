@@ -522,7 +522,9 @@ struct PartyState
     u32 changedSpecies:11; // For forms when multiple mons can change into the same pokemon.
     u32 sentOut:1;
     u32 isKnockedOff:1;
-    u32 padding:8;
+    u32 relicShellUsed:1;   // Pokémon Mutagen (SG-09): a worn Shedinja Shell has endured its hit this battle
+    u32 relicShellHungOn:1; // and the hang-on being told is the shell's, not a held item's
+    u32 padding:6;
     u16 usedHeldItem;
 };
 

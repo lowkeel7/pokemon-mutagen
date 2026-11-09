@@ -1375,6 +1375,24 @@ static void Cmd_typecalc(void)
     gBattlescriptCurrInstr = cmd->nextInstr;
 }
 
+// The hang-on's message: a held item's (a Focus Sash is spent), or a worn Shedinja Shell's, which
+// GetAdjustedDamage marks (Pokémon Mutagen, SG-09): nothing is spent, a held Sash is left alone.
+static void CallHangedOnScript(enum BattlerId battler)
+{
+    struct PartyState *state = GetBattlerPartyState(battler);
+
+    gPotentialItemEffectBattler = battler;
+    if (state->relicShellHungOn)
+    {
+        state->relicShellHungOn = FALSE;
+        gLastUsedItem = gRelicsInfo[RELIC_SHEDINJA_SHELL].item;
+        BattleScriptCall(BattleScript_RelicHungOnMsg);
+        return;
+    }
+    gLastUsedItem = gBattleMons[battler].item;
+    BattleScriptCall(BattleScript_HangedOnMsg);
+}
+
 static void Cmd_multihitresultmessage(void)
 {
     CMD_ARGS();
@@ -1393,10 +1411,8 @@ static void Cmd_multihitresultmessage(void)
         }
         else if (gBattleStruct->moveResultFlags[gBattlerTarget] & MOVE_RESULT_FOE_HUNG_ON)
         {
-            gLastUsedItem = gBattleMons[gBattlerTarget].item;
-            gPotentialItemEffectBattler = gBattlerTarget;
             gBattleStruct->moveResultFlags[gBattlerTarget] &= ~(MOVE_RESULT_STURDIED | MOVE_RESULT_FOE_HUNG_ON);
-            BattleScriptCall(BattleScript_HangedOnMsg);
+            CallHangedOnScript(gBattlerTarget);
             return;
         }
     }
@@ -2078,10 +2094,8 @@ static void Cmd_resultmessage(void)
             }
             break;
         case MOVE_RESULT_FOE_HUNG_ON:
-            gLastUsedItem = gBattleMons[gBattlerTarget].item;
-            gPotentialItemEffectBattler = gBattlerTarget;
             *moveResultFlags &= ~(MOVE_RESULT_FOE_ENDURED | MOVE_RESULT_FOE_HUNG_ON);
-            BattleScriptCall(BattleScript_HangedOnMsg);
+            CallHangedOnScript(gBattlerTarget);
             return;
         default:
             if (*moveResultFlags & MOVE_RESULT_ONE_HIT_KO)
@@ -2106,10 +2120,8 @@ static void Cmd_resultmessage(void)
             }
             else if (*moveResultFlags & MOVE_RESULT_FOE_HUNG_ON)
             {
-                gLastUsedItem = gBattleMons[gBattlerTarget].item;
-                gPotentialItemEffectBattler = gBattlerTarget;
                 *moveResultFlags &= ~(MOVE_RESULT_FOE_ENDURED | MOVE_RESULT_FOE_HUNG_ON);
-                BattleScriptCall(BattleScript_HangedOnMsg);
+                CallHangedOnScript(gBattlerTarget);
                 return;
             }
             else if (*moveResultFlags & MOVE_RESULT_FAILED)

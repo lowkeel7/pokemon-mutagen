@@ -146,3 +146,22 @@ TEST("Relics: a part's index fits the Pokémon's six bits, and the empty row is 
     EXPECT_EQ(RelicOfDonor(SPECIES_NONE), RELIC_NONE);
     EXPECT_EQ(GetRelicAbility(RELIC_NONE), ABILITY_NONE);
 }
+
+TEST("Relics: the misc parts carry no row effect, the battle reads each by its name")
+{
+    static const u8 sMisc[] = { RELIC_BEAUTIFLY_PROBOSCIS, RELIC_HYPNO_PENDULUM, RELIC_SUNFLORA_PETALS, RELIC_SHEDINJA_SHELL };
+    u32 i;
+
+    for (i = 0; i < ARRAY_COUNT(sMisc); i++)
+    {
+        const struct RelicInfo *info = &gRelicsInfo[sMisc[i]];
+
+        EXPECT_EQ((u32)info->ability, ABILITY_NONE); // (cast: the macro's typeof cannot take a bit-field)
+        EXPECT_EQ((u32)info->family, RELIC_FAMILY_NONE);
+        EXPECT_EQ((u32)info->stat, RELIC_STAT_NONE);
+    }
+    EXPECT_EQ(GetRelicType(RELIC_BEAUTIFLY_PROBOSCIS), TYPE_BUG);
+    EXPECT_EQ(GetRelicType(RELIC_HYPNO_PENDULUM), TYPE_PSYCHIC);
+    EXPECT_EQ(GetRelicType(RELIC_SUNFLORA_PETALS), TYPE_GRASS);
+    EXPECT_EQ(GetRelicType(RELIC_SHEDINJA_SHELL), TYPE_BUG);
+}

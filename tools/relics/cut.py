@@ -142,6 +142,16 @@ PARTS = {
                              anchor="HEAD", effect="Speed ×1.2 for an Electric-type wearer", lends="Electric", name="SHINX STAR"),
     "shuckle_shell":      dict(donor="shuckle",    front=((18, 27, 50, 49), {8, 9, 11, 12, 13, 14, 15}), back=MIRROR,
                              anchor="BODY", effect="Defense and Sp. Def ×1.1 for any wearer", lends="Bug", name="SHUCKLE SHELL"),
+    # The misc parts (slice 6, 2026-11-09): one effect each, read by name where the battle needs it.
+    "beautifly_proboscis": dict(donor="beautifly", front=((4, 35, 14, 55), {1, 2}), drop=[(12, 36, 14, 45)], back=MIRROR,
+                             anchor="FACE", dy=8, effect="draining moves heal 30% more", lends="Bug", name="BEAUTIFLY PROBOSCIS"),
+    "hypno_pendulum":     dict(donor="hypno",      front=((45, 29, 59, 40), None), back=((47, 27, 57, 53), {6, 7, 12, 13, 14, 15}), drop_back=[(47, 27, 51, 41)],
+                             anchor="BODY", effect="sleep moves' accuracy ×1.2", lends="Psychic", name="HYPNO PENDULUM"),
+    "sunflora_petals":    dict(donor="sunflora",   front=((16, 8, 45, 32), {1, 3, 4, 5, 6, 9}), drop=[(23, 15, 34, 29)], back=MIRROR,
+                             anchor="BACK", effect="1/16 of its HP back each turn in harsh sunlight", lends="Grass", name="SUNFLORA PETALS"),
+    # Shedinja is all shell, wider than a part's cell: the part is the shell's two wing-shards from its back sprite
+    "shedinja_shell":     dict(donor="shedinja",   front=((46, 18, 59, 29), None), front_from="back", pair=-2, back=MIRROR,
+                             anchor="BACK", effect="once a battle, lives through a hit that isn't super effective with 1 HP", lends="Bug", name="SHEDINJA SHELL"),
 }
 
 

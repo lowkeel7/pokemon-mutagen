@@ -2214,3 +2214,7 @@ const u32 gItemIcon_ShiftryBark[] = INCBIN_U32("graphics/items/icons/shiftry_bar
 const u32 gItemIcon_SpoinkPearl[] = INCBIN_U32("graphics/items/icons/spoink_pearl.4bpp.smol");
 const u32 gItemIcon_ShinxStar[] = INCBIN_U32("graphics/items/icons/shinx_star.4bpp.smol");
 const u32 gItemIcon_ShuckleShell[] = INCBIN_U32("graphics/items/icons/shuckle_shell.4bpp.smol");
+const u32 gItemIcon_BeautiflyProboscis[] = INCBIN_U32("graphics/items/icons/beautifly_proboscis.4bpp.smol");
+const u32 gItemIcon_HypnoPendulum[] = INCBIN_U32("graphics/items/icons/hypno_pendulum.4bpp.smol");
+const u32 gItemIcon_SunfloraPetals[] = INCBIN_U32("graphics/items/icons/sunflora_petals.4bpp.smol");
+const u32 gItemIcon_ShedinjaShell[] = INCBIN_U32("graphics/items/icons/shedinja_shell.4bpp.smol");

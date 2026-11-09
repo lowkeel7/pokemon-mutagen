@@ -1840,6 +1840,8 @@ s32 GetDrainedBigRootHp(enum BattlerId battler, s32 hp)
 {
     if (GetBattlerHoldEffect(battler) == HOLD_EFFECT_BIG_ROOT)
         hp = (hp * 1300) / 1000;
+    if (GetBattlerRelic(battler) == RELIC_BEAUTIFLY_PROBOSCIS) // Pokémon Mutagen (SG-09): a worn Proboscis, Big Root's 30% (the two stack)
+        hp = (hp * 1300) / 1000;
     if (hp == 0)
         hp = 1;
 
@@ -8206,6 +8208,8 @@ s32 GetAdjustedDamage(struct BattleContext *ctx, s32 damage)
     u32 rand = Random() % 100;
     u32 affectionScore = GetBattlerAffectionHearts(ctx->battlerDef);
 
+    if (ctx->updateFlags) // Pokémon Mutagen (SG-09): whether the shell is this hit's hang-on, never a stale one (CallHangedOnScript)
+        GetBattlerPartyState(ctx->battlerDef)->relicShellHungOn = FALSE;
     if (gBattleMons[ctx->battlerDef].volatiles.endured)
     {
         enduredHit = TRUE;
@@ -8234,6 +8238,15 @@ s32 GetAdjustedDamage(struct BattleContext *ctx, s32 damage)
         enduredHit = TRUE;
         RecordItemEffectBattle(ctx->battlerDef, ctx->holdEffectDef);
         gLastUsedItem = gBattleMons[ctx->battlerDef].item;
+        gBattleStruct->moveResultFlags[ctx->battlerDef] |= MOVE_RESULT_FOE_HUNG_ON;
+    }
+    else if (ctx->updateFlags && CanRelicShellEndure(ctx->battlerDef, ctx->typeEffectivenessModifier))
+    {
+        // Pokémon Mutagen (SG-09): a worn Shedinja Shell, once a battle, after the held items. A real
+        // hit only (updateFlags): the AI's and the battle TV's sums never spend it.
+        enduredHit = TRUE;
+        GetBattlerPartyState(ctx->battlerDef)->relicShellUsed = TRUE;
+        GetBattlerPartyState(ctx->battlerDef)->relicShellHungOn = TRUE; // the message names the shell (CallHangedOnScript)
         gBattleStruct->moveResultFlags[ctx->battlerDef] |= MOVE_RESULT_FOE_HUNG_ON;
     }
     else if (B_AFFECTION_MECHANICS == TRUE && IsOnPlayerSide(ctx->battlerDef) && affectionScore >= AFFECTION_THREE_HEARTS)
@@ -10586,6 +10599,10 @@ u32 GetTotalAccuracy(enum BattlerId battlerAtk, enum BattlerId battlerDef, enum 
     default:
         break;
     }
+
+    // Pokémon Mutagen (SG-09): a worn Hypno Pendulum, sleep moves x1.2
+    if (GetBattlerRelic(battlerAtk) == RELIC_HYPNO_PENDULUM && GetMoveNonVolatileStatus(move) == MOVE_EFFECT_SLEEP)
+        calc = (calc * 120) / 100;
 
     // Target's hold effect
     switch (defHoldEffect)

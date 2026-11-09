@@ -7,6 +7,7 @@
 #include "battle_ai_util.h"
 #include "battle_gimmick.h"
 #include "battle_scripts.h"
+#include "relic.h"
 #include "constants/battle.h"
 #include "constants/battle_string_ids.h"
 #include "constants/abilities.h"
@@ -380,6 +381,20 @@ static bool32 HandleEndTurnFirstEventBlock(enum BattlerId battler)
         gBattleStruct->eventState.endTurnBlock++;
         break;
     }
+    case FIRST_EVENT_BLOCK_RELIC: // Pokémon Mutagen (SG-09): worn Sunflora Petals give back 1/16 of the HP in harsh sunlight
+        if (GetBattlerRelic(battler) == RELIC_SUNFLORA_PETALS
+         && IsBattlerWeatherAffected(battler, B_WEATHER_SUN)
+         && !IsBattlerAtMaxHp(battler)
+         && !gBattleMons[battler].volatiles.healBlock)
+        {
+            gBattleScripting.battler = battler;
+            gLastUsedItem = gRelicsInfo[RELIC_SUNFLORA_PETALS].item;
+            SetHealAmount(battler, GetNonDynamaxMaxHP(battler) / 16);
+            BattleScriptExecute(BattleScript_ItemHealHP_End2);
+            effect = TRUE;
+        }
+        gBattleStruct->eventState.endTurnBlock++;
+        break;
     case FIRST_EVENT_BLOCK_HEAL_ITEMS:
         if (ItemBattleEffects(battler, 0, GetBattlerHoldEffect(battler), IsLeftoversActivation))
             effect = TRUE;

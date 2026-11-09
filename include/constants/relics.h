@@ -52,7 +52,11 @@
     X(SHIFTRY_BARK)         \
     X(SPOINK_PEARL)         \
     X(SHINX_STAR)           \
-    X(SHUCKLE_SHELL)
+    X(SHUCKLE_SHELL)        \
+    X(BEAUTIFLY_PROBOSCIS)  \
+    X(HYPNO_PENDULUM)       \
+    X(SUNFLORA_PETALS)      \
+    X(SHEDINJA_SHELL)
 
 #define RELIC_ENUM(name) RELIC_##name,
 enum Relic

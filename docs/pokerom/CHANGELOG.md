@@ -79,7 +79,12 @@ Heart & Soul's own history see its documentation, and for the engine see `CHANGE
   Pokémon of the part's type (the type it lends, so with THIRD TYPE on by any wearer but one keeping
   a third type of its own), SCEPTILE TAIL and SHINX STAR raise Speed, HERACROSS SHELL and SHIFTRY
   BARK Defense, BULBASAUR BULB Sp. Def and SPOINK PEARL Sp. Atk, each by a fifth; SHUCKLE SHELL
-  raises both defenses by a tenth for any wearer. The parts' page: `docs/pokerom/relics.md`.
+  raises both defenses by a tenth for any wearer. **Four misc parts**, one effect each:
+  BEAUTIFLY PROBOSCIS (HP-stealing moves, Leech Seed, Ingrain and Aqua Ring heal 30% more, as with a
+  Big Root, and the two stack), HYPNO PENDULUM (sleep moves 20% more accurate), SUNFLORA PETALS (1/16
+  of the HP back at the end of each turn in harsh sunlight) and SHEDINJA SHELL (once a battle, the
+  wearer lives through a hit it isn't weak to, with 1 HP; nothing is used up, and a held Focus Sash
+  is left alone). The parts' page: `docs/pokerom/relics.md`.
 - **A MUTAGEN tab** in the new-game and PC options, and **GAMEMODE → MUTAGEN** on the new-game
   menu: the recommended settings plus every Mutagen feature switched on in one press. Every row's
   first choice is Heart & Soul's behaviour, and older saves read every row as that.

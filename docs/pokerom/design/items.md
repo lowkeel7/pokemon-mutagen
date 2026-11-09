@@ -71,7 +71,7 @@ Pound); blunt counts the punches too. Every non-ING item is also an ingredient.
 | 11 | Feathers | birds (Flying) | FAM | wind ×1.2 |
 | 12 | Predator Teeth (shark/croc) | Sharpedo, Feraligatr (Water) | FAM | bite ×1.2 |
 | 13 | Sceptile Tail | Sceptile (Grass) | STAT | Speed ×1.2 for Grass holders |
-| 14 | Beautifly Proboscis | Beautifly (Bug) | MISC | draining moves heal 30% more (Big Root clone) |
+| 14 | Beautifly Proboscis | Beautifly (Bug) | MISC | draining moves heal 30% more (Big Root clone). **Built** (slice 6) |
 | 15 | Bulbasaur Bulb | Bulbasaur (Grass) | STAT | Sp. Def ×1.2 for Grass holders |
 | 16 | Arbok Venom | Arbok (Poison) | ABIL | Poison Touch |
 | 17 | Sandslash Claws | Sandslash (Ground) | FAM | slash ×1.1 and +1 crit stage |
@@ -81,7 +81,7 @@ Pound); blunt counts the punches too. Every non-ING item is also an ingredient.
 | 21 | Magnemite Core | Magnemite (Electric) | ING | spirit-core ingredient |
 | 22 | Leek (exists) | Farfetch'd (Normal) | FAM | adds slash ×1.2 to the existing crit effect; option: its slash moves become Grass |
 | 23 | Head Shell (Onix/Aron/Cranidos) | Onix (Rock) | ABIL | Rock Head |
-| 24 | Hypno Pendulum | Hypno (Psychic) | MISC | sleep moves' accuracy ×1.2 |
+| 24 | Hypno Pendulum | Hypno (Psychic) | MISC | sleep moves' accuracy ×1.2. **Built** (slice 6) |
 | 25 | Drill Horn | Rhydon (Ground) | FAM | stab ×1.2; Drill Run +1 crit |
 | 26 | Dragonite Antenna (poached) | Dragonite (Dragon) | ING | black market only; high sell price |
 | 27 | Bayleef Leaf Blade | Bayleef (Grass) | FAM | slash ×1.2 |
@@ -96,7 +96,7 @@ Pound); blunt counts the punches too. Every non-ING item is also an ingredient.
 | 36 | Swellow Tail | Swellow (Flying) | ABIL | Guts ❓ |
 | 37 | Kirlia Antenna | Kirlia (Psychic) | ABIL | Telepathy |
 | 38 | Breloom Cap | Breloom (Grass) | ABIL | Effect Spore |
-| 39 | Shedinja Shell | Shedinja (Bug) | MISC | once per battle, survive a hit that isn't super effective with 1 HP (a softer Wonder Guard) |
+| 39 | Shedinja Shell | Shedinja (Bug) | MISC | once per battle, survive a hit that isn't super effective with 1 HP (a softer Wonder Guard). **Built** (slice 6) |
 | 40 | Loudred Ears | Loudred (Normal) | FAM | sound ×1.2 |
 | 41 | Hariyama Belt | Hariyama (Fighting) | ABIL | Thick Fat |
 | 42 | Sableye Eyes | Sableye (Dark) | ABIL | Keen Eye |
@@ -122,7 +122,7 @@ Pound); blunt counts the punches too. Every non-ING item is also an ingredient.
 | 62 | Scyther Wings | Scyther (Bug) | ABIL | Technician |
 | 63 | Lapras Shell | Lapras (Water) | ABIL | Shell Armor |
 | 64 | Mareep Wool | Mareep (Electric) | ABIL | Static; also cloth for wearables (DP-12) |
-| 65 | Sunflora Seeds | Sunflora (Grass) | MISC | heals 1/16 per turn in sun |
+| 65 | Sunflora Seeds | Sunflora (Grass) | MISC | heals 1/16 per turn in sun. **Built** (slice 6) as SUNFLORA PETALS: the sprite has no seeds ❓ |
 | 66 | Shuckle Shell | Shuckle (Bug) | STAT | Defense and Sp. Def ×1.1 for any holder |
 | 67 | Sneasel Feather | Sneasel (Dark) | ABIL | Pickpocket |
 | 68 | Magcargo Shell | Magcargo (Fire) | ABIL | Flame Body |
@@ -228,6 +228,25 @@ needs nine of its sixteen (fewer than 512 abilities; a static assert holds it), 
 Not in this slice: the SPEC rows (the Cubone Skull as Marowak's club, the Alakazam Spoons), which want
 a species test in the row; they wait with the MISC rows.
 
+## Built: the 4 misc parts (slice 6, 2026-11-09)
+A misc part does one thing of its own, so its row carries no effect (no ability, family or stat) and
+the battle reads the part by its name, `GetBattlerRelic(battler) == RELIC_X` (the byte cached at
+send-out), at the one place its effect happens; with nothing worn or RELICS off that is one test. Both
+rules hold: nothing is written to the Pokémon, nothing is used up (the shell's once a battle is a bit of
+the battle's party state, `relicShellUsed`, gone with the battle), and nothing is stored twice.
+
+| Part | Donor | Worn | What shows | Where |
+|---|---|---|---|---|
+| BEAUTIFLY PROBOSCIS | Beautifly | HP-stealing moves, Leech Seed, Ingrain and Aqua Ring heal 30% more (`GetDrainedBigRootHp`: Big Root's rule again, the two stack) | the coiled tongue | face, 8 px down |
+| HYPNO PENDULUM | Hypno | sleep moves ×1.2 accuracy (`GetTotalAccuracy`, after the held item's) | the coin on its string (the owner's "circle on string"); from behind, hanging straight | body |
+| SUNFLORA PETALS | Sunflora | 1/16 of the HP back at the end of each turn in harsh sunlight (a step of the end turn's first block, before Leftovers; Heal Block and a Utility Umbrella stop it) | the ring of petals, the face blanked: behind the wearer's head, so the wearer's face is the flower's | back |
+| SHEDINJA SHELL | Shedinja | once a battle, a hit the wearer isn't weak to leaves it 1 HP (`GetAdjustedDamage`, after a held Focus Band or Sash; real hits only, never the AI's sums); "hung on using its SHEDINJA SHELL!", a held Focus Sash left alone | the shell's two wing-shards, from the back sprite: the whole shell is wider than a part's 32-pixel cell | back |
+
+The design's name was SUNFLORA SEEDS; Sunflora's sprite has no seeds, so the part is its petals, the
+ring that catches the sun (renaming is the item's name alone: saves keep the index). Not in this slice:
+the used-up rows (Victreebel Nectar, Tropius Bananas, Sudowoodo Berry, Cacnea Spikes, Smeargle Paint),
+which want a rethink as effects that hold while worn, and the Hoopa Hoop (a key item, DP-14).
+
 ## Build order
 1. ~~ABIL hook~~ (built) + ~~FAM flags and the FAM rows~~ (built 2026-11-09) + ~~STAT rows~~ (built
    2026-11-09, in the row's spare bits).
@@ -235,7 +254,8 @@ a species test in the row; they wait with the MISC rows.
    shows as the third type while THIRD TYPE is on, read, never written; a Pokémon with a third type of its
    own is asked which to show, the pick is one bit, `relicTypeOff`; off comes the part, back comes the own).
    TAKE OFF in the party menu's ITEM submenu takes a worn part off without a second copy in the bag.
-3. EVO rows; MISC rows one by one; ING after crafting exists.
+3. EVO rows; MISC rows one by one (~~the Proboscis, the Pendulum, the Petals and the Shell~~, built
+   2026-11-09; the used-up rows want a rethink as effects that hold while worn first); ING after crafting exists.
 4. ~~Icons~~: every part's icon is its own cut, no asset pack needed.
 
 ## Owner's notes (2026-11-09)
@@ -268,4 +288,6 @@ a species test in the row; they wait with the MISC rows.
 ## Open for review
 The ❓ rows; any item you meant differently; whether a worn ABIL part should replace the
 holder's ability or add a second one (proposal: replace, which the engine already understands);
-the Starmie Gem's effect, now that nothing is consumed; whether "Feathers" meant Pidgeot's crest.
+the Starmie Gem's effect, now that nothing is consumed; whether "Feathers" meant Pidgeot's crest;
+the Sunflora part, which is its petals (SUNFLORA PETALS: the sprite has no seeds), or another name; the
+Shedinja shell as its two wing-shards (the whole shell is wider than a part's 32-pixel cell).

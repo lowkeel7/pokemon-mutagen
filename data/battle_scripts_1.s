@@ -7228,6 +7228,13 @@ BattleScript_HangedOnMsg::
 BattleScript_HangedOnMsgRet:
 	return
 
+@ Pokémon Mutagen (SG-09): a worn Shedinja Shell hung on; nothing is spent, a held Focus Sash stays
+BattleScript_RelicHungOnMsg::
+	playanimation BS_TARGET, B_ANIM_HANGED_ON
+	printstring STRINGID_PKMNHUNGONWITHX
+	waitmessage B_WAIT_TIME_LONG
+	return
+
 BattleScript_BerryConfuseHeal::
 	jumpifability BS_SCRIPTING, ABILITY_RIPEN, BattleScript_BerryConfuseHealRet_AbilityPopup
 	goto BattleScript_BerryConfuseHealRet_Anim

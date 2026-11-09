@@ -9,7 +9,8 @@
 // Everything is behind MUTAGEN → RELICS (zero = Heart & Soul: the field is kept but does nothing).
 //
 // Reversible by construction: wearing a part writes nothing but the part's index. Its ability, the
-// type it lends, the move family it strengthens and the stat it raises are read while it is worn,
+// type it lends, the move family it strengthens, the stat it raises and a misc part's one effect are
+// read while it is worn,
 // so taking the part off gives the Pokémon back exactly as it was, and the part goes back to the
 // bag; no part is ever used up. The art is each donor's own pixels, cut by tools/relics/cut.py,
 // stored compressed and coloured by the donor's palette, which the ROM holds once already.
@@ -99,6 +100,12 @@ bool32 RelicPoisonsOnHit(u32 relic, u32 move);            // the part's rider is
 uq4_12_t GetRelicStatBoost(u32 relic, u32 stat);
 uq4_12_t GetBattlerRelicStatModifier(u32 battler, u32 stat);
 
+// The misc parts, each read by its name where its one effect happens: the Beautifly Proboscis in
+// GetDrainedBigRootHp and the Hypno Pendulum in GetTotalAccuracy (battle_util.c), the Sunflora Petals
+// at the end of the turn (battle_end_turn.c), the Shedinja Shell in GetAdjustedDamage through this:
+// whether the battler's shell endures a hit of this type effectiveness, its once a battle unspent.
+bool32 CanRelicShellEndure(u32 battler, uq4_12_t typeEffectiveness);
+
 // The overlay sprite: `frame` is the wearer's decompressed first frame (64x64 4bpp), which places
 // the part. Returns SPRITE_NONE when nothing is worn or nothing can be drawn.
 u8 Relic_CreateOverlay(u32 relic, u8 monSpriteId, const u8 *frame, bool32 back, u8 subpriority);
@@ -157,5 +164,9 @@ extern const u16 gMonPalette_Shiftry[];
 extern const u16 gMonPalette_Spoink[];
 extern const u16 gMonPalette_Shinx[];
 extern const u16 gMonPalette_Shuckle[];
+extern const u16 gMonPalette_Beautifly[];
+extern const u16 gMonPalette_Hypno[];
+extern const u16 gMonPalette_Sunflora[];
+extern const u16 gMonPalette_Shedinja[];
 
 #endif // GUARD_RELIC_H

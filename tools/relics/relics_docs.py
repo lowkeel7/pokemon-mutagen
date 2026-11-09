@@ -61,7 +61,8 @@ on the Pokémon's battle sprite, front and back, and in its summary, and the Pok
 gives, whatever its species: an ability; a family of moves that hits harder (slash, stab, bite,
 punch, sound, wind, ballistic or blunt; a few parts add a critical-hit stage or venom to those
 moves); or a stat raised by a fifth while a wearer of the part's type has it on (Shuckle's shell:
-both defenses by a tenth, for any wearer). Using another part asks to swap; the party menu's ITEM → TAKE OFF (or using the same part
+both defenses by a tenth, for any wearer); or one thing of its own (the misc parts: more HP from
+draining moves, surer sleep moves, HP back in the sun, a hit lived through once a battle). Using another part asks to swap; the party menu's ITEM → TAKE OFF (or using the same part
 again) takes it off, and the part goes back to the bag. Nothing is written to the Pokémon but the
 part's index, so taking a part off gives it back exactly as it was. Every part is the donor
 species' own pixels, cut by `tools/relics/cut.py` (nothing is drawn); the ROM colours it with the

@@ -62,7 +62,10 @@ hold for every part: reversible (a part writes nothing but its index, nothing is
    needed. A stat part: `ABILITY_NONE` and `STAT(SPEED, 2)` (Speed ×1.2; `DEFENSES` is both defenses)
    with `.typed = TRUE` for a wearer of the part's type only; the battle reads
    `GetBattlerRelicStatModifier` in `CalcAttackStat`, `CalcDefenseStat` (battle_util.c) and
-   `GetBattlerTotalSpeedStat` (battle_main.c). One donor per part (`RelicOfDonor` is the drop lookup; `test/relic.c` checks both lookups
+   `GetBattlerTotalSpeedStat` (battle_main.c). A misc part: `ABILITY_NONE` and nothing after `Sym`;
+   its one effect is read by its name (`GetBattlerRelic(battler) == RELIC_X`) where the battle needs it
+   (the Proboscis in `GetDrainedBigRootHp`, the Pendulum in `GetTotalAccuracy`, the Petals in the end
+   turn's `FIRST_EVENT_BLOCK_RELIC`, the Shell in `GetAdjustedDamage` and `CallHangedOnScript`). One donor per part (`RelicOfDonor` is the drop lookup; `test/relic.c` checks both lookups
    and every row's family against the move flags). A new family is a flag in `include/move.h`
    (spare bits, `padding1`), its moves flagged in `src/data/moves_info.h`, one case in
    `IsMoveOfRelicFamily` (relic.c) and one row in `sFamilyMove` (test/relic.c); the battle reads
@@ -70,7 +73,7 @@ hold for every part: reversible (a part writes nothing but its index, nothing is
    `CalcCritChanceStage` and the attacker's move end (battle_util.c).
 6. `tools/relics/cut.py --docs` regenerates the parts' page. `test/battle/relic/abilities.c` covers
    every part's ability from the list, `family.c` one part per move family and the riders, `stat.c`
-   the stat parts; a part
+   the stat parts, `misc.c` the misc parts; a part
    with a second effect gets its own test there.
 
 ## Move

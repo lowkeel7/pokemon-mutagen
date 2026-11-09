@@ -17359,6 +17359,78 @@ const struct ItemInfo gItemsInfo[] =
         .iconPic = gItemIcon_ShuckleShell,
         .iconPalette = gMonPalette_Shuckle,
     },
+
+    [ITEM_BEAUTIFLY_PROBOSCIS] =
+    {
+        .name = ITEM_NAME("BEAUTIFLY PROBOSCIS"),
+        .pluralName = ITEM_PLURAL_NAME("Beautifly Probosces"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "BEAUTIFLY's tongue,\n"
+            "to wear. HP-stealing\n"
+            "moves heal 30% more."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_BeautiflyProboscis,
+        .iconPalette = gMonPalette_Beautifly,
+    },
+
+    [ITEM_HYPNO_PENDULUM] =
+    {
+        .name = ITEM_NAME("HYPNO PENDULUM"),
+        .pluralName = ITEM_PLURAL_NAME("Hypno Pendulums"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "HYPNO's pendulum, to\n"
+            "wear. Sleep moves\n"
+            "land 20% more often."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_HypnoPendulum,
+        .iconPalette = gMonPalette_Hypno,
+    },
+
+    [ITEM_SUNFLORA_PETALS] =
+    {
+        .name = ITEM_NAME("SUNFLORA PETALS"),
+        .pluralName = ITEM_PLURAL_NAME("Sunflora Petals"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "SUNFLORA's petals,\n"
+            "to wear. Heals 1/16\n"
+            "HP each turn in sun."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_SunfloraPetals,
+        .iconPalette = gMonPalette_Sunflora,
+    },
+
+    [ITEM_SHEDINJA_SHELL] =
+    {
+        .name = ITEM_NAME("SHEDINJA SHELL"),
+        .pluralName = ITEM_PLURAL_NAME("Shedinja Shells"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "Worn, it endures one\n"
+            "hit a battle that it\n"
+            "isn't weak to."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_ShedinjaShell,
+        .iconPalette = gMonPalette_Shedinja,
+    },
 };
 
 #undef ITEM_NAME

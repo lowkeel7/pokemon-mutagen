@@ -6,7 +6,8 @@
 // that follows the Pokémon's sprite, placed by the shape of its first frame. A part may instead
 // strengthen one family of moves (relic.h, enum RelicFamily) or raise one stat for a wearer of its
 // type (enum RelicStat): battle_util.c and battle_main.c ask the helpers below with the battler's
-// cached part on the damage, critical-hit, move-end and speed paths. MUTAGEN → RELICS
+// cached part on the damage, critical-hit, move-end and speed paths. A misc part does one thing of
+// its own, read by its name where that thing happens (relic.h). MUTAGEN → RELICS
 // (zero = Heart & Soul) gates every effect; the field itself is kept either way.
 //
 // Cost: twelve bytes of ROM a part plus its compressed art (about half a kilobyte); no palette of
@@ -233,6 +234,15 @@ uq4_12_t GetBattlerRelicStatModifier(u32 battler, u32 stat)
     if (gRelicsInfo[relic].typed && !IS_BATTLER_OF_TYPE(battler, GetRelicType(relic)))
         return UQ_4_12(1.0);
     return sRelicBoost[gRelicsInfo[relic].boost];
+}
+
+// The Shedinja Shell (a misc part): a hit that isn't super effective leaves the wearer 1 HP, once a
+// battle for each wearer (a bit of the battle's party state, gone with the battle).
+bool32 CanRelicShellEndure(u32 battler, uq4_12_t typeEffectiveness)
+{
+    return GetBattlerRelic(battler) == RELIC_SHEDINJA_SHELL
+        && typeEffectiveness <= UQ_4_12(1.0)
+        && !GetBattlerPartyState(battler)->relicShellUsed;
 }
 
 // Where the part sits on this frame, as the cell's bottom centre. One pass over the 64x64 4bpp
