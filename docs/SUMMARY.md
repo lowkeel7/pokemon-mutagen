@@ -11,6 +11,8 @@
     - [Design: type roots](./pokerom/design/type-roots.md)
     - [Design: status escalation](./pokerom/design/statuses.md)
     - [Design: species items](./pokerom/design/items.md)
+    - [Mutagen evolutions](./pokerom/evolutions.md)
+    - [Voxel view](./pokerom/VOXEL.md)
     - [Heart & Soul's README](./hns/README.md)
 - [Installation](./INSTALL.md)
     - [Setting up WSL1 (Legacy Portion)](./legacy_WSL1_INSTALL.md)

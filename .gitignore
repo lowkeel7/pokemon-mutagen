@@ -77,3 +77,6 @@ tools/mid2gbs/.venv
 /release/
 # Save fixtures for tools/playtest/savecheck.py
 !/tools/playtest/saves/*.sav
+
+# mdbook output (tools/site, .github/workflows/docs.yml)
+docs/book/

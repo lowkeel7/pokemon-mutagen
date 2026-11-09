@@ -391,10 +391,10 @@ def build_scene(layout_id):
             lv = 1                          # a hedge, a fence, a cliff line
         else:
             lv = min(len(run), MAX_LEVELS)  # a building: roof rows over a wall row
+        stack = [cells[ids[i]][0] for i in reversed(run)][:lv]   # the run's rows, bottom row first
         for i in run:
             levels[i] = lv
-        bottom = run[-1]
-        stacks[bottom] = [cells[ids[i]][0] for i in reversed(run)][:lv]
+            stacks[i] = stack                                     # every side of the box shows them
 
     blocks = []
     for i, metatile_id in enumerate(ids):
@@ -600,21 +600,21 @@ function buildGeometry(sc) {
     const h = heights[y * sc.width + x];
     const x0 = x * SIZE, x1 = x0 + SIZE, z0 = y * SIZE, z1 = z0 + SIZE;
     quad([[x0, h, z0], [x1, h, z0], [x1, h, z1], [x0, h, z1]], [0, 1, 0], cell);
-    if (heightAt(sc, x, y + 1) < h) {
-      if (stack && stack.length && !relief.has(y * sc.width + x)) {
-        // the front face: the run's rows standing up, bottom row at the bottom, the slab under it
-        quad([[x0, SLAB, z1], [x1, SLAB, z1], [x1, 0, z1], [x0, 0, z1]], [0, 0, 1], stack[0], SLAB / 16, 0);
-        for (let i = 0; i < stack.length; i++) {
-          const a = SLAB + i * LEVEL, b = a + LEVEL;
-          quad([[x0, b, z1], [x1, b, z1], [x1, a, z1], [x0, a, z1]], [0, 0, 1], stack[i]);
-        }
-      } else {
-        quad([[x0, h, z1], [x1, h, z1], [x1, 0, z1], [x0, 0, z1]], [0, 0, 1], cell);
+    // a side of the box, from the ground to h, between its outside-left and outside-right corners: the
+    // run's rows standing up (bottom row at the bottom, the slab under it), so the 2D art is the wall
+    const boxed = stack && stack.length && !relief.has(y * sc.width + x);
+    function wall(l, r, n) {
+      if (!boxed) { quad([[l[0], h, l[1]], [r[0], h, r[1]], [r[0], 0, r[1]], [l[0], 0, l[1]]], n, cell); return; }
+      quad([[l[0], SLAB, l[1]], [r[0], SLAB, r[1]], [r[0], 0, r[1]], [l[0], 0, l[1]]], n, stack[0], SLAB / 16, 0);
+      for (let i = 0; i < stack.length; i++) {
+        const a = SLAB + i * LEVEL, b = a + LEVEL;
+        quad([[l[0], b, l[1]], [r[0], b, r[1]], [r[0], a, r[1]], [l[0], a, l[1]]], n, stack[i]);
       }
     }
-    if (heightAt(sc, x, y - 1) < h) quad([[x1, h, z0], [x0, h, z0], [x0, 0, z0], [x1, 0, z0]], [0, 0, -1], cell);
-    if (heightAt(sc, x + 1, y) < h) quad([[x1, h, z1], [x1, h, z0], [x1, 0, z0], [x1, 0, z1]], [1, 0, 0], cell);
-    if (heightAt(sc, x - 1, y) < h) quad([[x0, h, z0], [x0, h, z1], [x0, 0, z1], [x0, 0, z0]], [-1, 0, 0], cell);
+    if (heightAt(sc, x, y + 1) < h) wall([x0, z1], [x1, z1], [0, 0, 1]);    // south: the front
+    if (heightAt(sc, x, y - 1) < h) wall([x1, z0], [x0, z0], [0, 0, -1]);   // north
+    if (heightAt(sc, x + 1, y) < h) wall([x1, z1], [x1, z0], [1, 0, 0]);    // east
+    if (heightAt(sc, x - 1, y) < h) wall([x0, z0], [x0, z1], [-1, 0, 0]);   // west
   }
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
@@ -660,7 +660,7 @@ function placeMarker(st) {
   if (!current || !marker) return;
   const h = heightAt(current, st.x, st.y);
   marker.position.set(st.x * SIZE + 8, h, st.y * SIZE + 8);
-  marker.rotation.y = { 1: 0, 2: Math.PI, 3: Math.PI / 2, 4: -Math.PI / 2 }[st.dir] || 0;
+  marker.rotation.y = { 1: 0, 2: Math.PI, 3: -Math.PI / 2, 4: Math.PI / 2 }[st.dir] || 0;   // the nose starts south (+z); +y turns it toward +x (east)
   marker.visible = true;
 }
 

@@ -52,3 +52,10 @@ Only from the project's own pseudonymous account, after the steps in the clean-r
 (`.clean-room/ANONYMITY.md`, private): the placeholder identity rewritten with `git filter-repo
 --mailmap`, `git log --format='%an %ae'` checked. Tag `v<version>`, push, and attach the `.bps`,
 `SHA1SUMS` and `NOTES.md` to a release. The README's "Play" section tells players the rest.
+
+The documentation site is the mdbook in `docs/` (`cd docs && mdbook build` → `docs/book`;
+`docs/SUMMARY.md` lists the Mutagen chapters, `tools/site/evolutions.py` regenerates the evolution
+tree and its sprite thumbnails). `.github/workflows/docs.yml` builds and deploys it to GitHub Pages on
+every push to the published branches once Pages is switched on for the repository (Settings → Pages →
+Source: GitHub Actions); before the first deploy set `site-url` in `docs/book.toml` to
+`/<repository name>/`.

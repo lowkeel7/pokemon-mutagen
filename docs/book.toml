@@ -1,12 +1,12 @@
 [book]
 language = "en"
 src = "."
-title = "pokeemerald-expansion"
+title = "Pokémon Mutagen"
 
 [output.html]
 git-repository-url = "https://github.com/rh-hideout/pokeemerald-expansion"
 edit-url-template = "https://github.com/rh-hideout/pokeemerald-expansion/edit/master/docs/{path}"
-site-url = "/pokeemerald-expansion/"
+site-url = "/"   # set to "/<repository>/" when the pages are published (RELEASE.md)
 
 [preprocessor.fix_links]
 command = "python3 fix_links.py"

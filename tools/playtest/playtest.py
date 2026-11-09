@@ -24,6 +24,8 @@ or newlines (a FAIL line makes the run exit 1):
     deref SYM [OFFSET] [LEN] read the pointer at SYM, then dump LEN bytes at pointer+OFFSET
     reboot                   power cycle: keep save RAM, drop everything else, as on a cart
     still N                  fail unless the screen changed during the next N frames (hang check)
+    record NAME              start recording every frame and the sound into NAME.mp4 (needs ffmpeg)
+    record stop              finish the recording (the session's end finishes it too)
 Buttons: A B L R START SELECT UP DOWN LEFT RIGHT.
 """
 import argparse
@@ -83,6 +85,23 @@ class MemoryMap(C.Structure):
     _fields_ = [("descriptors", C.POINTER(MemoryDescriptor)), ("num_descriptors", C.c_uint)]
 
 
+class GameGeometry(C.Structure):
+    _fields_ = [("base_width", C.c_uint), ("base_height", C.c_uint), ("max_width", C.c_uint),
+                ("max_height", C.c_uint), ("aspect_ratio", C.c_float)]
+
+
+class SystemTiming(C.Structure):
+    _fields_ = [("fps", C.c_double), ("sample_rate", C.c_double)]
+
+
+class SystemAvInfo(C.Structure):
+    _fields_ = [("geometry", GameGeometry), ("timing", SystemTiming)]
+
+
+PIXEL_FORMATS = {0: "rgb555le", 1: "bgra", 2: "rgb565le"}   # libretro pixel format -> ffmpeg's name
+RECORD_SCALE = 4                                            # 240x160 -> 960x640, crisp pixels
+
+
 class Core:
     def __init__(self, core_path, workdir, options=None):
         self.lib = C.CDLL(core_path)
@@ -93,8 +112,9 @@ class Core:
         self.pressed = set()
         self.regions = []  # (start, length, pointer) from the core's memory map
         self.frames = 0
+        self.recorder = None  # a Recorder while a video is being made
         self._keep = [ENVIRONMENT(self._environment), VIDEO_REFRESH(self._video), AUDIO_SAMPLE(lambda l, r: None),
-                      AUDIO_SAMPLE_BATCH(lambda d, n: n), INPUT_POLL(lambda: None), INPUT_STATE(self._input)]
+                      AUDIO_SAMPLE_BATCH(self._audio), INPUT_POLL(lambda: None), INPUT_STATE(self._input)]
         lib = self.lib
         lib.retro_set_environment(self._keep[0])
         lib.retro_set_video_refresh(self._keep[1])
@@ -138,6 +158,13 @@ class Core:
     def _video(self, data, width, height, pitch):
         if data:
             self.frame = (data, width, height, pitch)
+            if self.recorder:
+                self.recorder.video(data, width, height, pitch, self.pixel_format)
+
+    def _audio(self, data, frames):
+        if self.recorder and data:
+            self.recorder.audio(C.string_at(data, frames * 4))   # stereo s16
+        return frames
 
     def _input(self, port, device, index, button):
         return 1 if port == 0 and device == 1 and button in self.pressed else 0
@@ -148,6 +175,9 @@ class Core:
         info = GameInfo(rom_path.encode(), C.cast(self.rom_buf, C.c_void_p), len(self.rom), None)
         if not self.lib.retro_load_game(C.byref(info)):
             sys.exit(f"the core refused {rom_path}")
+        av = SystemAvInfo()
+        self.lib.retro_get_system_av_info(C.byref(av))
+        self.fps, self.sample_rate = av.timing.fps or 59.7275, av.timing.sample_rate or 32768.0
 
     def unload(self):
         self.lib.retro_unload_game()
@@ -224,6 +254,55 @@ class Core:
         return width, height, rows
 
 
+class Recorder:
+    """Every frame the core draws and every sound sample it plays, while recording, into NAME.mp4:
+    the frames go live into ffmpeg as lossless video, the samples into a raw file, and `stop` muxes
+    them, scaled up with crisp pixels. Needs ffmpeg on PATH (brew install ffmpeg)."""
+
+    def __init__(self, path, fps, sample_rate):
+        self.path, self.fps, self.sample_rate = path, fps, sample_rate
+        self.video_path, self.audio_path = path + ".video.mkv", path + ".audio.pcm"
+        self.encoder = None
+        self.audio_file = open(self.audio_path, "wb")
+        self.frames = 0
+        self.size = None
+
+    def video(self, data, width, height, pitch, pixel_format):
+        bytes_per_pixel = 4 if pixel_format == 1 else 2
+        if self.encoder is None:
+            self.size = (width, height)
+            self.encoder = subprocess.Popen(
+                ["ffmpeg", "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", PIXEL_FORMATS[pixel_format],
+                 "-s", f"{width}x{height}", "-r", f"{self.fps:.4f}", "-i", "-", "-c:v", "libx264", "-preset",
+                 "veryfast", "-qp", "0", self.video_path], stdin=subprocess.PIPE)
+        if (width, height) != self.size:
+            return      # the GBA never changes size; a stray frame would break the stream
+        raw = C.string_at(data, pitch * height)
+        row = width * bytes_per_pixel
+        self.encoder.stdin.write(b"".join(raw[y * pitch:y * pitch + row] for y in range(height)))
+        self.frames += 1
+
+    def audio(self, samples):
+        self.audio_file.write(samples)
+
+    def stop(self):
+        self.audio_file.close()
+        if self.encoder is None:
+            print("record: nothing drawn, no video")
+            return
+        self.encoder.stdin.close()
+        self.encoder.wait()
+        width, height = self.size
+        subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", self.video_path, "-f", "s16le", "-ar",
+                        f"{int(self.sample_rate)}", "-ac", "2", "-i", self.audio_path, "-vf",
+                        f"scale={width * RECORD_SCALE}:{height * RECORD_SCALE}:flags=neighbor", "-c:v", "libx264",
+                        "-preset", "medium", "-crf", "18", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "160k",
+                        "-ar", "48000", "-shortest", "-movflags", "+faststart", self.path], check=True)
+        os.remove(self.video_path)
+        os.remove(self.audio_path)
+        print(f"record {self.path}: {self.frames} frames, {self.frames / self.fps:.1f} s")
+
+
 def write_png(path, width, height, rows, scale):
     def chunk(tag, data):
         return struct.pack(">I", len(data)) + tag + data + struct.pack(">I", zlib.crc32(tag + data) & 0xFFFFFFFF)
@@ -285,8 +364,21 @@ class Session:
             self.core.put_state(open(self.state_path, "rb").read())
 
     def close(self):
+        if self.core.recorder:
+            self.record("stop")
         open(self.sram_path, "wb").write(self.core.get_sram())
         open(self.state_path, "wb").write(self.core.get_state())
+
+    def record(self, name):
+        if name == "stop":
+            if self.core.recorder:
+                recorder, self.core.recorder = self.core.recorder, None
+                recorder.stop()
+            return
+        if self.core.recorder:
+            self.record("stop")
+        self.core.recorder = Recorder(os.path.join(self.dir, name + ".mp4"), self.core.fps, self.core.sample_rate)
+        print(f"record {name}: started at frame {self.core.frames}")
 
     def addr(self, sym):
         if sym.startswith("0x"):
@@ -367,6 +459,8 @@ class Session:
             print(f"{rest[0]} 0x{address:08x}: {data.hex(' ')}")
         elif op == "reboot":
             self.reboot()
+        elif op == "record":
+            self.record(rest[0] if rest else "stop")
         elif op == "still":
             before = self.core.screen_rgb()
             self.core.run(num(0, 120))
