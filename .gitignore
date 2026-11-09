@@ -80,3 +80,6 @@ tools/mid2gbs/.venv
 
 # mdbook output (tools/site, .github/workflows/docs.yml)
 docs/book/
+
+# the documentation site's own scripts (the rule above ignores every .js)
+!docs/pokerom/brand/*.js
