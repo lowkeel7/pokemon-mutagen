@@ -7,6 +7,8 @@ styles side by side for all 391 of them; the shiny colours and the 62 female for
 a toggle away, and the party icons follow the option too. Generated from the game's own art by
 `tools/site/sprites.py`.
 
+Each species part a Pokémon can wear (**MUTAGEN → RELICS**) is shown on a Pokémon's sprite, facing you and from behind, on [Relics](relics.md).
+
 <div class="styles icons" id="styles">
 <p class="controls"><label><input type="checkbox" id="st-shiny"> Shiny</label><label><input type="checkbox" id="st-female"> Female forms (62)</label><label><input type="checkbox" id="st-icons" checked> Party icons</label></p>
 <h2 id="generation-1">Generation 1 <small>170 species</small></h2>

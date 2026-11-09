@@ -7,6 +7,9 @@ Heart & Soul's own history see its documentation, and for the engine see `CHANGE
 ## Unreleased
 
 ### Brand and documentation (no change to the ROM)
+- The species parts' page shows every part worn by a Pokémon (a Johto starter), facing you and from
+  behind, placed by the ROM's own rule; a part on the back sits behind a Pokémon that faces you, as in
+  the game. The Sprite styles page links to it.
 - Pokémon Mutagen has a look of its own: the MUTAGEN wordmark traced from the title screen's banner,
   a fork mark for "one line becomes two", the banner's greys with a strain magenta and a graft lime,
   Space Grotesk and Silkscreen (both OFL). The README opens on a cover composed from the game's own

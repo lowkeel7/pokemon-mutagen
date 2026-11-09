@@ -418,7 +418,7 @@ def main():
         preview(args.preview, args.wearer, args.only)
     elif args.docs:
         import relics_docs  # noqa: F401
-        relics_docs.write(PARTS, build)
+        relics_docs.write(PARTS, build, sys.modules[__name__])
     else:
         write_all()
 

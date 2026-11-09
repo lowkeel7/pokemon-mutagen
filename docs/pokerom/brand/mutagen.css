@@ -221,6 +221,8 @@ main:has(.m-hero) { max-width: 1080px; }
 .styles .ic.ds { background-image: url(../sheets/icon-ds.png); }
 
 /* Relics: the species parts page (tools/relics/relics_docs.py) */
-.relics img { image-rendering: pixelated; image-rendering: crisp-edges; border-radius: 0 !important; vertical-align: middle; }
+.relics img { image-rendering: pixelated; image-rendering: crisp-edges; border-radius: 0 !important; vertical-align: middle; max-width: none; }
 .relics td { vertical-align: middle; }
 .relics .sub { display: block; font-size: 0.85em; color: var(--m-ash); }
+.relics-wrap { overflow-x: auto; }
+.relics .worn { white-space: nowrap; text-align: center; }

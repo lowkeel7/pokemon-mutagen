@@ -1,4 +1,5 @@
-"""The species parts as a docs page: docs/pokerom/relics.md with each part's bag icon and both views.
+"""The species parts as a docs page: docs/pokerom/relics.md with each part's bag icon and the part worn
+by a Pokémon, facing you and from behind.
 
 Called by `tools/relics/cut.py --docs`. The icons and sheets are written to docs/pokerom/relics/ from
 the same cuts the ROM is built from; the page is styled by docs/pokerom/brand/mutagen.css (.relics).
@@ -10,6 +11,7 @@ from PIL import Image
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 OUT_MD = os.path.join(ROOT, "docs/pokerom/relics.md")
 OUT_DIR = os.path.join(ROOT, "docs/pokerom/relics")
+WEARERS = ("chikorita", "cyndaquil", "totodile")  # the Johto starters in turn, one a part
 PLACES = {
     "HEAD": "on the head",
     "FACE": "over the face",
@@ -30,15 +32,35 @@ def rgba(rows, pal):
     return im
 
 
-def write(parts, build):
+def worn_view(cut, wearer, cell, pal, spec, back):
+    """The part on the wearer as the ROM draws it, at 2x: placed by the wearer's own first frame
+    (cut.anchor_point is src/relic.c's FindAnchor), behind the Pokémon when it sits on the back of
+    one facing you, in front otherwise. Front is the summary's and a foe's view, back your own
+    Pokémon's in battle."""
+    front_path, back_path, pal_path = cut.donor_files(wearer)
+    rows = cut.frame(back_path if back else front_path)
+    mon = rgba(rows, cut.read_pal(pal_path))
+    piece = rgba(cell, pal)
+    ax, ay = cut.anchor_point(rows, spec["anchor"], spec.get("dy", 0), back=back)
+    at = (ax - cut.CELL // 2, ay - cut.CELL)
+    scene = Image.new("RGBA", mon.size, (0, 0, 0, 0))
+    layers = [(piece, at), (mon, (0, 0))] if spec["anchor"] == "BACK" and not back else [(mon, (0, 0)), (piece, at)]
+    for im, xy in layers:
+        scene.paste(im, xy, im)
+    return scene.resize((scene.width * 2, scene.height * 2), Image.NEAREST)
+
+
+def write(parts, build, cut):
     os.makedirs(OUT_DIR, exist_ok=True)
     rows = []
-    for part, spec in parts.items():
+    for n, (part, spec) in enumerate(parts.items()):
         sheet, icon, pal, _, _ = build(part, spec)
         cell = len(sheet) // 2
+        wearer = WEARERS[n % len(WEARERS)]
         rgba(icon, pal).save(os.path.join(OUT_DIR, part + "-icon.png"))
-        rgba(sheet[:cell], pal).save(os.path.join(OUT_DIR, part + "-front.png"))
-        rgba(sheet[cell:], pal).save(os.path.join(OUT_DIR, part + "-back.png"))
+        worn_view(cut, wearer, sheet[:cell], pal, spec, back=False).save(os.path.join(OUT_DIR, part + "-worn-front.png"))
+        worn_view(cut, wearer, sheet[cell:], pal, spec, back=True).save(os.path.join(OUT_DIR, part + "-worn-back.png"))
+        on = wearer.title()
         donor = spec["donor"].replace("_", " ").title()
         source = spec.get("recolour", (None,))[0]
         taken = f"cut from {donor}'s own sprites" if not source else f"the Cubone skull in {source.title()}'s colours"
@@ -47,10 +69,12 @@ def write(parts, build):
             worn += " (poached: no wild drop; the black market's, later)"
         rows.append(
             f'<tr><td><img src="relics/{part}-icon.png" alt="" width="48" height="48"></td>'
-            f'<td><b>{spec["name"]}</b><br><span class="sub">{taken}</span></td>'
-            f'<td>{worn}</td><td>{spec["lends"]}</td><td>{PLACES[spec["anchor"]]}</td>'
-            f'<td><img src="relics/{part}-front.png" alt="front view" width="64" height="64">'
-            f'<img src="relics/{part}-back.png" alt="back view" width="64" height="64"></td></tr>'
+            f'<td><b>{spec["name"]}</b><span class="sub">{taken}</span>'
+            f'<span class="sub">lends {spec["lends"]}; sits {PLACES[spec["anchor"]]}</span></td>'
+            f'<td>{worn}</td>'
+            f'<td class="worn"><img src="relics/{part}-worn-front.png" alt="{spec["name"]} on {on}, facing you" width="128" height="128">'
+            f'<img src="relics/{part}-worn-back.png" alt="{spec["name"]} on {on}, from behind" width="128" height="128">'
+            f'<span class="sub">on {on}</span></td></tr>'
         )
     body = "\n".join(rows)
     with open(OUT_MD, "w") as f:
@@ -72,12 +96,19 @@ Where they come from: a wild Pokémon of the donor species drops its part one ti
 faints (RELICS on). **CHEAT SHELF → ALL** sells every part in every Poké Mart, and the sandbox build
 starts with one of each. Generated from the same table the ROM is built from: {len(rows)} parts.
 
+Each part is shown worn by a Johto starter, placed the way the ROM places it: facing you, as in the
+summary or on a foe, and from behind, as your own Pokémon in battle. A part on the back sits behind a
+Pokémon that faces you, so only what rises above or beside it shows. These are the GBA sprites; with
+**FEATURES → SPRITES → DS** the ROM places each part by the DS art's outline the same way.
+
+<div class="relics-wrap">
 <table class="relics">
-<thead><tr><th></th><th>Part</th><th>Worn, it gives</th><th>Type lent</th><th>Where it sits</th><th>Front and back</th></tr></thead>
+<thead><tr><th></th><th>Part</th><th>Worn, it gives</th><th>On a Pokémon, facing you and from behind</th></tr></thead>
 <tbody>
 {body}
 </tbody>
 </table>
+</div>
 
 The type a part lends is its donor's first type (its second when the first is Normal, so a bird's
 part lends Flying): with **MUTAGEN → THIRD TYPE** on it is the wearer's third type while the part
