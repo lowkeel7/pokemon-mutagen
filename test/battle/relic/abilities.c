@@ -19,7 +19,7 @@ SINGLE_BATTLE_TEST("Relics: a worn part's ability is the wearer's, whatever its 
     } WHEN {
         TURN { MOVE(player, MOVE_CELEBRATE); }
     } THEN {
-        EXPECT_EQ(player->ability, gRelicsInfo[relic].ability);
+        EXPECT_EQ(player->ability, (u32)gRelicsInfo[relic].ability); // (cast: the macro's typeof cannot take a bit-field)
     }
 }
 

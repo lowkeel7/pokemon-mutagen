@@ -691,6 +691,13 @@ extern const u32 gItemIcon_OctilleryCannon[];
 extern const u32 gItemIcon_HaxorusBlade[];
 extern const u32 gItemIcon_TinkatonHammer[];
 extern const u32 gItemIcon_BoxingGloves[];
+extern const u32 gItemIcon_SceptileTail[];
+extern const u32 gItemIcon_BulbasaurBulb[];
+extern const u32 gItemIcon_HeracrossShell[];
+extern const u32 gItemIcon_ShiftryBark[];
+extern const u32 gItemIcon_SpoinkPearl[];
+extern const u32 gItemIcon_ShinxStar[];
+extern const u32 gItemIcon_ShuckleShell[];
 // Mints
 extern const u32 gItemIcon_Mint[];
 extern const u16 gItemIconPalette_RedMint[];
@@ -3432,6 +3439,13 @@ extern const u32 gRelicGfx_OctilleryCannon[];
 extern const u32 gRelicGfx_HaxorusBlade[];
 extern const u32 gRelicGfx_TinkatonHammer[];
 extern const u32 gRelicGfx_BoxingGloves[];
+extern const u32 gRelicGfx_SceptileTail[];
+extern const u32 gRelicGfx_BulbasaurBulb[];
+extern const u32 gRelicGfx_HeracrossShell[];
+extern const u32 gRelicGfx_ShiftryBark[];
+extern const u32 gRelicGfx_SpoinkPearl[];
+extern const u32 gRelicGfx_ShinxStar[];
+extern const u32 gRelicGfx_ShuckleShell[];
 extern const u32 gEnemyMonShadowsSized_GfxGen3[];
 
 extern const u32 gBattleAnimFogTilemap[];

@@ -1532,6 +1532,13 @@ const u32 gRelicGfx_OctilleryCannon[] = INCBIN_U32("graphics/relics/octillery_ca
 const u32 gRelicGfx_HaxorusBlade[] = INCBIN_U32("graphics/relics/haxorus_blade.4bpp.smol");
 const u32 gRelicGfx_TinkatonHammer[] = INCBIN_U32("graphics/relics/tinkaton_hammer.4bpp.smol");
 const u32 gRelicGfx_BoxingGloves[] = INCBIN_U32("graphics/relics/boxing_gloves.4bpp.smol");
+const u32 gRelicGfx_SceptileTail[] = INCBIN_U32("graphics/relics/sceptile_tail.4bpp.smol");
+const u32 gRelicGfx_BulbasaurBulb[] = INCBIN_U32("graphics/relics/bulbasaur_bulb.4bpp.smol");
+const u32 gRelicGfx_HeracrossShell[] = INCBIN_U32("graphics/relics/heracross_shell.4bpp.smol");
+const u32 gRelicGfx_ShiftryBark[] = INCBIN_U32("graphics/relics/shiftry_bark.4bpp.smol");
+const u32 gRelicGfx_SpoinkPearl[] = INCBIN_U32("graphics/relics/spoink_pearl.4bpp.smol");
+const u32 gRelicGfx_ShinxStar[] = INCBIN_U32("graphics/relics/shinx_star.4bpp.smol");
+const u32 gRelicGfx_ShuckleShell[] = INCBIN_U32("graphics/relics/shuckle_shell.4bpp.smol");
 // Gen 3 shadow — per-game
 #if IS_HNS
 const u32 gEnemyMonShadow_GfxGen3[] = INCBIN_U32("graphics/battle_interface/hns/enemy_mon_shadow.4bpp.smol");

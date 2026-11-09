@@ -7209,6 +7209,10 @@ static inline u32 CalcAttackStat(struct BattleContext *ctx)
         break;
     }
 
+    // Pokémon Mutagen (SG-09): a worn species part raises the attacking stat of a wearer of its type (one byte read; nothing with RELICS off)
+    if (GetBattlerRelic(battlerAtk) != RELIC_NONE)
+        modifier = uq4_12_multiply_half_down(modifier, GetBattlerRelicStatModifier(battlerAtk, IsBattleMovePhysical(move) ? STAT_ATK : STAT_SPATK));
+
     modifier = ApplyOffensiveBadgeBoost(modifier, battlerAtk, move);
 
     return uq4_12_multiply_by_int_half_down(modifier, atkStat);
@@ -7411,6 +7415,10 @@ static inline u32 CalcDefenseStat(struct BattleContext *ctx)
     // snow def boost for ice types
     if (IS_BATTLER_OF_TYPE(battlerDef, TYPE_ICE) && IsBattlerWeatherAffected(battlerDef, B_WEATHER_SNOW) && usesDefStat)
         modifier = uq4_12_multiply_half_down(modifier, UQ_4_12(1.5));
+
+    // Pokémon Mutagen (SG-09): a worn species part raises the defending stat of a wearer of its type
+    if (GetBattlerRelic(battlerDef) != RELIC_NONE)
+        modifier = uq4_12_multiply_half_down(modifier, GetBattlerRelicStatModifier(battlerDef, usesDefStat ? STAT_DEF : STAT_SPDEF));
 
     modifier = ApplyDefensiveBadgeBoost(modifier, battlerDef, move);
 

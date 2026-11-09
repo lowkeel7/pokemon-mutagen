@@ -10,8 +10,8 @@ each item is a data row.
 ## Two rules every slice keeps (owner, 2026-11-09)
 - **Reversible by construction** ("Toffoli", nothing destroyed). Every Mutagen action on a Pokémon has
   an exact inverse, so an undo is always one action away and no information is lost: a part writes
-  nothing to the Pokémon but its own index, its ability, its type and the move family it strengthens
-  are *read while worn*, so taking it off restores the Pokémon exactly; the part returns to the bag; no
+  nothing to the Pokémon but its own index, its ability, its type, the move family it strengthens and
+  the stat it raises are *read while worn*, so taking it off restores the Pokémon exactly; the part returns to the bag; no
   part is ever used up.
   A third type a part lends is never written over the Pokémon's own: it shows while worn and the own
   one comes back after (the one bit the choice needs records the player's pick, not a type). Where a
@@ -46,7 +46,7 @@ obtainable in HnS (Gen 4+: Haxorus, Tinkaton, Hoopa, Torterra…) sell at the Ro
 | ABIL | grants an ability (replaces the holder's while held) | one new hook where the battler's ability is resolved; build first |
 | FAM | a move family ×1.2 (punch, slash, stab, bite, sound, wind, ballistic, blunt) | `CalcMoveBasePowerAfterModifiers`, after the hold effects, from the battler's cached part; riders in `CalcCritChanceStage` and the move's end (built) |
 | SPEC | big boost for its own species line only (like Thick Club) | `GetAttackerItemsModifier` / defender equivalent |
-| STAT | a stat ×1.2 for holders of a matching type | stat modifier |
+| STAT | a stat ×1.2 for a wearer of the part's type (Shuckle: both defenses ×1.1, any wearer) | `CalcAttackStat` / `CalcDefenseStat` (battle_util.c) and `GetBattlerTotalSpeedStat` (battle_main.c), after the hold effects, from the battler's cached part (built) |
 | EVO | evolves or changes form (held at a level, or used) | evolution / form-change tables |
 | ING | crafting ingredient only (DP-07) | crafting recipe table |
 | MISC | a one-off effect, written by hand | per item; keep these few |
@@ -206,8 +206,31 @@ effect that holds while worn), **Leek** (an existing item; its extra slash boost
 | TINKATON HAMMER | Tinkaton | blunt ×1.2 | the hammer, at half size | back |
 | BOXING GLOVES | Hitmonchan | punch ×1.1 | the two gloves | body |
 
+## Built: the 7 stat parts (slice 5, 2026-11-09)
+Each is a cut of the donor's own sprite, like the others; the row says the stat and the rise
+(`STAT(SPEED, 2)` is Speed ×1.2) and `.typed` asks for a wearer of the part's type, the type it lends,
+so with THIRD TYPE on the part itself qualifies any wearer, unless it keeps a third type of its own.
+The rise multiplies the stat after the held item's (a Choice Scarf and the tail stack) on the attack,
+defence and Speed paths, from the byte cached at send-out. The row's own spare bits hold it: `ability`
+needs nine of its sixteen (fewer than 512 abilities; a static assert holds it), so `stat:3` and
+`typed:1` sit beside it and the row stays twelve bytes.
+
+| Part | Donor | Worn | What shows | Where |
+|---|---|---|---|---|
+| SCEPTILE TAIL | Sceptile | Speed ×1.2, a Grass type | the leaf tail (cut from the back sprite, where it is whole) | back |
+| BULBASAUR BULB | Bulbasaur | Sp. Def ×1.2, a Grass type | the bulb; from behind, the back sprite's bulb, 32 px of its 34 | back, raised 4 px |
+| HERACROSS SHELL | Heracross | Defense ×1.2, a Bug type | the shell of the back (from the back sprite, the arm resting on it blanked) | back |
+| SHIFTRY BARK | Shiftry | Defense ×1.2, a Grass type | the trunk; from behind, the dark patch of bark | body |
+| SPOINK PEARL | Spoink | Sp. Atk ×1.2, a Psychic type | the pearl (the owner's "ball") | head |
+| SHINX STAR | Shinx | Speed ×1.2, an Electric type | the tail's star, small as Shinx wears it (DS art: Shinx has no other) | head |
+| SHUCKLE SHELL | Shuckle | Defense and Sp. Def ×1.1, any wearer | the red shell, its holes open | body |
+
+Not in this slice: the SPEC rows (the Cubone Skull as Marowak's club, the Alakazam Spoons), which want
+a species test in the row; they wait with the MISC rows.
+
 ## Build order
-1. ~~ABIL hook~~ (built) + ~~FAM flags and the FAM rows~~ (built 2026-11-09).
+1. ~~ABIL hook~~ (built) + ~~FAM flags and the FAM rows~~ (built 2026-11-09) + ~~STAT rows~~ (built
+   2026-11-09, in the row's spare bits).
 2. ~~Third-type USE~~ → ~~the type a part lends while worn~~ (built 2026-11-09: a worn part's donor type
    shows as the third type while THIRD TYPE is on, read, never written; a Pokémon with a third type of its
    own is asked which to show, the pick is one bit, `relicTypeOff`; off comes the part, back comes the own).

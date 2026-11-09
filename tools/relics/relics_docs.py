@@ -58,9 +58,10 @@ def write(parts, build):
 
 With **MUTAGEN → RELICS** on, a species part used from the bag on a party Pokémon is *worn*: it shows
 on the Pokémon's battle sprite, front and back, and in its summary, and the Pokémon has what the part
-gives, whatever its species: an ability, or a family of moves that hits harder (slash, stab, bite,
+gives, whatever its species: an ability; a family of moves that hits harder (slash, stab, bite,
 punch, sound, wind, ballistic or blunt; a few parts add a critical-hit stage or venom to those
-moves). Using another part asks to swap; the party menu's ITEM → TAKE OFF (or using the same part
+moves); or a stat raised by a fifth while a wearer of the part's type has it on (Shuckle's shell:
+both defenses by a tenth, for any wearer). Using another part asks to swap; the party menu's ITEM → TAKE OFF (or using the same part
 again) takes it off, and the part goes back to the bag. Nothing is written to the Pokémon but the
 part's index, so taking a part off gives it back exactly as it was. Every part is the donor
 species' own pixels, cut by `tools/relics/cut.py` (nothing is drawn); the ROM colours it with the
@@ -81,6 +82,7 @@ The type a part lends is its donor's first type (its second when the first is No
 part lends Flying): with **MUTAGEN → THIRD TYPE** on it is the wearer's third type while the part
 is worn, in the summary and in battle. A Pokémon that already
 has a third type of its own is asked which to show; its own type is never written over, and comes
-back when the part comes off (design note: [Species items](design/items.md)).
+back when the part comes off. A stat part asks for a wearer of that same type, so with THIRD TYPE on
+every wearer qualifies unless it keeps a third type of its own (design note: [Species items](design/items.md)).
 """)
     print(f"wrote {OUT_MD} and {3 * len(rows)} images")

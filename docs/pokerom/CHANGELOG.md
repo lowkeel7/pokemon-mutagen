@@ -75,7 +75,11 @@ Heart & Soul's own history see its documentation, and for the engine see `CHANGE
   drills, stings, needles, spears, jabs, pecks) and blunt (hammers, clubs, slams, head and tail
   blows) are two move families of Mutagen's own. The Mamoswine tusk is poached: no wild Pokémon
   drops it (it waits for the black market; the sandbox bag and CHEAT SHELF → ALL have it). A part's
-  type is its donor's, Flying rather than Normal for a bird. The parts' page: `docs/pokerom/relics.md`.
+  type is its donor's, Flying rather than Normal for a bird. **Seven stat parts** follow: worn by a
+  Pokémon of the part's type (the type it lends, so with THIRD TYPE on by any wearer but one keeping
+  a third type of its own), SCEPTILE TAIL and SHINX STAR raise Speed, HERACROSS SHELL and SHIFTRY
+  BARK Defense, BULBASAUR BULB Sp. Def and SPOINK PEARL Sp. Atk, each by a fifth; SHUCKLE SHELL
+  raises both defenses by a tenth for any wearer. The parts' page: `docs/pokerom/relics.md`.
 - **A MUTAGEN tab** in the new-game and PC options, and **GAMEMODE → MUTAGEN** on the new-game
   menu: the recommended settings plus every Mutagen feature switched on in one press. Every row's
   first choice is Heart & Soul's behaviour, and older saves read every row as that.

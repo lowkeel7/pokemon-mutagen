@@ -44,7 +44,8 @@ hold for every part: reversible (a part writes nothing but its index, nothing is
    the index; 63 parts at most). The enum, the table's bounds and the ability test follow from it.
 2. The art spec in `tools/relics/cut.py` `PARTS`: the donor folder, a box of its first front frame
    and one of its back sprite (or `MIRROR`), the palette indices to keep so the part comes away from
-   the body, the anchor (HEAD, FACE, BODY, BACK) and a nudge. `--palettes` prints the indices,
+   the body, the anchor (HEAD, FACE, BODY, BACK), a nudge, and `drop` boxes for another part of the
+   donor sharing the cut (an arm on a shell). `--palettes` prints the indices,
    `--preview --only name` shows the cut on a sample wearer. Then run it: it writes
    `graphics/relics/<part>.png` (32x64, index 0 transparent, the donor's palette) and the bag icon
    `graphics/items/icons/<part>.png`; no `.pal` files, the ROM points both at the donor's
@@ -58,14 +59,18 @@ hold for every part: reversible (a part writes nothing but its index, nothing is
 5. The row in `src/data/relics.h`: `RELIC(NAME, ITEM_X, SPECIES_DONOR, ABILITY_Y, RELIC_ANCHOR_Z, dy, Sym)`.
    A move-family part instead: `ABILITY_NONE` and, after `Sym`, `FAM(STAB, 2)` (stab moves ×1.2),
    then `.rider = RELIC_RIDER_CRIT` / `RELIC_RIDER_POISON` or `.poached = TRUE` (no wild drop) as
-   needed. One donor per part (`RelicOfDonor` is the drop lookup; `test/relic.c` checks both lookups
+   needed. A stat part: `ABILITY_NONE` and `STAT(SPEED, 2)` (Speed ×1.2; `DEFENSES` is both defenses)
+   with `.typed = TRUE` for a wearer of the part's type only; the battle reads
+   `GetBattlerRelicStatModifier` in `CalcAttackStat`, `CalcDefenseStat` (battle_util.c) and
+   `GetBattlerTotalSpeedStat` (battle_main.c). One donor per part (`RelicOfDonor` is the drop lookup; `test/relic.c` checks both lookups
    and every row's family against the move flags). A new family is a flag in `include/move.h`
    (spare bits, `padding1`), its moves flagged in `src/data/moves_info.h`, one case in
    `IsMoveOfRelicFamily` (relic.c) and one row in `sFamilyMove` (test/relic.c); the battle reads
    `GetBattlerRelic` (a byte cached by `SetBattlerThirdType`) in `CalcMoveBasePowerAfterModifiers`,
    `CalcCritChanceStage` and the attacker's move end (battle_util.c).
 6. `tools/relics/cut.py --docs` regenerates the parts' page. `test/battle/relic/abilities.c` covers
-   every part's ability from the list, `family.c` one part per move family and the riders; a part
+   every part's ability from the list, `family.c` one part per move family and the riders, `stat.c`
+   the stat parts; a part
    with a second effect gets its own test there.
 
 ## Move

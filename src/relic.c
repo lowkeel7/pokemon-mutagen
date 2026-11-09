@@ -4,8 +4,9 @@
 // (party_menu.c, ItemUseCB_Relic), it grants its ability whatever the species (pokemon.c,
 // GetMonAbility) and is drawn over the Pokémon's sprite in battle and in the summary: a 32x32 cell
 // that follows the Pokémon's sprite, placed by the shape of its first frame. A part may instead
-// strengthen one family of moves (relic.h, enum RelicFamily): battle_util.c asks the helpers below
-// with the battler's cached part on its damage, critical-hit and move-end paths. MUTAGEN → RELICS
+// strengthen one family of moves (relic.h, enum RelicFamily) or raise one stat for a wearer of its
+// type (enum RelicStat): battle_util.c and battle_main.c ask the helpers below with the battler's
+// cached part on the damage, critical-hit, move-end and speed paths. MUTAGEN → RELICS
 // (zero = Heart & Soul) gates every effect; the field itself is kept either way.
 //
 // Cost: twelve bytes of ROM a part plus its compressed art (about half a kilobyte); no palette of
@@ -31,6 +32,7 @@
 
 STATIC_ASSERT(RELICS_COUNT <= 64, RelicIndexMustFitSixBits);
 STATIC_ASSERT(sizeof(struct RelicInfo) == 12, RelicRowIsTwelveBytes);
+STATIC_ASSERT(ABILITIES_COUNT <= 512, RelicAbilityMustFitNineBits);
 
 #define TAG_RELIC_GFX 0x5E1C   // plus twice the part's index, plus one for the back view: one tile block per view on screen
 #define TAG_RELIC_PAL 0x5E1C   // plus the part's index: one palette per kind of part on screen
@@ -175,14 +177,15 @@ static bool32 IsRelicFamilyMove(u32 relic, u32 move)
         && IsMoveOfRelicFamily(move, gRelicsInfo[relic].family);
 }
 
-// x1.1, x1.2 or x1.3 for a move of the part's family (the row's boost, in tenths), x1.0 for any other.
+// The row's boost, in tenths: what a family's moves or a stat rise by.
+static const uq4_12_t sRelicBoost[] = { UQ_4_12(1.0), UQ_4_12(1.1), UQ_4_12(1.2), UQ_4_12(1.3) };
+
+// x1.1, x1.2 or x1.3 for a move of the part's family, x1.0 for any other.
 uq4_12_t GetRelicMovePowerModifier(u32 relic, u32 move)
 {
-    static const uq4_12_t sBoost[] = { UQ_4_12(1.0), UQ_4_12(1.1), UQ_4_12(1.2), UQ_4_12(1.3) };
-
     if (!IsRelicFamilyMove(relic, move))
         return UQ_4_12(1.0);
-    return sBoost[gRelicsInfo[relic].boost];
+    return sRelicBoost[gRelicsInfo[relic].boost];
 }
 
 u32 GetRelicCritStageIncrease(u32 relic, u32 move)
@@ -193,6 +196,43 @@ u32 GetRelicCritStageIncrease(u32 relic, u32 move)
 bool32 RelicPoisonsOnHit(u32 relic, u32 move)
 {
     return IsRelicFamilyMove(relic, move) && gRelicsInfo[relic].rider == RELIC_RIDER_POISON;
+}
+
+// The stat parts (relic.h, enum RelicStat): whether the row's stat is `stat` (constants/pokemon.h).
+static bool32 RelicRaisesStat(u32 relicStat, u32 stat)
+{
+    switch (relicStat)
+    {
+    case RELIC_STAT_ATK:      return stat == STAT_ATK;
+    case RELIC_STAT_DEF:      return stat == STAT_DEF;
+    case RELIC_STAT_SPATK:    return stat == STAT_SPATK;
+    case RELIC_STAT_SPDEF:    return stat == STAT_SPDEF;
+    case RELIC_STAT_SPEED:    return stat == STAT_SPEED;
+    case RELIC_STAT_DEFENSES: return stat == STAT_DEF || stat == STAT_SPDEF;
+    default:                  return FALSE;
+    }
+}
+
+// The row's rise of a stat, the wearer aside: x1.1, x1.2 or x1.3, or x1.0 when the part does not raise it.
+uq4_12_t GetRelicStatBoost(u32 relic, u32 stat)
+{
+    if (relic == RELIC_NONE || relic >= RELICS_COUNT || !RelicRaisesStat(gRelicsInfo[relic].stat, stat))
+        return UQ_4_12(1.0);
+    return sRelicBoost[gRelicsInfo[relic].boost];
+}
+
+// Battle: the part the battler wears (one byte, cached by SetBattlerThirdType) and, where the row
+// asks for the wearer's type, the battler's types as they stand: with THIRD TYPE on the part lends
+// its own type, so every wearer qualifies but one keeping a third type of its own.
+uq4_12_t GetBattlerRelicStatModifier(u32 battler, u32 stat)
+{
+    u32 relic = GetBattlerRelic(battler);
+
+    if (relic == RELIC_NONE || !RelicRaisesStat(gRelicsInfo[relic].stat, stat))
+        return UQ_4_12(1.0);
+    if (gRelicsInfo[relic].typed && !IS_BATTLER_OF_TYPE(battler, GetRelicType(relic)))
+        return UQ_4_12(1.0);
+    return sRelicBoost[gRelicsInfo[relic].boost];
 }
 
 // Where the part sits on this frame, as the cell's bottom centre. One pass over the 64x64 4bpp

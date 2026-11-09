@@ -45,7 +45,14 @@
     X(OCTILLERY_CANNON)     \
     X(HAXORUS_BLADE)        \
     X(TINKATON_HAMMER)      \
-    X(BOXING_GLOVES)
+    X(BOXING_GLOVES)        \
+    X(SCEPTILE_TAIL)        \
+    X(BULBASAUR_BULB)       \
+    X(HERACROSS_SHELL)      \
+    X(SHIFTRY_BARK)         \
+    X(SPOINK_PEARL)         \
+    X(SHINX_STAR)           \
+    X(SHUCKLE_SHELL)
 
 #define RELIC_ENUM(name) RELIC_##name,
 enum Relic

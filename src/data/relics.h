@@ -2,11 +2,13 @@
 // own sprite the art is cut from (tools/relics/cut.py), whose palette colours it in the ROM and whose
 // wild form may drop it; the ability worn; where the part sits on the wearer (relic.h); and, after
 // those, the effect designators a row needs: FAM(SLASH, 2) is slash moves x1.2, a `.rider` is what
-// else those moves do, `.poached = TRUE` keeps a part off the wild drops. Twelve bytes a row. The art
+// else those moves do; STAT(SPEED, 2) is Speed x1.2, `.typed = TRUE` for a wearer of the part's type
+// only; `.poached = TRUE` keeps a part off the wild drops. Twelve bytes a row. The art
 // is in graphics/relics/, each part's provenance in docs/pokerom/PROVENANCE.md.
 #define RELIC(part, itemId, species, abil, anc, nudge, sym, ...) \
     [RELIC_##part] = { .item = itemId, .donor = species, .ability = abil, .anchor = anc, .dy = nudge, .gfx = gRelicGfx_##sym, ##__VA_ARGS__ }
 #define FAM(fam, tenths) .family = RELIC_FAMILY_##fam, .boost = tenths
+#define STAT(st, tenths) .stat = RELIC_STAT_##st, .boost = tenths
 
 const struct RelicInfo gRelicsInfo[RELICS_COUNT] =
 {
@@ -53,7 +55,16 @@ const struct RelicInfo gRelicsInfo[RELICS_COUNT] =
     RELIC(HAXORUS_BLADE,      ITEM_HAXORUS_BLADE,      SPECIES_HAXORUS,    ABILITY_NONE, RELIC_ANCHOR_FACE, 2, HaxorusBlade,     FAM(SLASH, 2)),
     RELIC(TINKATON_HAMMER,    ITEM_TINKATON_HAMMER,    SPECIES_TINKATON,   ABILITY_NONE, RELIC_ANCHOR_BACK, 0, TinkatonHammer,   FAM(BLUNT, 2)),
     RELIC(BOXING_GLOVES,      ITEM_BOXING_GLOVES,      SPECIES_HITMONCHAN, ABILITY_NONE, RELIC_ANCHOR_BODY, 4, BoxingGloves,     FAM(PUNCH, 1)),
+    // The stat parts: a stat rises while the part is worn, for a wearer of the part's type where `.typed` (battle_util.c, battle_main.c)
+    RELIC(SCEPTILE_TAIL,   ITEM_SCEPTILE_TAIL,   SPECIES_SCEPTILE,  ABILITY_NONE, RELIC_ANCHOR_BACK,  0, SceptileTail,   STAT(SPEED, 2), .typed = TRUE),
+    RELIC(BULBASAUR_BULB,  ITEM_BULBASAUR_BULB,  SPECIES_BULBASAUR, ABILITY_NONE, RELIC_ANCHOR_BACK, -4, BulbasaurBulb,  STAT(SPDEF, 2), .typed = TRUE),
+    RELIC(HERACROSS_SHELL, ITEM_HERACROSS_SHELL, SPECIES_HERACROSS, ABILITY_NONE, RELIC_ANCHOR_BACK,  0, HeracrossShell, STAT(DEF, 2),   .typed = TRUE),
+    RELIC(SHIFTRY_BARK,    ITEM_SHIFTRY_BARK,    SPECIES_SHIFTRY,   ABILITY_NONE, RELIC_ANCHOR_BODY,  0, ShiftryBark,    STAT(DEF, 2),   .typed = TRUE),
+    RELIC(SPOINK_PEARL,    ITEM_SPOINK_PEARL,    SPECIES_SPOINK,    ABILITY_NONE, RELIC_ANCHOR_HEAD,  0, SpoinkPearl,    STAT(SPATK, 2), .typed = TRUE),
+    RELIC(SHINX_STAR,      ITEM_SHINX_STAR,      SPECIES_SHINX,     ABILITY_NONE, RELIC_ANCHOR_HEAD,  0, ShinxStar,      STAT(SPEED, 2), .typed = TRUE),
+    RELIC(SHUCKLE_SHELL,   ITEM_SHUCKLE_SHELL,   SPECIES_SHUCKLE,   ABILITY_NONE, RELIC_ANCHOR_BODY,  0, ShuckleShell,   STAT(DEFENSES, 1)),
 };
 
+#undef STAT
 #undef FAM
 #undef RELIC

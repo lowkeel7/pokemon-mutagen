@@ -2,9 +2,10 @@
 
 With **MUTAGEN → RELICS** on, a species part used from the bag on a party Pokémon is *worn*: it shows
 on the Pokémon's battle sprite, front and back, and in its summary, and the Pokémon has what the part
-gives, whatever its species: an ability, or a family of moves that hits harder (slash, stab, bite,
+gives, whatever its species: an ability; a family of moves that hits harder (slash, stab, bite,
 punch, sound, wind, ballistic or blunt; a few parts add a critical-hit stage or venom to those
-moves). Using another part asks to swap; the party menu's ITEM → TAKE OFF (or using the same part
+moves); or a stat raised by a fifth while a wearer of the part's type has it on (Shuckle's shell:
+both defenses by a tenth, for any wearer). Using another part asks to swap; the party menu's ITEM → TAKE OFF (or using the same part
 again) takes it off, and the part goes back to the bag. Nothing is written to the Pokémon but the
 part's index, so taking a part off gives it back exactly as it was. Every part is the donor
 species' own pixels, cut by `tools/relics/cut.py` (nothing is drawn); the ROM colours it with the
@@ -12,7 +13,7 @@ donor's palette.
 
 Where they come from: a wild Pokémon of the donor species drops its part one time in four when it
 faints (RELICS on). **CHEAT SHELF → ALL** sells every part in every Poké Mart, and the sandbox build
-starts with one of each. Generated from the same table the ROM is built from: 41 parts.
+starts with one of each. Generated from the same table the ROM is built from: 48 parts.
 
 <table class="relics">
 <thead><tr><th></th><th>Part</th><th>Worn, it gives</th><th>Type lent</th><th>Where it sits</th><th>Front and back</th></tr></thead>
@@ -58,6 +59,13 @@ starts with one of each. Generated from the same table the ROM is built from: 41
 <tr><td><img src="relics/haxorus_blade-icon.png" alt="" width="48" height="48"></td><td><b>HAXORUS BLADE</b><br><span class="sub">cut from Haxorus's own sprites</span></td><td>slash moves ×1.2</td><td>Dragon</td><td>over the face</td><td><img src="relics/haxorus_blade-front.png" alt="front view" width="64" height="64"><img src="relics/haxorus_blade-back.png" alt="back view" width="64" height="64"></td></tr>
 <tr><td><img src="relics/tinkaton_hammer-icon.png" alt="" width="48" height="48"></td><td><b>TINKATON HAMMER</b><br><span class="sub">cut from Tinkaton's own sprites</span></td><td>blunt moves ×1.2</td><td>Fairy</td><td>on the back (behind the Pokémon when it faces you)</td><td><img src="relics/tinkaton_hammer-front.png" alt="front view" width="64" height="64"><img src="relics/tinkaton_hammer-back.png" alt="back view" width="64" height="64"></td></tr>
 <tr><td><img src="relics/boxing_gloves-icon.png" alt="" width="48" height="48"></td><td><b>BOXING GLOVES</b><br><span class="sub">cut from Hitmonchan's own sprites</span></td><td>punch moves ×1.1</td><td>Fighting</td><td>around the body</td><td><img src="relics/boxing_gloves-front.png" alt="front view" width="64" height="64"><img src="relics/boxing_gloves-back.png" alt="back view" width="64" height="64"></td></tr>
+<tr><td><img src="relics/sceptile_tail-icon.png" alt="" width="48" height="48"></td><td><b>SCEPTILE TAIL</b><br><span class="sub">cut from Sceptile's own sprites</span></td><td>Speed ×1.2 for a Grass-type wearer</td><td>Grass</td><td>on the back (behind the Pokémon when it faces you)</td><td><img src="relics/sceptile_tail-front.png" alt="front view" width="64" height="64"><img src="relics/sceptile_tail-back.png" alt="back view" width="64" height="64"></td></tr>
+<tr><td><img src="relics/bulbasaur_bulb-icon.png" alt="" width="48" height="48"></td><td><b>BULBASAUR BULB</b><br><span class="sub">cut from Bulbasaur's own sprites</span></td><td>Sp. Def ×1.2 for a Grass-type wearer</td><td>Grass</td><td>on the back (behind the Pokémon when it faces you)</td><td><img src="relics/bulbasaur_bulb-front.png" alt="front view" width="64" height="64"><img src="relics/bulbasaur_bulb-back.png" alt="back view" width="64" height="64"></td></tr>
+<tr><td><img src="relics/heracross_shell-icon.png" alt="" width="48" height="48"></td><td><b>HERACROSS SHELL</b><br><span class="sub">cut from Heracross's own sprites</span></td><td>Defense ×1.2 for a Bug-type wearer</td><td>Bug</td><td>on the back (behind the Pokémon when it faces you)</td><td><img src="relics/heracross_shell-front.png" alt="front view" width="64" height="64"><img src="relics/heracross_shell-back.png" alt="back view" width="64" height="64"></td></tr>
+<tr><td><img src="relics/shiftry_bark-icon.png" alt="" width="48" height="48"></td><td><b>SHIFTRY BARK</b><br><span class="sub">cut from Shiftry's own sprites</span></td><td>Defense ×1.2 for a Grass-type wearer</td><td>Grass</td><td>around the body</td><td><img src="relics/shiftry_bark-front.png" alt="front view" width="64" height="64"><img src="relics/shiftry_bark-back.png" alt="back view" width="64" height="64"></td></tr>
+<tr><td><img src="relics/spoink_pearl-icon.png" alt="" width="48" height="48"></td><td><b>SPOINK PEARL</b><br><span class="sub">cut from Spoink's own sprites</span></td><td>Sp. Atk ×1.2 for a Psychic-type wearer</td><td>Psychic</td><td>on the head</td><td><img src="relics/spoink_pearl-front.png" alt="front view" width="64" height="64"><img src="relics/spoink_pearl-back.png" alt="back view" width="64" height="64"></td></tr>
+<tr><td><img src="relics/shinx_star-icon.png" alt="" width="48" height="48"></td><td><b>SHINX STAR</b><br><span class="sub">cut from Shinx's own sprites</span></td><td>Speed ×1.2 for an Electric-type wearer</td><td>Electric</td><td>on the head</td><td><img src="relics/shinx_star-front.png" alt="front view" width="64" height="64"><img src="relics/shinx_star-back.png" alt="back view" width="64" height="64"></td></tr>
+<tr><td><img src="relics/shuckle_shell-icon.png" alt="" width="48" height="48"></td><td><b>SHUCKLE SHELL</b><br><span class="sub">cut from Shuckle's own sprites</span></td><td>Defense and Sp. Def ×1.1 for any wearer</td><td>Bug</td><td>around the body</td><td><img src="relics/shuckle_shell-front.png" alt="front view" width="64" height="64"><img src="relics/shuckle_shell-back.png" alt="back view" width="64" height="64"></td></tr>
 </tbody>
 </table>
 
@@ -65,4 +73,5 @@ The type a part lends is its donor's first type (its second when the first is No
 part lends Flying): with **MUTAGEN → THIRD TYPE** on it is the wearer's third type while the part
 is worn, in the summary and in battle. A Pokémon that already
 has a third type of its own is asked which to show; its own type is never written over, and comes
-back when the part comes off (design note: [Species items](design/items.md)).
+back when the part comes off. A stat part asks for a wearer of that same type, so with THIRD TYPE on
+every wearer qualifies unless it keeps a third type of its own (design note: [Species items](design/items.md)).

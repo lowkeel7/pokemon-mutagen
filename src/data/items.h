@@ -17233,6 +17233,132 @@ const struct ItemInfo gItemsInfo[] =
         .iconPic = gItemIcon_BoxingGloves,
         .iconPalette = gMonPalette_Hitmonchan,
     },
+
+    [ITEM_SCEPTILE_TAIL] =
+    {
+        .name = ITEM_NAME("SCEPTILE TAIL"),
+        .pluralName = ITEM_PLURAL_NAME("Sceptile Tails"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "SCEPTILE's tail, to\n"
+            "wear. SPEED +20%\n"
+            "for GRASS types."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_SceptileTail,
+        .iconPalette = gMonPalette_Sceptile,
+    },
+
+    [ITEM_BULBASAUR_BULB] =
+    {
+        .name = ITEM_NAME("BULBASAUR BULB"),
+        .pluralName = ITEM_PLURAL_NAME("Bulbasaur Bulbs"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "BULBASAUR's bulb, to\n"
+            "wear. SP. DEF +20%\n"
+            "for GRASS types."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_BulbasaurBulb,
+        .iconPalette = gMonPalette_Bulbasaur,
+    },
+
+    [ITEM_HERACROSS_SHELL] =
+    {
+        .name = ITEM_NAME("HERACROSS SHELL"),
+        .pluralName = ITEM_PLURAL_NAME("Heracross Shells"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "HERACROSS's shell,\n"
+            "to wear. DEFENSE\n"
+            "+20% for BUG types."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_HeracrossShell,
+        .iconPalette = gMonPalette_Heracross,
+    },
+
+    [ITEM_SHIFTRY_BARK] =
+    {
+        .name = ITEM_NAME("SHIFTRY BARK"),
+        .pluralName = ITEM_PLURAL_NAME("Shiftry Barks"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "SHIFTRY's bark, to\n"
+            "wear. DEFENSE +20%\n"
+            "for GRASS types."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_ShiftryBark,
+        .iconPalette = gMonPalette_Shiftry,
+    },
+
+    [ITEM_SPOINK_PEARL] =
+    {
+        .name = ITEM_NAME("SPOINK PEARL"),
+        .pluralName = ITEM_PLURAL_NAME("Spoink Pearls"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "SPOINK's pearl, to\n"
+            "wear. SP. ATK +20%\n"
+            "for PSYCHIC types."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_SpoinkPearl,
+        .iconPalette = gMonPalette_Spoink,
+    },
+
+    [ITEM_SHINX_STAR] =
+    {
+        .name = ITEM_NAME("SHINX STAR"),
+        .pluralName = ITEM_PLURAL_NAME("Shinx Stars"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "SHINX's tail star, to\n"
+            "wear. SPEED +20% for\n"
+            "ELECTRIC types."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_ShinxStar,
+        .iconPalette = gMonPalette_Shinx,
+    },
+
+    [ITEM_SHUCKLE_SHELL] =
+    {
+        .name = ITEM_NAME("SHUCKLE SHELL"),
+        .pluralName = ITEM_PLURAL_NAME("Shuckle Shells"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "SHUCKLE's shell, to\n"
+            "wear. DEFENSE and\n"
+            "SP. DEF +10%."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_ShuckleShell,
+        .iconPalette = gMonPalette_Shuckle,
+    },
 };
 
 #undef ITEM_NAME

@@ -36,7 +36,9 @@ MIRROR = "mirror"  # the back view is the front cut flipped: a part the camera s
 # the Pokémon in the front view); dy nudges in pixels (positive is down). Boxes are x0, y0, x1, y1
 # in the 64x64 frame, x1 and y1 exclusive. pair=N puts the cut beside its mirror image, N px apart, overlapping
 # when N is negative (one eye or wing makes two). front_from="back" cuts the front view from the back sprite instead
-# (Kabutops raises a cleaver only there). Recolour: the part's pixels mapped, colour by colour,
+# (Kabutops raises a cleaver only there). drop=[box, ...] blanks those boxes of the frame the front view
+# is cut from before the cut (and drop_back the back sprite's): another part of the donor sharing the
+# box and the colours, such as an arm over a shell. Recolour: the part's pixels mapped, colour by colour,
 # to the nearest luminance in another species' palette (the Charizard skull is Cubone's skull in
 # Charizard's colours; still Game Freak's pixels and colours, nothing drawn).
 PARTS = {
@@ -124,6 +126,22 @@ PARTS = {
                              anchor="BACK", effect="blunt moves ×1.2", lends="Fairy", name="TINKATON HAMMER"),
     "boxing_gloves":      dict(donor="hitmonchan", front=((36, 20, 50, 32), {6, 7, 8, 9}), back=MIRROR, pair=4,
                              anchor="BODY", dy=4, effect="punch moves ×1.1", lends="Fighting", name="BOXING GLOVES"),
+    # The stat parts (slice 5, 2026-11-09): a stat raised for a wearer of the part's type (Shuckle's for any);
+    # the row is in src/data/relics.h, `effect` the docs' wording of it.
+    "sceptile_tail":      dict(donor="sceptile",   front=((45, 31, 64, 63), None), front_from="back", back=MIRROR,
+                             anchor="BACK", effect="Speed ×1.2 for a Grass-type wearer", lends="Grass", name="SCEPTILE TAIL"),
+    "bulbasaur_bulb":     dict(donor="bulbasaur",  front=((18, 13, 44, 28), {10, 11, 12, 13, 14}), back=((10, 16, 42, 48), {11, 12, 13, 14}),
+                             anchor="BACK", dy=-4, effect="Sp. Def ×1.2 for a Grass-type wearer", lends="Grass", name="BULBASAUR BULB"),
+    "heracross_shell":    dict(donor="heracross",  front=((9, 36, 41, 53), {2, 3, 4, 5, 15}), front_from="back", drop=[(39, 34, 46, 39)], back=MIRROR,
+                             anchor="BACK", effect="Defense ×1.2 for a Bug-type wearer", lends="Bug", name="HERACROSS SHELL"),
+    "shiftry_bark":       dict(donor="shiftry",    front=((24, 35, 48, 50), {1, 4, 5, 6, 7}), back=((28, 36, 46, 51), {1, 4, 5, 15}),
+                             anchor="BODY", effect="Defense ×1.2 for a Grass-type wearer", lends="Grass", name="SHIFTRY BARK"),
+    "spoink_pearl":       dict(donor="spoink",     front=((26, 7, 42, 22), {5, 6, 7, 8, 9, 13}), back=((16, 11, 41, 33), {5, 6, 7, 8, 9, 13}),
+                             anchor="HEAD", effect="Sp. Atk ×1.2 for a Psychic-type wearer", lends="Psychic", name="SPOINK PEARL"),
+    "shinx_star":         dict(donor="shinx",      front=((42, 28, 55, 39), {4, 6, 7}), back=MIRROR,
+                             anchor="HEAD", effect="Speed ×1.2 for an Electric-type wearer", lends="Electric", name="SHINX STAR"),
+    "shuckle_shell":      dict(donor="shuckle",    front=((18, 27, 50, 49), {8, 9, 11, 12, 13, 14, 15}), back=MIRROR,
+                             anchor="BODY", effect="Defense and Sp. Def ×1.1 for any wearer", lends="Bug", name="SHUCKLE SHELL"),
 }
 
 
@@ -160,6 +178,17 @@ def frame(path, index=0):
     px = im.load()
     y0 = 64 * index
     return [[px[x, y0 + y] for x in range(64)] for y in range(64)]
+
+
+def blank(rows, boxes):
+    """A copy of the frame with these boxes (x0, y0, x1, y1 in the frame) emptied: another part of the
+    donor that shares the cut's box and colours, such as an arm resting on a shell."""
+    rows = [list(r) for r in rows]
+    for x0, y0, x1, y1 in boxes:
+        for y in range(y0, y1):
+            for x in range(x0, x1):
+                rows[y][x] = 0
+    return rows
 
 
 def cut(rows, box, keep):
@@ -252,10 +281,10 @@ def build(part, spec):
     front_path, back_path, pal_path = donor_files(spec["donor"])
     pal = read_pal(pal_path)
     # front_from="back": the front view is cut from the back sprite, where the donor shows the part better
-    front = cut(frame(back_path if spec.get("front_from") == "back" else front_path), *spec["front"])
+    front = cut(blank(frame(back_path if spec.get("front_from") == "back" else front_path), spec.get("drop", ())), *spec["front"])
     if "pair" in spec:
         front = pair(front, spec["pair"])
-    back = mirror(front) if spec["back"] == MIRROR else cut(frame(back_path), *spec["back"])
+    back = mirror(front) if spec["back"] == MIRROR else cut(blank(frame(back_path), spec.get("drop_back", ())), *spec["back"])
     if "recolour" in spec:
         species, allowed = spec["recolour"]
         _, _, other = donor_files(species)

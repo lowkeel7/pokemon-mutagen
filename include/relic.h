@@ -9,10 +9,10 @@
 // Everything is behind MUTAGEN → RELICS (zero = Heart & Soul: the field is kept but does nothing).
 //
 // Reversible by construction: wearing a part writes nothing but the part's index. Its ability, the
-// type it lends and the move family it strengthens are read while it is worn, so taking the part
-// off gives the Pokémon back exactly as it was, and the part goes back to the bag; no part is ever
-// used up. The art is each donor's own pixels, cut by tools/relics/cut.py, stored compressed and
-// coloured by the donor's palette, which the ROM holds once already.
+// type it lends, the move family it strengthens and the stat it raises are read while it is worn,
+// so taking the part off gives the Pokémon back exactly as it was, and the part goes back to the
+// bag; no part is ever used up. The art is each donor's own pixels, cut by tools/relics/cut.py,
+// stored compressed and coloured by the donor's palette, which the ROM holds once already.
 
 enum RelicAnchor
 {
@@ -44,14 +44,31 @@ enum RelicRider
     RELIC_RIDER_POISON,  // a hit poisons the target one time in ten
 };
 
+// The stat a part raises (STAT rows) by the row's boost, for a wearer of the part's type (the type it
+// lends: with THIRD TYPE on the part lends it, so every wearer qualifies but one keeping a third type
+// of its own) or for any wearer when the row says so.
+enum RelicStat
+{
+    RELIC_STAT_NONE,
+    RELIC_STAT_ATK,
+    RELIC_STAT_DEF,
+    RELIC_STAT_SPATK,
+    RELIC_STAT_SPDEF,
+    RELIC_STAT_SPEED,
+    RELIC_STAT_DEFENSES,  // Defense and Sp. Def both
+};
+
 struct RelicInfo  // twelve bytes
 {
     u16 item;        // the bag item that puts the part on (and comes back when it is taken off)
     u16 donor;       // the species the part is cut from: its palette colours the art, and a wild one may drop the part
-    u16 ability;     // enum Ability, granted while worn whatever the species; ABILITY_NONE grants nothing
+    u16 ability:9;   // enum Ability, granted while worn whatever the species; ABILITY_NONE grants nothing (nine bits hold ABILITIES_COUNT: relic.c asserts it)
+    u16 stat:3;      // enum RelicStat, the stat the part raises by `boost`; RELIC_STAT_NONE for none
+    u16 typed:1;     // the stat rises only for a wearer of the part's type (GetRelicType); clear, for any wearer
+    u16 unused:3;
     u8 anchor:2;     // enum RelicAnchor
     u8 family:4;     // enum RelicFamily, the moves the part strengthens; RELIC_FAMILY_NONE for none
-    u8 boost:2;      // by how much, in tenths: 1 = x1.1, 2 = x1.2, 3 = x1.3
+    u8 boost:2;      // by how much the family's moves, or the stat, rise, in tenths: 1 = x1.1, 2 = x1.2, 3 = x1.3
     s8 dy:5;         // nudge in pixels, down from the anchor
     u8 rider:2;      // enum RelicRider
     u8 poached:1;    // no wild donor drops it: the black market's (DP-18)
@@ -75,6 +92,12 @@ bool32 IsMoveOfRelicFamily(u32 move, u32 family);
 uq4_12_t GetRelicMovePowerModifier(u32 relic, u32 move);  // x1.1, x1.2 or x1.3 for a move of the part's family, x1.0 for any other
 u32 GetRelicCritStageIncrease(u32 relic, u32 move);       // 1 when the part's rider is a critical-hit stage and the move is of its family
 bool32 RelicPoisonsOnHit(u32 relic, u32 move);            // the part's rider is venom and the move is of its family (one hit in ten poisons; the caller rolls)
+
+// The stat parts: the row's rise of `stat` (STAT_ATK, STAT_DEF, STAT_SPATK, STAT_SPDEF or STAT_SPEED), the
+// wearer aside; and the battle's, x1.0 unless the battler wears the part and is of its type (or the row
+// takes any wearer). battle_util.c asks on the attack and defence paths, battle_main.c for the Speed.
+uq4_12_t GetRelicStatBoost(u32 relic, u32 stat);
+uq4_12_t GetBattlerRelicStatModifier(u32 battler, u32 stat);
 
 // The overlay sprite: `frame` is the wearer's decompressed first frame (64x64 4bpp), which places
 // the part. Returns SPRITE_NONE when nothing is worn or nothing can be drawn.
@@ -127,5 +150,12 @@ extern const u16 gMonPalette_Octillery[];
 extern const u16 gMonPalette_Haxorus[];
 extern const u16 gMonPalette_Tinkaton[];
 extern const u16 gMonPalette_Hitmonchan[];
+extern const u16 gMonPalette_Sceptile[];
+extern const u16 gMonPalette_Bulbasaur[];
+extern const u16 gMonPalette_Heracross[];
+extern const u16 gMonPalette_Shiftry[];
+extern const u16 gMonPalette_Spoink[];
+extern const u16 gMonPalette_Shinx[];
+extern const u16 gMonPalette_Shuckle[];
 
 #endif // GUARD_RELIC_H

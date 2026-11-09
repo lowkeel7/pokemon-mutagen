@@ -14,6 +14,17 @@
 // back to it (the bag, the drops and the sandbox all look the part up that way). A part strengthens
 // a move family or grants an ability, by its row alone.
 
+// The engine's stat each stat kind raises (Shuckle's both: its Defense here, its Sp. Def below).
+static const u8 sStatOf[] =
+{
+    [RELIC_STAT_ATK] = STAT_ATK,
+    [RELIC_STAT_DEF] = STAT_DEF,
+    [RELIC_STAT_SPATK] = STAT_SPATK,
+    [RELIC_STAT_SPDEF] = STAT_SPDEF,
+    [RELIC_STAT_SPEED] = STAT_SPEED,
+    [RELIC_STAT_DEFENSES] = STAT_DEF,
+};
+
 // A move inside each family, to check every row's family against the flags.
 static const u16 sFamilyMove[] =
 {
@@ -44,8 +55,21 @@ TEST("Relics: every part's row is whole and leads back to itself")
         EXPECT(info->gfx != NULL);
         EXPECT(GetItemFieldFunc(info->item) == ItemUseOutOfBattle_Relic);
         EXPECT_EQ(GetItemType(info->item), ITEM_USE_PARTY_MENU);
-        // One effect a part: an ability, or a move family with a boost of one to three tenths
-        EXPECT(info->ability == ABILITY_NONE || info->family == RELIC_FAMILY_NONE);
+        // One effect a part: an ability, a move family or a stat, the last two by one to three tenths
+        EXPECT((info->ability != ABILITY_NONE) + (info->family != RELIC_FAMILY_NONE) + (info->stat != RELIC_STAT_NONE) <= 1);
+        if (info->stat != RELIC_STAT_NONE)
+        {
+            EXPECT(info->stat < ARRAY_COUNT(sStatOf));
+            EXPECT(info->boost >= 1 && info->boost <= 3);
+            EXPECT_NE(GetRelicStatBoost(relic, sStatOf[info->stat]), UQ_4_12(1.0));
+            EXPECT_EQ(GetRelicStatBoost(relic, STAT_HP), UQ_4_12(1.0));
+        }
+        else
+        {
+            EXPECT_EQ((u32)info->typed, 0);
+            EXPECT_EQ(GetRelicStatBoost(relic, STAT_DEF), UQ_4_12(1.0));
+            EXPECT_EQ(GetRelicStatBoost(relic, STAT_SPEED), UQ_4_12(1.0));
+        }
         if (info->family != RELIC_FAMILY_NONE)
         {
             EXPECT(info->family < ARRAY_COUNT(sFamilyMove));
@@ -56,7 +80,8 @@ TEST("Relics: every part's row is whole and leads back to itself")
         }
         else
         {
-            EXPECT_EQ((u32)info->boost, 0); // (cast: the macro's typeof cannot take a bit-field)
+            if (info->stat == RELIC_STAT_NONE)
+                EXPECT_EQ((u32)info->boost, 0); // (cast: the macro's typeof cannot take a bit-field)
             EXPECT_EQ((u32)info->rider, RELIC_RIDER_NONE);
             EXPECT_EQ(GetRelicMovePowerModifier(relic, MOVE_CUT), UQ_4_12(1.0));
         }
@@ -80,6 +105,29 @@ TEST("Relics: the move families follow the flags, the stab and blunt ones includ
     EXPECT(RelicPoisonsOnHit(RELIC_SEVIPER_VENOM, MOVE_BITE));
     EXPECT(!RelicPoisonsOnHit(RELIC_SEVIPER_VENOM, MOVE_TACKLE));
     EXPECT(!RelicPoisonsOnHit(RELIC_NONE, MOVE_BITE));
+}
+
+TEST("Relics: the stat parts raise their stat alone, Shuckle's shell both defenses for any wearer")
+{
+    EXPECT_EQ(GetRelicStatBoost(RELIC_SCEPTILE_TAIL, STAT_SPEED), UQ_4_12(1.2));
+    EXPECT_EQ(GetRelicStatBoost(RELIC_SCEPTILE_TAIL, STAT_DEF), UQ_4_12(1.0));
+    EXPECT(gRelicsInfo[RELIC_SCEPTILE_TAIL].typed);
+    EXPECT_EQ(GetRelicType(RELIC_SCEPTILE_TAIL), TYPE_GRASS);
+    EXPECT_EQ(GetRelicStatBoost(RELIC_SHINX_STAR, STAT_SPEED), UQ_4_12(1.2));
+    EXPECT_EQ(GetRelicType(RELIC_SHINX_STAR), TYPE_ELECTRIC);
+    EXPECT_EQ(GetRelicStatBoost(RELIC_SPOINK_PEARL, STAT_SPATK), UQ_4_12(1.2));
+    EXPECT_EQ(GetRelicStatBoost(RELIC_SPOINK_PEARL, STAT_ATK), UQ_4_12(1.0));
+    EXPECT_EQ(GetRelicStatBoost(RELIC_HERACROSS_SHELL, STAT_DEF), UQ_4_12(1.2));
+    EXPECT_EQ(GetRelicStatBoost(RELIC_HERACROSS_SHELL, STAT_SPDEF), UQ_4_12(1.0));
+    EXPECT_EQ(GetRelicStatBoost(RELIC_SHIFTRY_BARK, STAT_DEF), UQ_4_12(1.2));
+    EXPECT_EQ(GetRelicStatBoost(RELIC_BULBASAUR_BULB, STAT_SPDEF), UQ_4_12(1.2));
+    EXPECT_EQ(GetRelicStatBoost(RELIC_BULBASAUR_BULB, STAT_DEF), UQ_4_12(1.0));
+    EXPECT_EQ(GetRelicStatBoost(RELIC_SHUCKLE_SHELL, STAT_DEF), UQ_4_12(1.1));
+    EXPECT_EQ(GetRelicStatBoost(RELIC_SHUCKLE_SHELL, STAT_SPDEF), UQ_4_12(1.1));
+    EXPECT_EQ(GetRelicStatBoost(RELIC_SHUCKLE_SHELL, STAT_SPEED), UQ_4_12(1.0));
+    EXPECT(!gRelicsInfo[RELIC_SHUCKLE_SHELL].typed);
+    EXPECT_EQ(GetRelicStatBoost(RELIC_KABUTOPS_CLEAVERS, STAT_ATK), UQ_4_12(1.0));
+    EXPECT_EQ(GetRelicStatBoost(RELIC_NONE, STAT_SPEED), UQ_4_12(1.0));
 }
 
 TEST("Relics: the type a part lends is its donor's, Flying for a bird rather than Normal")

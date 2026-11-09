@@ -48,6 +48,7 @@
 #include "pokemon.h"
 #include "pokerus.h"
 #include "random.h"
+#include "relic.h"
 #include "randomizer.h"
 #include "nuzlocke.h"
 #include "recorded_battle.h"
@@ -4986,6 +4987,10 @@ u32 GetBattlerTotalSpeedStat(enum BattlerId battler, enum Ability ability, enum 
         speed = (speed * 150) / 100;
     else if (holdEffect == HOLD_EFFECT_QUICK_POWDER && gBattleMons[battler].species == SPECIES_DITTO && !(gBattleMons[battler].volatiles.transformed))
         speed *= 2;
+
+    // Pokémon Mutagen (SG-09): a worn species part raises the Speed of a wearer of its type (one byte read; nothing with RELICS off)
+    if (GetBattlerRelic(battler) != RELIC_NONE)
+        speed = uq4_12_multiply_by_int_half_down(GetBattlerRelicStatModifier(battler, STAT_SPEED), speed);
 
     // various effects
     if (gSideStatuses[GetBattlerSide(battler)] & SIDE_STATUS_TAILWIND)
