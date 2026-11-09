@@ -55,8 +55,8 @@ Heart & Soul's own history see its documentation, and for the engine see `CHANGE
   Overqwil, Sneasel into Sneasler, Scyther into Kleavor and Gallade into Iron Valiant.
 - **New Game+** (MUTAGEN tab, NEW GAME+ → KEEP LV or LEVEL 1): once you have beaten the League, NEW
   GAME on the title screen becomes NEW GAME+, and the new adventure keeps your party and boxes (as
-  they are, or every Pokémon back at level 1 with a fresh moveset, as in R.O.W.E.), your bag apart
-  from key items, your PC items, money and Pokédex. The story, badges and trainers start over,
+  they are, or every Pokémon back at level 1 with a fresh moveset, as in R.O.W.E.), your whole bag,
+  your PC items, money and Pokédex. The story, badges and trainers start over,
   and every wild and trainer Pokémon is one level higher per loop.
 - **Discovery** (MUTAGEN tab, DISCOVERY → ON): one wild Pokémon in 128 is a boss, five levels up with
   perfect IVs and its hidden ability, announced as "A powerful wild X appeared!"; and eighteen more

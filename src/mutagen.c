@@ -189,7 +189,7 @@ u32 GetMonThirdType(struct Pokemon *mon)
 
 // NEW GAME+ (SG-15), after R.O.W.E.: NEW GAME on the title menu becomes NEW GAME+ once the game
 // is cleared and the option is on. The new game then keeps the party and every box (as they are, or
-// reset to Lv 1 with fresh movesets), the bag but its key items, the PC items, money, coins and
+// reset to Lv 1 with fresh movesets), the whole bag, key items included, the PC items, money, coins and
 // the Pokédex; everything else starts over, the trainer ID included among what stays (so the
 // carried Pokémon still obey).
 static EWRAM_DATA u8 sNewGamePlusPending = 0; // loop number of the coming new game, 0 for a plain one
@@ -239,8 +239,7 @@ void *NewGamePlus_Snapshot(void)
     u32 slots = 0, n = 0;
 
     for (u32 p = 0; p < POCKETS_COUNT; p++)
-        if (p != POCKET_KEY_ITEMS)
-            slots += gBagPockets[p].capacity;
+        slots += gBagPockets[p].capacity;
     carry = AllocZeroed(sizeof(*carry) + slots * sizeof(struct ItemSlot));
     if (carry == NULL)
         return NULL;
@@ -252,10 +251,10 @@ void *NewGamePlus_Snapshot(void)
     carry->pokedex = gSaveBlock2Ptr->pokedex;
     memcpy(carry->dexSeen, gSaveBlock1Ptr->dexSeen, sizeof(carry->dexSeen));
     memcpy(carry->dexCaught, gSaveBlock1Ptr->dexCaught, sizeof(carry->dexCaught));
+    // Every pocket, key items included (the owner's call: a story script that hands over a key
+    // item you already hold is the thing to watch for).
     for (u32 p = 0; p < POCKETS_COUNT; p++)
     {
-        if (p == POCKET_KEY_ITEMS)
-            continue;
         for (u32 i = 0; i < gBagPockets[p].capacity; i++)
         {
             struct ItemSlot slot = BagPocket_GetSlotData(&gBagPockets[p], i);
