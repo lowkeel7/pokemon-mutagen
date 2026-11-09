@@ -1685,12 +1685,15 @@ static void ApplyDifficultyBundle(u8 levelCap, u8 expMult, u8 playerItems, u8 tr
     *GetSelectionPtr(TAB_DIFFICULTY, ITEM_DIFFICULTY_ESCAPE_ROPE_DIG) = 0; // YES
 }
 
+// Each of the three also writes TRAINER AI and CHEAT SHELF, so moving between them leaves nothing
+// of the last one behind (MINIMAL GRINDING's shelf, HARDCORE's AI).
 static void ApplyEasyPresets(void)
 {
     ApplyRecommendedPresets();
     //                    cap  exp   items: you  foe  IVs: you  foe  foe EVs
     ApplyDifficultyBundle(0,   2,           0,   1,        1,   0,   0); // no cap, x2.0, foe no items, yours 31, foe as is
     *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_TRAINER_AI) = 0; // OFF: each trainer's own flags
+    *GetSelectionPtr(TAB_CHEATS, ITEM_CHEATS_SHELF)        = 0; // OFF
 }
 
 static void ApplyHardcorePresets(void)
@@ -1698,13 +1701,15 @@ static void ApplyHardcorePresets(void)
     ApplyRecommendedPresets();
     ApplyDifficultyBundle(2,   0,           1,   0,        0,   2,   2); // hard cap, x1.0, no items for you, foe IVs and EVs HARD
     *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_TRAINER_AI) = 2; // EXPERT
+    *GetSelectionPtr(TAB_CHEATS, ITEM_CHEATS_SHELF)        = 0; // OFF
 }
 
 static void ApplyMinimalGrindingPresets(void)
 {
     ApplyRecommendedPresets();
     ApplyDifficultyBundle(0,   2,           0,   0,        1,   0,   0); // no cap, x2.0, yours 31
-    *GetSelectionPtr(TAB_CHEATS, ITEM_CHEATS_SHELF) = 1; // ON: Rare Candies, Ability Capsules, Bottle Caps for sale
+    *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_TRAINER_AI) = 0; // OFF: each trainer's own flags
+    *GetSelectionPtr(TAB_CHEATS, ITEM_CHEATS_SHELF)        = 1; // ON: Rare Candies, Ability Capsules, Bottle Caps for sale
 }
 
 // =============================================================================
