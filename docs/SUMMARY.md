@@ -6,6 +6,7 @@
 
 - [Mutagen evolutions](./pokerom/evolutions.md)
 - [Sprite styles](./pokerom/sprite-styles.md)
+- [Relics: the species parts](./pokerom/relics.md)
 - [Changelog](./pokerom/CHANGELOG.md)
 - [Backlog](./pokerom/BACKLOG.md)
 - [Design notes]()

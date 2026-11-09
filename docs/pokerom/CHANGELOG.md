@@ -39,12 +39,23 @@ Heart & Soul's own history see its documentation, and for the engine see `CHANGE
 
 ### New
 - **MUTAGEN → RELICS** (OFF, Heart & Soul / ON): species parts a Pokémon can wear. Used from the
-  bag on a party Pokémon, a part is worn: it shows on the Pokémon's battle sprite and in its
-  summary, and it grants its ability whatever the species. Using another part asks to swap it,
-  using the same part takes it off, and the part taken off goes back to the bag. The first part is
-  the **CUBONE SKULL**, which grants ROCK HEAD; its art is Cubone's own skull, cut from its sprite.
-  There is no in-game source yet: CHEAT SHELF → ALL sells it in every Poké Mart, and the debug menu
-  gives it.
+  bag on a party Pokémon, a part is worn: it shows on the Pokémon's battle sprite (on the head, over
+  the face, around the body or on the back, placed by the shape of the Pokémon's own sprite) and in
+  its summary, and it grants its ability whatever the species. Using another part asks to swap it,
+  using the same part takes it off, and the part taken off goes back to the bag. Nothing is written
+  to the Pokémon but the part's index, so taking a part off gives the Pokémon back exactly as it
+  was, and no part is ever used up. **24 parts**: CUBONE SKULL and CHARIZARD SKULL (Rock Head,
+  Solar Power), HEAD SHELL (Onix, Rock Head), ARBOK VENOM (Poison Touch), TOGEPI SHELL (Serene
+  Grace), PUPITAR SHELL (Shed Skin), LOTAD LILY (Rain Dish), SWELLOW TAIL (Guts), KIRLIA ANTENNA
+  (Telepathy), BRELOOM CAP (Effect Spore), HARIYAMA PANTS (Thick Fat), SABLEYE EYES (Keen Eye),
+  ROSELIA ROSE (Natural Cure), SHARPEDO SKIN (Rough Skin), FLYGON EYES (Compound Eyes), DUSKULL
+  MASK (Infiltrator), METAGROSS CROSS (Clear Body), BASTIODON SHIELD (Sturdy), SKUNTANK OIL
+  (Stench), SCYTHER WINGS (Technician), LAPRAS SHELL (Shell Armor), MAREEP WOOL (Static), SNEASEL
+  FEATHER (Pickpocket), MAGCARGO SHELL (Flame Body). Every part's art is its donor's own pixels,
+  cut from the donor's sprites by a script (the Charizard skull is Cubone's skull in Charizard's
+  colours); nothing is drawn. A wild Pokémon of a donor species drops its part one time in four
+  when it faints; CHEAT SHELF → ALL sells them all, and the sandbox build starts with one of each.
+  The parts' page: `docs/pokerom/relics.md`.
 - **A MUTAGEN tab** in the new-game and PC options, and **GAMEMODE → MUTAGEN** on the new-game
   menu: the recommended settings plus every Mutagen feature switched on in one press. Every row's
   first choice is Heart & Soul's behaviour, and older saves read every row as that.

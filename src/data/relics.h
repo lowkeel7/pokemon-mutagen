@@ -1,13 +1,37 @@
-// Pokémon Mutagen (SG-09): the species parts. Art: each part is cut from its donor's own sprite
-// (graphics/relics/, PROVENANCE.md); the index 0 of its palette is transparent.
+// Pokémon Mutagen (SG-09): the species parts, one row each: the bag item; the donor species, whose
+// own sprite the art is cut from (tools/relics/cut.py), whose palette colours it in the ROM and whose
+// wild form may drop it; the ability worn; where the part sits on the wearer (relic.h). Twelve bytes
+// a row. The art is in graphics/relics/, each part's provenance in docs/pokerom/PROVENANCE.md.
+#define RELIC(part, itemId, species, abil, anc, nudge, sym) \
+    [RELIC_##part] = { .item = itemId, .donor = species, .ability = abil, .anchor = anc, .dy = nudge, .gfx = gRelicGfx_##sym }
+
 const struct RelicInfo gRelicsInfo[RELICS_COUNT] =
 {
     [RELIC_NONE] = {0},
-    [RELIC_CUBONE_SKULL] =
-    {
-        .item = ITEM_CUBONE_SKULL,
-        .ability = ABILITY_ROCK_HEAD,
-        .gfx = gRelicGfx_CuboneSkull,
-        .palette = gRelicPal_CuboneSkull,
-    },
+    RELIC(CUBONE_SKULL,     ITEM_CUBONE_SKULL,     SPECIES_CUBONE,    ABILITY_ROCK_HEAD,     RELIC_ANCHOR_HEAD, 0, CuboneSkull),
+    RELIC(CHARIZARD_SKULL,  ITEM_CHARIZARD_SKULL,  SPECIES_CHARIZARD, ABILITY_SOLAR_POWER,   RELIC_ANCHOR_HEAD, 0, CharizardSkull),
+    RELIC(HEAD_SHELL,       ITEM_HEAD_SHELL,       SPECIES_ONIX,      ABILITY_ROCK_HEAD,     RELIC_ANCHOR_HEAD, 0, HeadShell),
+    RELIC(ARBOK_VENOM,      ITEM_ARBOK_VENOM,      SPECIES_ARBOK,     ABILITY_POISON_TOUCH,  RELIC_ANCHOR_FACE, 0, ArbokVenom),
+    RELIC(TOGEPI_SHELL,     ITEM_TOGEPI_SHELL,     SPECIES_TOGEPI,    ABILITY_SERENE_GRACE,  RELIC_ANCHOR_BODY, 0, TogepiShell),
+    RELIC(PUPITAR_SHELL,    ITEM_PUPITAR_SHELL,    SPECIES_PUPITAR,   ABILITY_SHED_SKIN,     RELIC_ANCHOR_HEAD, 0, PupitarShell),
+    RELIC(LOTAD_LILY,       ITEM_LOTAD_LILY,       SPECIES_LOTAD,     ABILITY_RAIN_DISH,     RELIC_ANCHOR_HEAD, 0, LotadLily),
+    RELIC(SWELLOW_TAIL,     ITEM_SWELLOW_TAIL,     SPECIES_SWELLOW,   ABILITY_GUTS,          RELIC_ANCHOR_BACK, 0, SwellowTail),
+    RELIC(KIRLIA_ANTENNA,   ITEM_KIRLIA_ANTENNA,   SPECIES_KIRLIA,    ABILITY_TELEPATHY,     RELIC_ANCHOR_HEAD, 0, KirliaAntenna),
+    RELIC(BRELOOM_CAP,      ITEM_BRELOOM_CAP,      SPECIES_BRELOOM,   ABILITY_EFFECT_SPORE,  RELIC_ANCHOR_HEAD, 0, BreloomCap),
+    RELIC(HARIYAMA_PANTS,   ITEM_HARIYAMA_PANTS,   SPECIES_HARIYAMA,  ABILITY_THICK_FAT,     RELIC_ANCHOR_BODY, 8, HariyamaPants),
+    RELIC(SABLEYE_EYES,     ITEM_SABLEYE_EYES,     SPECIES_SABLEYE,   ABILITY_KEEN_EYE,      RELIC_ANCHOR_FACE, 0, SableyeEyes),
+    RELIC(ROSELIA_ROSE,     ITEM_ROSELIA_ROSE,     SPECIES_ROSELIA,   ABILITY_NATURAL_CURE,  RELIC_ANCHOR_HEAD, 0, RoseliaRose),
+    RELIC(SHARPEDO_SKIN,    ITEM_SHARPEDO_SKIN,    SPECIES_SHARPEDO,  ABILITY_ROUGH_SKIN,    RELIC_ANCHOR_HEAD, 0, SharpedoSkin),
+    RELIC(FLYGON_EYES,      ITEM_FLYGON_EYES,      SPECIES_FLYGON,    ABILITY_COMPOUND_EYES, RELIC_ANCHOR_FACE, 0, FlygonEyes),
+    RELIC(DUSKULL_MASK,     ITEM_DUSKULL_MASK,     SPECIES_DUSKULL,   ABILITY_INFILTRATOR,   RELIC_ANCHOR_FACE, 0, DuskullMask),
+    RELIC(METAGROSS_CROSS,  ITEM_METAGROSS_CROSS,  SPECIES_METAGROSS, ABILITY_CLEAR_BODY,    RELIC_ANCHOR_FACE, 0, MetagrossCross),
+    RELIC(BASTIODON_SHIELD, ITEM_BASTIODON_SHIELD, SPECIES_BASTIODON, ABILITY_STURDY,        RELIC_ANCHOR_FACE, 0, BastiodonShield),
+    RELIC(SKUNTANK_OIL,     ITEM_SKUNTANK_OIL,     SPECIES_SKUNTANK,  ABILITY_STENCH,        RELIC_ANCHOR_HEAD, 0, SkuntankOil),
+    RELIC(SCYTHER_WINGS,    ITEM_SCYTHER_WINGS,    SPECIES_SCYTHER,   ABILITY_TECHNICIAN,    RELIC_ANCHOR_BACK, 0, ScytherWings),
+    RELIC(LAPRAS_SHELL,     ITEM_LAPRAS_SHELL,     SPECIES_LAPRAS,    ABILITY_SHELL_ARMOR,   RELIC_ANCHOR_BACK, 0, LaprasShell),
+    RELIC(MAREEP_WOOL,      ITEM_MAREEP_WOOL,      SPECIES_MAREEP,    ABILITY_STATIC,        RELIC_ANCHOR_BODY, 0, MareepWool),
+    RELIC(SNEASEL_FEATHER,  ITEM_SNEASEL_FEATHER,  SPECIES_SNEASEL,   ABILITY_PICKPOCKET,    RELIC_ANCHOR_HEAD, 0, SneaselFeather),
+    RELIC(MAGCARGO_SHELL,   ITEM_MAGCARGO_SHELL,   SPECIES_MAGCARGO,  ABILITY_FLAME_BODY,    RELIC_ANCHOR_BACK, 0, MagcargoShell),
 };
+
+#undef RELIC

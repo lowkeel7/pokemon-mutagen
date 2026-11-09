@@ -1,6 +1,7 @@
 #include "global.h"
 #include "new_game.h"
 #include "random.h"
+#include "relic.h"
 #include "config/randomizer.h"
 #include "pokemon.h"
 #include "roamer.h"
@@ -462,9 +463,12 @@ static void Sandbox_StockNewGame(void)
     // Every item but key items: the useful ones first, so they land in the bag. Mutagen's own
     // items come first of all (they sit at the end of the item list, past the bag's room).
     Sandbox_GiveItem(ITEM_SHINY_TOKEN, &holder, monCount);
+    for (i = RELIC_NONE + 1; i < RELICS_COUNT; i++) // the species parts (SG-09)
+        Sandbox_GiveItem(gRelicsInfo[i].item, &holder, monCount);
     for (itemId = ITEM_NONE + 1; itemId < ITEMS_COUNT; itemId++)
     {
-        if (!Sandbox_SkipItem(itemId) && !Sandbox_IsLaterItem(itemId) && itemId != ITEM_SHINY_TOKEN)
+        if (!Sandbox_SkipItem(itemId) && !Sandbox_IsLaterItem(itemId) && itemId != ITEM_SHINY_TOKEN
+         && RelicFromItem(itemId) == RELIC_NONE)
             Sandbox_GiveItem(itemId, &holder, monCount);
     }
     for (i = 0; i < ARRAY_COUNT(sSandboxLaterItems); i++)

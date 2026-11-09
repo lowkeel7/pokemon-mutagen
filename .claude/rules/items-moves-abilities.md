@@ -36,18 +36,29 @@ Anchors at HnS 2.0.6 (`167aa6d`). Every new thing also needs a BACKLOG row and, 
 
 ## Worn species part (a relic, SG-09)
 The hook exists: `GetMonAbility` (pokemon.c) returns the worn part's ability, so a new ABIL part is
-data. `src/relic.c` holds the overlay sprite and the battle hooks; `docs/pokerom/design/items.md`
-the list of parts.
-1. `RELIC_X` before `RELICS_COUNT` in `include/constants/relics.h` (6 bits per Pokémon: 63 parts at most).
-2. A row in `src/data/relics.h`: its item, its ability (`ABILITY_NONE` for none), its art and palette.
-3. The item as above (`.fieldUseFunc = ItemUseOutOfBattle_Relic`, `ITEM_USE_PARTY_MENU`); `RelicFromItem` finds the row.
-4. Art: `graphics/relics/<part>.png`, a 32x64 4-bit PNG, the front view bottom-aligned in the top
-   32x32 cell and the back view in the lower one, index 0 transparent, with `<part>.pal`; INCBIN in
-   `src/graphics.c`, externs in `include/graphics.h`. Cut it from the donor's own sprite (a script,
-   no drawing) and add the PROVENANCE row. The overlay sits on the wearer's head line (the first row
-   of its first frame that is wide enough) with its cell bottom 6 px below it (`RELIC_SINK`).
-5. A test in `test/battle/relic/` with `Relic(RELIC_X)` in the PLAYER block and
-   `gSaveBlock3Ptr->mutagenSettings.relics = TRUE;` in GIVEN; the same test with the option off.
+data. `src/relic.c` holds the overlay sprite, the drops' lookup and the battle hooks;
+`docs/pokerom/design/items.md` the list of parts, `docs/pokerom/relics.md` the built ones. Two rules
+hold for every part: reversible (a part writes nothing but its index, nothing is used up) and lean
+(no palette copies, compressed art, a 12-byte row).
+1. `X(NAME)` at the end of `RELICS_LIST` in `include/constants/relics.h` (append only: saves store
+   the index; 63 parts at most). The enum, the table's bounds and the ability test follow from it.
+2. The art spec in `tools/relics/cut.py` `PARTS`: the donor folder, a box of its first front frame
+   and one of its back sprite (or `MIRROR`), the palette indices to keep so the part comes away from
+   the body, the anchor (HEAD, FACE, BODY, BACK) and a nudge. `--palettes` prints the indices,
+   `--preview --only name` shows the cut on a sample wearer. Then run it: it writes
+   `graphics/relics/<part>.png` (32x64, index 0 transparent, the donor's palette) and the bag icon
+   `graphics/items/icons/<part>.png`; no `.pal` files, the ROM points both at the donor's
+   `gMonPalette_X`. A box of the donor's own pixels, never a drawing; add the donor to the
+   PROVENANCE row's list if it is a new one.
+3. `const u32 gRelicGfx_X[] = INCBIN_U32("graphics/relics/<part>.4bpp.smol")` in `src/graphics.c`,
+   the extern in `include/graphics.h`; the icon likewise in `src/data/graphics/items.h` (no palette
+   symbol); the donor's `gMonPalette_X` extern in `include/relic.h` if missing.
+4. The item as above with `.fieldUseFunc = ItemUseOutOfBattle_Relic`, `ITEM_USE_PARTY_MENU`,
+   `.iconPalette = gMonPalette_<Donor>`; `RelicFromItem` finds the row by the item.
+5. The row in `src/data/relics.h`: `RELIC(NAME, ITEM_X, SPECIES_DONOR, ABILITY_Y, RELIC_ANCHOR_Z, dy, Sym)`.
+   One donor per part (`RelicOfDonor` is the drop lookup; `test/relic.c` checks both lookups).
+6. `tools/relics/cut.py --docs` regenerates the parts' page. `test/battle/relic/abilities.c` covers
+   every part's ability from the list; a part with a second effect gets its own test there.
 
 ## Move
 1. Enum at `include/constants/moves.h:908` ("Add any custom moves here"); bump `MOVES_COUNT`.

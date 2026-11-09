@@ -12,6 +12,7 @@
 #include "strings.h"
 #include "load_save.h"
 #include "item_use.h"
+#include "relic.h"
 #include "battle_pyramid.h"
 #include "battle_pyramid_bag.h"
 #include "graphics.h"

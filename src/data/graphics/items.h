@@ -2167,4 +2167,26 @@ const u16 gItemIconPalette_GBPlayer[] = INCBIN_U16("graphics/items/icon_palettes
 
 // Pokémon Mutagen (SG-09): species parts, cut from their donors' own sprites
 const u32 gItemIcon_CuboneSkull[] = INCBIN_U32("graphics/items/icons/cubone_skull.4bpp.smol");
-const u16 gItemIconPalette_CuboneSkull[] = INCBIN_U16("graphics/items/icon_palettes/cubone_skull.gbapal");
+const u32 gItemIcon_CharizardSkull[] = INCBIN_U32("graphics/items/icons/charizard_skull.4bpp.smol");
+const u32 gItemIcon_HeadShell[] = INCBIN_U32("graphics/items/icons/head_shell.4bpp.smol");
+const u32 gItemIcon_ArbokVenom[] = INCBIN_U32("graphics/items/icons/arbok_venom.4bpp.smol");
+const u32 gItemIcon_TogepiShell[] = INCBIN_U32("graphics/items/icons/togepi_shell.4bpp.smol");
+const u32 gItemIcon_PupitarShell[] = INCBIN_U32("graphics/items/icons/pupitar_shell.4bpp.smol");
+const u32 gItemIcon_LotadLily[] = INCBIN_U32("graphics/items/icons/lotad_lily.4bpp.smol");
+const u32 gItemIcon_SwellowTail[] = INCBIN_U32("graphics/items/icons/swellow_tail.4bpp.smol");
+const u32 gItemIcon_KirliaAntenna[] = INCBIN_U32("graphics/items/icons/kirlia_antenna.4bpp.smol");
+const u32 gItemIcon_BreloomCap[] = INCBIN_U32("graphics/items/icons/breloom_cap.4bpp.smol");
+const u32 gItemIcon_HariyamaPants[] = INCBIN_U32("graphics/items/icons/hariyama_pants.4bpp.smol");
+const u32 gItemIcon_SableyeEyes[] = INCBIN_U32("graphics/items/icons/sableye_eyes.4bpp.smol");
+const u32 gItemIcon_RoseliaRose[] = INCBIN_U32("graphics/items/icons/roselia_rose.4bpp.smol");
+const u32 gItemIcon_SharpedoSkin[] = INCBIN_U32("graphics/items/icons/sharpedo_skin.4bpp.smol");
+const u32 gItemIcon_FlygonEyes[] = INCBIN_U32("graphics/items/icons/flygon_eyes.4bpp.smol");
+const u32 gItemIcon_DuskullMask[] = INCBIN_U32("graphics/items/icons/duskull_mask.4bpp.smol");
+const u32 gItemIcon_MetagrossCross[] = INCBIN_U32("graphics/items/icons/metagross_cross.4bpp.smol");
+const u32 gItemIcon_BastiodonShield[] = INCBIN_U32("graphics/items/icons/bastiodon_shield.4bpp.smol");
+const u32 gItemIcon_SkuntankOil[] = INCBIN_U32("graphics/items/icons/skuntank_oil.4bpp.smol");
+const u32 gItemIcon_ScytherWings[] = INCBIN_U32("graphics/items/icons/scyther_wings.4bpp.smol");
+const u32 gItemIcon_LaprasShell[] = INCBIN_U32("graphics/items/icons/lapras_shell.4bpp.smol");
+const u32 gItemIcon_MareepWool[] = INCBIN_U32("graphics/items/icons/mareep_wool.4bpp.smol");
+const u32 gItemIcon_SneaselFeather[] = INCBIN_U32("graphics/items/icons/sneasel_feather.4bpp.smol");
+const u32 gItemIcon_MagcargoShell[] = INCBIN_U32("graphics/items/icons/magcargo_shell.4bpp.smol");

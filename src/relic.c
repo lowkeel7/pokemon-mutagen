@@ -3,13 +3,20 @@
 // A part is one index per Pokémon (PokemonSubstruct0.relic, 6 bits). Put on from the bag
 // (party_menu.c, ItemUseCB_Relic), it grants its ability whatever the species (pokemon.c,
 // GetMonAbility) and is drawn over the Pokémon's sprite in battle and in the summary: a 32x32 cell
-// that follows the Pokémon's sprite, sitting on the head line of its first frame. MUTAGEN → RELICS
+// that follows the Pokémon's sprite, placed by the shape of its first frame. MUTAGEN → RELICS
 // (zero = Heart & Soul) gates every effect; the field itself is kept either way.
+//
+// Cost: twelve bytes of ROM a part plus its compressed art (about half a kilobyte); no palette of
+// its own, the donor species' palette colours it. Two bytes of EWRAM a battler. One sprite, one
+// 512-byte tile block and one palette slot per part on screen; the part's other view stays in ROM.
+// Placing a part reads the wearer's frame once, two pixels a step, skipping blank bytes.
 #include "global.h"
 #include "battle.h"
 #include "battle_anim.h"
 #include "battle_util.h"
+#include "decompress.h"
 #include "graphics.h"
+#include "malloc.h"
 #include "mutagen.h"
 #include "pokemon.h"
 #include "relic.h"
@@ -19,16 +26,24 @@
 
 #include "data/relics.h"
 
-#define TAG_RELIC_GFX 0x5E1C   // plus the part's index: one sheet and one palette per kind of part
-#define TAG_RELIC_PAL 0x5E1C
-#define RELIC_CELL 32          // the overlay cell; the art is bottom-aligned in it
-#define RELIC_SINK 6           // the cell's bottom sits this far below the head line, so the part sits on the head
+STATIC_ASSERT(RELICS_COUNT <= 64, RelicIndexMustFitSixBits);
+
+#define TAG_RELIC_GFX 0x5E1C   // plus twice the part's index, plus one for the back view: one tile block per view on screen
+#define TAG_RELIC_PAL 0x5E1C   // plus the part's index: one palette per kind of part on screen
+#define RELIC_CELL 32          // the overlay cell, in pixels
+#define RELIC_CELL_SIZE (RELIC_CELL * RELIC_CELL / 2)   // 512 bytes of 4bpp tiles a view
+#define RELIC_SHEET_SIZE (2 * RELIC_CELL_SIZE)          // both views, decompressed
+#define RELIC_SINK 6           // HEAD: the cell's bottom sits this far below the head line, so the part sits on the head
+#define RELIC_FACE_DROP 10     // FACE: the cell's centre sits this far below the head line
+#define RELIC_BACK_DROP_FRONT 4    // BACK, facing us: the cell's centre a little under the head line, so the part rises over the shoulders behind the body
+#define RELIC_BACK_DROP_BACK 14    // BACK, facing away: the cell's centre on the back itself
 
 // sprite->data
 #define sBattler   data[0]     // MAX_BATTLERS_COUNT outside a battle (the summary screen)
 #define sMonSprite data[1]
 #define sOffsetX   data[2]
 #define sOffsetY   data[3]
+#define sBehind    data[4]     // drawn behind the wearer's sprite
 
 static u8 sBattlerOverlay[MAX_BATTLERS_COUNT];
 
@@ -67,54 +82,85 @@ u32 RelicFromItem(u16 item)
     return RELIC_NONE;
 }
 
+u32 RelicOfDonor(u16 species)
+{
+    u32 i;
+
+    if (species == SPECIES_NONE)
+        return RELIC_NONE;
+    for (i = RELIC_NONE + 1; i < RELICS_COUNT; i++)
+    {
+        if (gRelicsInfo[i].donor == species)
+            return i;
+    }
+    return RELIC_NONE;
+}
+
 enum Ability GetRelicAbility(u32 relic)
 {
     return relic < RELICS_COUNT ? gRelicsInfo[relic].ability : ABILITY_NONE;
 }
 
+// One read of the Pokémon: an egg's field is zero (the bag refuses to dress one), so no egg check.
 u32 GetMonRelic(struct Pokemon *mon)
 {
     u32 relic;
 
-    if (!AreRelicsOn() || mon == NULL || GetMonData(mon, MON_DATA_IS_EGG))
+    if (!AreRelicsOn() || mon == NULL)
         return RELIC_NONE;
     relic = GetMonData(mon, MON_DATA_RELIC);
     return relic < RELICS_COUNT ? relic : RELIC_NONE;
 }
 
-// 4bpp, 8x8 tiles, 8 tiles a row: the pixel at (x, y) of a 64x64 frame.
-static u32 FramePixel(const u8 *frame, u32 x, u32 y)
-{
-    const u8 *tile = frame + ((y >> 3) * 8 + (x >> 3)) * TILE_SIZE_4BPP;
-    u8 pair = tile[(y & 7) * 4 + ((x & 7) >> 1)];
-
-    return (x & 1) ? pair >> 4 : pair & 0xF;
-}
-
-// The head line: the first row from the top whose drawn width is a fair share of the sprite's, so
-// ears, horns and antennae are passed over; returns its centre. FALSE for a blank frame.
-static bool32 FindHeadLine(const u8 *frame, s32 *outX, s32 *outY)
+// Where the part sits on this frame, as the cell's bottom centre. One pass over the 64x64 4bpp
+// frame, a byte (two pixels) a step, blank bytes (most of a sprite's edge) costing one test: the
+// drawn width of every row and the sprite's bounds. The head line is the first row from the top
+// whose drawn width is a fair share (7/20, at least 6 px) of the sprite's, so ears, horns and
+// antennae are passed over. FALSE for a blank frame.
+static bool32 FindAnchor(const u8 *frame, u32 anchor, bool32 back, s32 *outX, s32 *outY)
 {
     u8 count[MON_PIC_HEIGHT], first[MON_PIC_HEIGHT], last[MON_PIC_HEIGHT];
-    s32 x, y, minX = MON_PIC_WIDTH, maxX = -1, threshold, top = -1;
+    s32 x, y, minX = MON_PIC_WIDTH, maxX = -1, top = -1, bottom = -1, threshold;
+    u32 tx, ty, py, bx;
 
     for (y = 0; y < MON_PIC_HEIGHT; y++)
+        count[y] = 0;
+    for (ty = 0; ty < MON_PIC_HEIGHT / 8; ty++)
     {
-        count[y] = first[y] = last[y] = 0;
-        for (x = 0; x < MON_PIC_WIDTH; x++)
+        for (tx = 0; tx < MON_PIC_WIDTH / 8; tx++)
         {
-            if (FramePixel(frame, x, y) == 0)
-                continue;
-            if (count[y] == 0)
-                first[y] = x;
-            last[y] = x;
-            count[y]++;
-            if (x < minX)
-                minX = x;
-            if (x > maxX)
-                maxX = x;
-            if (top < 0)
-                top = y;
+            const u8 *tile = frame + (ty * (MON_PIC_WIDTH / 8) + tx) * TILE_SIZE_4BPP;
+
+            for (py = 0; py < 8; py++)
+            {
+                const u8 *row = tile + py * 4;
+
+                y = ty * 8 + py;
+                for (bx = 0; bx < 4; bx++)
+                {
+                    u32 pair = row[bx];
+
+                    if (pair == 0)
+                        continue;
+                    x = tx * 8 + bx * 2;
+                    if (!(pair & 0x0F))
+                        x++;
+                    if (count[y] == 0)
+                        first[y] = x;
+                    count[y] += ((pair & 0x0F) != 0) + ((pair & 0xF0) != 0);
+                    if (pair & 0xF0)
+                        x = tx * 8 + bx * 2 + 1;
+                    last[y] = x;
+                    if (first[y] < minX)
+                        minX = first[y];
+                    if (x > maxX)
+                        maxX = x;
+                    if (top < 0 || y < top)
+                        top = y;
+                    if (y > bottom)
+                        bottom = y;
+                }
+            }
         }
     }
     if (maxX < 0)
@@ -122,52 +168,85 @@ static bool32 FindHeadLine(const u8 *frame, s32 *outX, s32 *outY)
     threshold = (maxX - minX + 1) * 7 / 20;
     if (threshold < 6)
         threshold = 6;
-    for (y = top; y < MON_PIC_HEIGHT; y++)
+    for (y = top; y <= bottom; y++)
     {
         if (count[y] >= threshold)
-        {
-            *outX = (first[y] + last[y]) / 2;
-            *outY = y;
-            return TRUE;
-        }
+            break;
     }
-    *outX = (first[top] + last[top]) / 2;
-    *outY = top;
+    if (y > bottom)
+        y = top;
+    *outX = (first[y] + last[y]) / 2;
+    switch (anchor)
+    {
+    case RELIC_ANCHOR_FACE:
+        *outY = y + RELIC_FACE_DROP + RELIC_CELL / 2;
+        break;
+    case RELIC_ANCHOR_BACK:
+        *outY = y + (back ? RELIC_BACK_DROP_BACK : RELIC_BACK_DROP_FRONT) + RELIC_CELL / 2;
+        break;
+    case RELIC_ANCHOR_BODY:
+        *outX = (minX + maxX) / 2;
+        *outY = (top + bottom) / 2 + RELIC_CELL / 2;
+        break;
+    default: // RELIC_ANCHOR_HEAD
+        *outY = y + RELIC_SINK;
+        break;
+    }
     return TRUE;
+}
+
+// The view's 512 bytes of tiles into VRAM, once per part and view on screen: the sheet is
+// decompressed into a scratch buffer only when its tiles are not loaded yet.
+static bool32 LoadRelicView(u32 relic, bool32 back, u16 tag)
+{
+    struct SpriteSheet sheet = { .size = RELIC_CELL_SIZE, .tag = tag };
+    void *buffer;
+    bool32 ok;
+
+    if (GetSpriteTileStartByTag(tag) != 0xFFFF)
+        return TRUE;
+    buffer = Alloc(RELIC_SHEET_SIZE);
+    if (buffer == NULL)
+        return FALSE;
+    DecompressDataWithHeaderWram(gRelicsInfo[relic].gfx, buffer);
+    sheet.data = (const u8 *)buffer + (back ? RELIC_CELL_SIZE : 0);
+    ok = LoadSpriteSheet(&sheet) != 0xFFFF;
+    Free(buffer);
+    return ok;
 }
 
 u8 Relic_CreateOverlay(u32 relic, u8 monSpriteId, const u8 *frame, bool32 back, u8 subpriority)
 {
     struct SpriteTemplate template = sSpriteTemplate_Relic;
-    struct SpriteSheet sheet;
     struct SpritePalette palette;
     struct Sprite *sprite;
-    s32 headX, headY;
+    s32 anchorX, anchorY;
     u8 spriteId;
+    bool32 behind;
 
     if (relic == RELIC_NONE || relic >= RELICS_COUNT || gRelicsInfo[relic].gfx == NULL
-     || monSpriteId >= MAX_SPRITES || frame == NULL || !FindHeadLine(frame, &headX, &headY))
+     || monSpriteId >= MAX_SPRITES || frame == NULL || !FindAnchor(frame, gRelicsInfo[relic].anchor, back, &anchorX, &anchorY))
         return SPRITE_NONE;
 
-    sheet = (struct SpriteSheet){ .data = gRelicsInfo[relic].gfx, .size = RELIC_CELL * RELIC_CELL, .tag = TAG_RELIC_GFX + relic };
-    palette = (struct SpritePalette){ .data = gRelicsInfo[relic].palette, .tag = TAG_RELIC_PAL + relic };
-    if (GetSpriteTileStartByTag(sheet.tag) == 0xFFFF && LoadSpriteSheet(&sheet) == 0xFFFF)
+    template.tileTag = TAG_RELIC_GFX + relic * 2 + (back ? 1 : 0);
+    template.paletteTag = TAG_RELIC_PAL + relic;
+    if (!LoadRelicView(relic, back, template.tileTag))
         return SPRITE_NONE;
+    palette = (struct SpritePalette){ .data = gSpeciesInfo[gRelicsInfo[relic].donor].palette, .tag = template.paletteTag };
     if (IndexOfSpritePaletteTag(palette.tag) == 0xFF && LoadSpritePalette(&palette) == 0xFF)
         return SPRITE_NONE;
 
-    template.tileTag = sheet.tag;
-    template.paletteTag = palette.tag;
-    spriteId = CreateSprite(&template, 0, 0, subpriority > 0 ? subpriority - 1 : 0);
+    // A part on the back is behind the Pokémon when we face it, in front when it faces away from us.
+    behind = (gRelicsInfo[relic].anchor == RELIC_ANCHOR_BACK && !back);
+    spriteId = CreateSprite(&template, 0, 0, behind ? subpriority + 1 : (subpriority > 0 ? subpriority - 1 : 0));
     if (spriteId == MAX_SPRITES)
         return SPRITE_NONE;
     sprite = &gSprites[spriteId];
     sprite->sBattler = MAX_BATTLERS_COUNT;
     sprite->sMonSprite = monSpriteId;
-    sprite->sOffsetX = headX - MON_PIC_WIDTH / 2;
-    sprite->sOffsetY = headY - MON_PIC_HEIGHT / 2 + RELIC_SINK - RELIC_CELL / 2;
-    if (back)
-        sprite->oam.tileNum += (RELIC_CELL / 8) * (RELIC_CELL / 8);   // the lower cell of the sheet
+    sprite->sOffsetX = anchorX - MON_PIC_WIDTH / 2;
+    sprite->sOffsetY = anchorY + gRelicsInfo[relic].dy - MON_PIC_HEIGHT / 2 - RELIC_CELL / 2;
+    sprite->sBehind = behind;
     SpriteCB_Relic(sprite);
     return spriteId;
 }
@@ -203,7 +282,10 @@ static void SpriteCB_Relic(struct Sprite *sprite)
     sprite->x2 = mon->x2;
     sprite->y2 = mon->y2;
     sprite->oam.priority = mon->oam.priority;
-    sprite->subpriority = mon->subpriority > 0 ? mon->subpriority - 1 : 0;
+    if (sprite->sBehind)
+        sprite->subpriority = mon->subpriority + 1;
+    else
+        sprite->subpriority = mon->subpriority > 0 ? mon->subpriority - 1 : 0;
     sprite->invisible = invisible;
 }
 

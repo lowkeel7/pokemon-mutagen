@@ -1,5 +1,6 @@
 #include "global.h"
 #include "mutagen.h"
+#include "relic.h"
 #include "battle.h"
 #include "battle_hold_effects.h"
 #include "battle_message.h"
@@ -15128,20 +15129,45 @@ void BS_UndoDynamax(void)
 void BS_TryGiveDroppedItems(void)
 {
     NATIVE_ARGS();
+    u32 i;
+    u8 battlers[] = {GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT),
+                     GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT)};
 
-    if (gSaveBlock3Ptr->challengeSettings.tx_Features_WildMonDropItems
-        && !(gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_FIRST_BATTLE)))
+    if (gBattleTypeFlags & (BATTLE_TYPE_TRAINER | BATTLE_TYPE_FIRST_BATTLE))
     {
-        u32 i;
-        u8 battlers[] = {GetBattlerAtPosition(B_POSITION_OPPONENT_LEFT),
-                         GetBattlerAtPosition(B_POSITION_OPPONENT_RIGHT)};
+        gBattlescriptCurrInstr = cmd->nextInstr;
+        return;
+    }
 
+    if (gSaveBlock3Ptr->challengeSettings.tx_Features_WildMonDropItems)
+    {
         for (i = 0; i < 1 + IsDoubleBattle(); i++)
         {
             gLastUsedItem = gBattleMons[battlers[i]].item;
             if (gLastUsedItem != ITEM_NONE)
             {
                 gBattleMons[battlers[i]].item = ITEM_NONE;
+                if (AddBagItem(gLastUsedItem, 1))
+                    BattleScriptCall(BattleScript_DroppedItemObtained);
+                else
+                    BattleScriptCall(BattleScript_DroppedItemBagFull);
+                return;
+            }
+        }
+    }
+
+    // Pokémon Mutagen (SG-09): a wild Pokémon of a part's donor species drops the part one time in
+    // four, behind MUTAGEN → RELICS. The part is the species' own, so nothing is taken from the bag's
+    // held-item drops above.
+    if (AreRelicsOn())
+    {
+        for (i = 0; i < 1 + IsDoubleBattle(); i++)
+        {
+            u32 relic = RelicOfDonor(gBattleMons[battlers[i]].species);
+
+            if (relic != RELIC_NONE && (Random() % 4) == 0)
+            {
+                gLastUsedItem = gRelicsInfo[relic].item;
                 if (AddBagItem(gLastUsedItem, 1))
                     BattleScriptCall(BattleScript_DroppedItemObtained);
                 else

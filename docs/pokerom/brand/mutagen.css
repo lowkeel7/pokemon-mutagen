@@ -219,3 +219,8 @@ main:has(.m-hero) { max-width: 1080px; }
   background-position: calc(var(--x) * -32px) calc(var(--y) * -32px); }
 .styles .ic.gba { background-image: url(../sheets/icon-gba.png); }
 .styles .ic.ds { background-image: url(../sheets/icon-ds.png); }
+
+/* Relics: the species parts page (tools/relics/relics_docs.py) */
+.relics img { image-rendering: pixelated; image-rendering: crisp-edges; border-radius: 0 !important; vertical-align: middle; }
+.relics td { vertical-align: middle; }
+.relics .sub { display: block; font-size: 0.85em; color: var(--m-ash); }

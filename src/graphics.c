@@ -1491,8 +1491,30 @@ const u16 gBattleAnimBackgroundImageMuddyWater_Pal[] = INCBIN_U16("graphics/batt
 // Gen 4 shadow — engine-wide
 const u32 gEnemyMonShadow_GfxGen4[] = INCBIN_U32("graphics/battle_interface/gen4/enemy_mon_shadow.4bpp.smol");
 // Pokémon Mutagen (SG-09): species parts worn on a Pokémon, cut from their donors' own sprites (graphics/relics)
-const u32 gRelicGfx_CuboneSkull[] = INCBIN_U32("graphics/relics/cubone_skull.4bpp");
-const u16 gRelicPal_CuboneSkull[] = INCBIN_U16("graphics/relics/cubone_skull.gbapal");
+const u32 gRelicGfx_CuboneSkull[] = INCBIN_U32("graphics/relics/cubone_skull.4bpp.smol");
+const u32 gRelicGfx_CharizardSkull[] = INCBIN_U32("graphics/relics/charizard_skull.4bpp.smol");
+const u32 gRelicGfx_HeadShell[] = INCBIN_U32("graphics/relics/head_shell.4bpp.smol");
+const u32 gRelicGfx_ArbokVenom[] = INCBIN_U32("graphics/relics/arbok_venom.4bpp.smol");
+const u32 gRelicGfx_TogepiShell[] = INCBIN_U32("graphics/relics/togepi_shell.4bpp.smol");
+const u32 gRelicGfx_PupitarShell[] = INCBIN_U32("graphics/relics/pupitar_shell.4bpp.smol");
+const u32 gRelicGfx_LotadLily[] = INCBIN_U32("graphics/relics/lotad_lily.4bpp.smol");
+const u32 gRelicGfx_SwellowTail[] = INCBIN_U32("graphics/relics/swellow_tail.4bpp.smol");
+const u32 gRelicGfx_KirliaAntenna[] = INCBIN_U32("graphics/relics/kirlia_antenna.4bpp.smol");
+const u32 gRelicGfx_BreloomCap[] = INCBIN_U32("graphics/relics/breloom_cap.4bpp.smol");
+const u32 gRelicGfx_HariyamaPants[] = INCBIN_U32("graphics/relics/hariyama_pants.4bpp.smol");
+const u32 gRelicGfx_SableyeEyes[] = INCBIN_U32("graphics/relics/sableye_eyes.4bpp.smol");
+const u32 gRelicGfx_RoseliaRose[] = INCBIN_U32("graphics/relics/roselia_rose.4bpp.smol");
+const u32 gRelicGfx_SharpedoSkin[] = INCBIN_U32("graphics/relics/sharpedo_skin.4bpp.smol");
+const u32 gRelicGfx_FlygonEyes[] = INCBIN_U32("graphics/relics/flygon_eyes.4bpp.smol");
+const u32 gRelicGfx_DuskullMask[] = INCBIN_U32("graphics/relics/duskull_mask.4bpp.smol");
+const u32 gRelicGfx_MetagrossCross[] = INCBIN_U32("graphics/relics/metagross_cross.4bpp.smol");
+const u32 gRelicGfx_BastiodonShield[] = INCBIN_U32("graphics/relics/bastiodon_shield.4bpp.smol");
+const u32 gRelicGfx_SkuntankOil[] = INCBIN_U32("graphics/relics/skuntank_oil.4bpp.smol");
+const u32 gRelicGfx_ScytherWings[] = INCBIN_U32("graphics/relics/scyther_wings.4bpp.smol");
+const u32 gRelicGfx_LaprasShell[] = INCBIN_U32("graphics/relics/lapras_shell.4bpp.smol");
+const u32 gRelicGfx_MareepWool[] = INCBIN_U32("graphics/relics/mareep_wool.4bpp.smol");
+const u32 gRelicGfx_SneaselFeather[] = INCBIN_U32("graphics/relics/sneasel_feather.4bpp.smol");
+const u32 gRelicGfx_MagcargoShell[] = INCBIN_U32("graphics/relics/magcargo_shell.4bpp.smol");
 // Gen 3 shadow — per-game
 #if IS_HNS
 const u32 gEnemyMonShadow_GfxGen3[] = INCBIN_U32("graphics/battle_interface/hns/enemy_mon_shadow.4bpp.smol");

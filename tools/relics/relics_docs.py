@@ -1,0 +1,78 @@
+"""The species parts as a docs page: docs/pokerom/relics.md with each part's bag icon and both views.
+
+Called by `tools/relics/cut.py --docs`. The icons and sheets are written to docs/pokerom/relics/ from
+the same cuts the ROM is built from; the page is styled by docs/pokerom/brand/mutagen.css (.relics).
+"""
+import os
+
+from PIL import Image
+
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+OUT_MD = os.path.join(ROOT, "docs/pokerom/relics.md")
+OUT_DIR = os.path.join(ROOT, "docs/pokerom/relics")
+PLACES = {
+    "HEAD": "on the head",
+    "FACE": "over the face",
+    "BODY": "around the body",
+    "BACK": "on the back (behind the Pokémon when it faces you)",
+}
+
+
+def rgba(rows, pal):
+    h, w = len(rows), len(rows[0])
+    im = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    px = im.load()
+    for y in range(h):
+        for x in range(w):
+            v = rows[y][x]
+            if v:
+                px[x, y] = pal[v] + (255,)
+    return im
+
+
+def write(parts, build):
+    os.makedirs(OUT_DIR, exist_ok=True)
+    rows = []
+    for part, spec in parts.items():
+        sheet, icon, pal, _, _ = build(part, spec)
+        cell = len(sheet) // 2
+        rgba(icon, pal).save(os.path.join(OUT_DIR, part + "-icon.png"))
+        rgba(sheet[:cell], pal).save(os.path.join(OUT_DIR, part + "-front.png"))
+        rgba(sheet[cell:], pal).save(os.path.join(OUT_DIR, part + "-back.png"))
+        donor = spec["donor"].replace("_", " ").title()
+        source = spec.get("recolour", (None,))[0]
+        taken = f"cut from {donor}'s own sprites" if not source else f"the Cubone skull in {source.title()}'s colours"
+        rows.append(
+            f'<tr><td><img src="relics/{part}-icon.png" alt="" width="48" height="48"></td>'
+            f'<td><b>{spec["name"]}</b><br><span class="sub">{taken}</span></td>'
+            f'<td>{spec["ability"]}</td><td>{spec["lends"]}</td><td>{PLACES[spec["anchor"]]}</td>'
+            f'<td><img src="relics/{part}-front.png" alt="front view" width="64" height="64">'
+            f'<img src="relics/{part}-back.png" alt="back view" width="64" height="64"></td></tr>'
+        )
+    body = "\n".join(rows)
+    with open(OUT_MD, "w") as f:
+        f.write(f"""# Relics: the species parts
+
+With **MUTAGEN → RELICS** on, a species part used from the bag on a party Pokémon is *worn*: it shows
+on the Pokémon's battle sprite, front and back, and in its summary, and the Pokémon has the part's
+ability whatever its species. Using another part asks to swap; using the same part takes it off,
+and the part goes back to the bag. Nothing is written to the Pokémon but the part's index, so
+taking a part off gives it back exactly as it was. Every part is the donor species' own pixels,
+cut by `tools/relics/cut.py` (nothing is drawn); the ROM colours it with the donor's palette.
+
+Where they come from: a wild Pokémon of the donor species drops its part one time in four when it
+faints (RELICS on). **CHEAT SHELF → ALL** sells every part in every Poké Mart, and the sandbox build
+starts with one of each. Generated from the same table the ROM is built from: {len(rows)} parts.
+
+<table class="relics">
+<thead><tr><th></th><th>Part</th><th>Ability worn</th><th>Type lent</th><th>Where it sits</th><th>Front and back</th></tr></thead>
+<tbody>
+{body}
+</tbody>
+</table>
+
+The type a part lends is its donor's first type; it becomes the wearer's third type while the part
+is worn when **MUTAGEN → THIRD TYPE** is on (the next slice; see the design note
+[Species items](design/items.md)).
+""")
+    print(f"wrote {OUT_MD} and {3 * len(rows)} images")

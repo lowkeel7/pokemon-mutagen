@@ -16511,7 +16511,421 @@ const struct ItemInfo gItemsInfo[] =
         .type = ITEM_USE_PARTY_MENU,
         .fieldUseFunc = ItemUseOutOfBattle_Relic,
         .iconPic = gItemIcon_CuboneSkull,
-        .iconPalette = gItemIconPalette_CuboneSkull,
+        .iconPalette = gMonPalette_Cubone,
+    },
+
+    [ITEM_CHARIZARD_SKULL] =
+    {
+        .name = ITEM_NAME("CHARIZARD SKULL"),
+        .pluralName = ITEM_PLURAL_NAME("Charizard Skulls"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "CHARIZARD-colored\n"
+            "skull, to wear. It\n"
+            "grants SOLAR POWER."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_CharizardSkull,
+        .iconPalette = gMonPalette_Charizard,
+    },
+
+    [ITEM_HEAD_SHELL] =
+    {
+        .name = ITEM_NAME("HEAD SHELL"),
+        .pluralName = ITEM_PLURAL_NAME("Head Shells"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "ONIX's rock crest, to\n"
+            "wear on the head. It\n"
+            "grants ROCK HEAD."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_HeadShell,
+        .iconPalette = gMonPalette_Onix,
+    },
+
+    [ITEM_ARBOK_VENOM] =
+    {
+        .name = ITEM_NAME("ARBOK VENOM"),
+        .pluralName = ITEM_PLURAL_NAME("Arbok Venoms"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "ARBOK's venom, worn\n"
+            "as a hood marking.\n"
+            "Gives POISON TOUCH."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_ArbokVenom,
+        .iconPalette = gMonPalette_Arbok,
+    },
+
+    [ITEM_TOGEPI_SHELL] =
+    {
+        .name = ITEM_NAME("TOGEPI SHELL"),
+        .pluralName = ITEM_PLURAL_NAME("Togepi Shells"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "TOGEPI's shell, to\n"
+            "wear. It grants\n"
+            "SERENE GRACE."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_TogepiShell,
+        .iconPalette = gMonPalette_Togepi,
+    },
+
+    [ITEM_PUPITAR_SHELL] =
+    {
+        .name = ITEM_NAME("PUPITAR SHELL"),
+        .pluralName = ITEM_PLURAL_NAME("Pupitar Shells"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "PUPITAR's spiked\n"
+            "shell, to wear. It\n"
+            "grants SHED SKIN."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_PupitarShell,
+        .iconPalette = gMonPalette_Pupitar,
+    },
+
+    [ITEM_LOTAD_LILY] =
+    {
+        .name = ITEM_NAME("LOTAD LILY"),
+        .pluralName = ITEM_PLURAL_NAME("Lotad Lilys"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "LOTAD's lily pad, to\n"
+            "wear on the head. It\n"
+            "grants RAIN DISH."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_LotadLily,
+        .iconPalette = gMonPalette_Lotad,
+    },
+
+    [ITEM_SWELLOW_TAIL] =
+    {
+        .name = ITEM_NAME("SWELLOW TAIL"),
+        .pluralName = ITEM_PLURAL_NAME("Swellow Tails"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "SWELLOW's tail\n"
+            "feathers, to wear.\n"
+            "They grant GUTS."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_SwellowTail,
+        .iconPalette = gMonPalette_Swellow,
+    },
+
+    [ITEM_KIRLIA_ANTENNA] =
+    {
+        .name = ITEM_NAME("KIRLIA ANTENNA"),
+        .pluralName = ITEM_PLURAL_NAME("Kirlia Antennas"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "KIRLIA's horns, to\n"
+            "wear. They grant\n"
+            "TELEPATHY."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_KirliaAntenna,
+        .iconPalette = gMonPalette_Kirlia,
+    },
+
+    [ITEM_BRELOOM_CAP] =
+    {
+        .name = ITEM_NAME("BRELOOM CAP"),
+        .pluralName = ITEM_PLURAL_NAME("Breloom Caps"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "BRELOOM's cap, to\n"
+            "wear. It grants\n"
+            "EFFECT SPORE."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_BreloomCap,
+        .iconPalette = gMonPalette_Breloom,
+    },
+
+    [ITEM_HARIYAMA_PANTS] =
+    {
+        .name = ITEM_NAME("HARIYAMA PANTS"),
+        .pluralName = ITEM_PLURAL_NAME("Hariyama Pants"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "HARIYAMA's wrap and\n"
+            "belt, to wear. They\n"
+            "grant THICK FAT."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_HariyamaPants,
+        .iconPalette = gMonPalette_Hariyama,
+    },
+
+    [ITEM_SABLEYE_EYES] =
+    {
+        .name = ITEM_NAME("SABLEYE EYES"),
+        .pluralName = ITEM_PLURAL_NAME("Sableye Eyes"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "SABLEYE's gem eyes,\n"
+            "to wear. They grant\n"
+            "KEEN EYE."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_SableyeEyes,
+        .iconPalette = gMonPalette_Sableye,
+    },
+
+    [ITEM_ROSELIA_ROSE] =
+    {
+        .name = ITEM_NAME("ROSELIA ROSE"),
+        .pluralName = ITEM_PLURAL_NAME("Roselia Roses"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "ROSELIA's rose, to\n"
+            "wear. It grants\n"
+            "NATURAL CURE."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_RoseliaRose,
+        .iconPalette = gMonPalette_Roselia,
+    },
+
+    [ITEM_SHARPEDO_SKIN] =
+    {
+        .name = ITEM_NAME("SHARPEDO SKIN"),
+        .pluralName = ITEM_PLURAL_NAME("Sharpedo Skins"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "SHARPEDO's fin and\n"
+            "skin, to wear. It\n"
+            "grants ROUGH SKIN."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_SharpedoSkin,
+        .iconPalette = gMonPalette_Sharpedo,
+    },
+
+    [ITEM_FLYGON_EYES] =
+    {
+        .name = ITEM_NAME("FLYGON EYES"),
+        .pluralName = ITEM_PLURAL_NAME("Flygon Eyes"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "FLYGON's eye covers,\n"
+            "to wear. They grant\n"
+            "COMPOUND EYES."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_FlygonEyes,
+        .iconPalette = gMonPalette_Flygon,
+    },
+
+    [ITEM_DUSKULL_MASK] =
+    {
+        .name = ITEM_NAME("DUSKULL MASK"),
+        .pluralName = ITEM_PLURAL_NAME("Duskull Masks"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "DUSKULL's mask, to\n"
+            "wear. It grants\n"
+            "INFILTRATOR."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_DuskullMask,
+        .iconPalette = gMonPalette_Duskull,
+    },
+
+    [ITEM_METAGROSS_CROSS] =
+    {
+        .name = ITEM_NAME("METAGROSS CROSS"),
+        .pluralName = ITEM_PLURAL_NAME("Metagross Crosss"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "METAGROSS's steel\n"
+            "cross, to wear. It\n"
+            "grants CLEAR BODY."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_MetagrossCross,
+        .iconPalette = gMonPalette_Metagross,
+    },
+
+    [ITEM_BASTIODON_SHIELD] =
+    {
+        .name = ITEM_NAME("BASTIODON SHIELD"),
+        .pluralName = ITEM_PLURAL_NAME("Bastiodon Shields"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "BASTIODON's face\n"
+            "shield, to wear. It\n"
+            "grants STURDY."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_BastiodonShield,
+        .iconPalette = gMonPalette_Bastiodon,
+    },
+
+    [ITEM_SKUNTANK_OIL] =
+    {
+        .name = ITEM_NAME("SKUNTANK OIL"),
+        .pluralName = ITEM_PLURAL_NAME("Skuntank Oils"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "SKUNTANK's oily tail\n"
+            "fur, to wear. It\n"
+            "grants STENCH."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_SkuntankOil,
+        .iconPalette = gMonPalette_Skuntank,
+    },
+
+    [ITEM_SCYTHER_WINGS] =
+    {
+        .name = ITEM_NAME("SCYTHER WINGS"),
+        .pluralName = ITEM_PLURAL_NAME("Scyther Wings"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "SCYTHER's wings, to\n"
+            "wear. They grant\n"
+            "TECHNICIAN."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_ScytherWings,
+        .iconPalette = gMonPalette_Scyther,
+    },
+
+    [ITEM_LAPRAS_SHELL] =
+    {
+        .name = ITEM_NAME("LAPRAS SHELL"),
+        .pluralName = ITEM_PLURAL_NAME("Lapras Shells"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "LAPRAS's shell, to\n"
+            "wear on the back. It\n"
+            "grants SHELL ARMOR."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_LaprasShell,
+        .iconPalette = gMonPalette_Lapras,
+    },
+
+    [ITEM_MAREEP_WOOL] =
+    {
+        .name = ITEM_NAME("MAREEP WOOL"),
+        .pluralName = ITEM_PLURAL_NAME("Mareep Wools"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "MAREEP's wool, to\n"
+            "wear. It grants\n"
+            "STATIC."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_MareepWool,
+        .iconPalette = gMonPalette_Mareep,
+    },
+
+    [ITEM_SNEASEL_FEATHER] =
+    {
+        .name = ITEM_NAME("SNEASEL FEATHER"),
+        .pluralName = ITEM_PLURAL_NAME("Sneasel Feathers"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "SNEASEL's feather,\n"
+            "to wear. It grants\n"
+            "PICKPOCKET."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_SneaselFeather,
+        .iconPalette = gMonPalette_Sneasel,
+    },
+
+    [ITEM_MAGCARGO_SHELL] =
+    {
+        .name = ITEM_NAME("MAGCARGO SHELL"),
+        .pluralName = ITEM_PLURAL_NAME("Magcargo Shells"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "MAGCARGO's shell, to\n"
+            "wear on the back. It\n"
+            "grants FLAME BODY."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_MagcargoShell,
+        .iconPalette = gMonPalette_Magcargo,
     },
 };
 
