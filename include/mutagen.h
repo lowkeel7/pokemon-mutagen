@@ -14,6 +14,7 @@ bool32 IsStarterPickAny(void);         // the lab's balls open a species list (S
 bool32 IsDiscoveryOn(void);            // wild bosses, lead-ability encounter pulls (QW-32)
 bool32 IsThirdTypeOn(void);            // the grafted third type is live (SG-01)
 bool32 CheatShelfOn(void);             // CHEATS tab (QW-16/17/18/26/13)
+bool32 CheatShopEverything(void);      // CHEAT SHELF → ALL: every item but the key items in every mart (QW-07)
 bool32 CheatInfinitePp(void);
 bool32 CheatCatchAlways(void);
 void Mutagen_ApplyCheats(void);        // flags, the Box Link and the Pokédex follow the CHEATS rows

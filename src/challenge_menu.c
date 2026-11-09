@@ -379,6 +379,9 @@ static const u8 *const sChoices_Gamemode[] = {
     COMPOUND_STRING("RECOMMENDED"),
     COMPOUND_STRING("CUSTOM"),
     COMPOUND_STRING("MUTAGEN"),
+    COMPOUND_STRING("EASY"),
+    COMPOUND_STRING("HARDCORE"),
+    COMPOUND_STRING("MINIMAL GRINDING"),
 };
 
 // MUTAGEN tab (QW-29). The first choice of every row is Heart & Soul's behaviour.
@@ -436,6 +439,9 @@ static const u8 *const sDesc_Gamemode[] = {
     COMPOUND_STRING("Recommended settings."),
     COMPOUND_STRING("Choose your own rules."),
     COMPOUND_STRING("Recommended settings, plus every\nPokémon Mutagen feature switched on."),
+    COMPOUND_STRING("Recommended settings, double EXP,\nperfect IVs and no level cap."),
+    COMPOUND_STRING("Recommended settings, a hard level\ncap, no battle items, expert AI."),
+    COMPOUND_STRING("Recommended settings, double EXP,\nperfect IVs, candies in every mart."),
 };
 
 static const u8 *const sDesc_PokerusOdds[] = {
@@ -504,9 +510,16 @@ static const u8 *const sChoices_DexComplete[] = {
     COMPOUND_STRING("COMPLETE"),
 };
 
+static const u8 *const sChoices_CheatShelf[] = {
+    COMPOUND_STRING("OFF"),
+    COMPOUND_STRING("ON"),
+    COMPOUND_STRING("ALL"),
+};
+
 static const u8 *const sDesc_CheatShelf[] = {
     COMPOUND_STRING("Poké Marts sell their usual stock."),
     COMPOUND_STRING("Every Poké Mart also sells Rare\nCandies, Master Balls, stones…"),
+    COMPOUND_STRING("Every Poké Mart sells every item\nin the game but the key items."),
 };
 static const u8 *const sDesc_InfinitePp[] = {
     COMPOUND_STRING("Moves use PP as usual."),
@@ -599,7 +612,7 @@ static const struct ChallengeMenuItem sTabItems_Mode[] = {
     [ITEM_MODE_GAMEMODE] = {
         .name         = COMPOUND_STRING("GAMEMODE"),
         .descriptions = sDesc_Gamemode,
-        .numChoices   = 3,
+        .numChoices   = 6,
         .choiceNames  = sChoices_Gamemode,
         .showOneChoice = TRUE, // RECOMMENDED / CUSTOM / MUTAGEN don't fit side by side
     },
@@ -950,7 +963,7 @@ static const struct ChallengeMenuItem sTabItems_Mutagen[] = {
 };
 
 static const struct ChallengeMenuItem sTabItems_Cheats[] = {
-    [ITEM_CHEATS_SHELF]        = { .name = COMPOUND_STRING("CHEAT SHELF"),   .descriptions = sDesc_CheatShelf,  .numChoices = 2, .choiceNames = sChoices_OffOn },
+    [ITEM_CHEATS_SHELF]        = { .name = COMPOUND_STRING("CHEAT SHELF"),   .descriptions = sDesc_CheatShelf,  .numChoices = 3, .choiceNames = sChoices_CheatShelf },
     [ITEM_CHEATS_INFINITE_PP]  = { .name = COMPOUND_STRING("INFINITE PP"),   .descriptions = sDesc_InfinitePp,  .numChoices = 2, .choiceNames = sChoices_OffOn },
     [ITEM_CHEATS_CATCH_ALWAYS] = { .name = COMPOUND_STRING("CATCH ALWAYS"),  .descriptions = sDesc_CatchAlways, .numChoices = 2, .choiceNames = sChoices_OffOn },
     [ITEM_CHEATS_MOBILE_PC]    = { .name = COMPOUND_STRING("MOBILE PC"),     .descriptions = sDesc_MobilePc,    .numChoices = 2, .choiceNames = sChoices_OffOn },
@@ -1653,6 +1666,47 @@ static void ApplyMutagenPresets(void)
     *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_THIRD_TYPE)      = 1; // ON
 }
 
+// GAMEMODE → EASY / HARDCORE / MINIMAL GRINDING (QW-30): the recommended settings plus a bundle of
+// DIFFICULTY rows (and one MUTAGEN or CHEATS row) that the GAMEMODE description names. Each writes
+// every DIFFICULTY row, so a preset means the same thing whatever was set before it.
+static void ApplyDifficultyBundle(u8 levelCap, u8 expMult, u8 playerItems, u8 trainerItems,
+                                  u8 playerIvs, u8 trainerIvs, u8 trainerEvs)
+{
+    *GetSelectionPtr(TAB_DIFFICULTY, ITEM_DIFFICULTY_PARTY_LIMIT)     = 0; // OFF
+    *GetSelectionPtr(TAB_DIFFICULTY, ITEM_DIFFICULTY_LEVEL_CAP)       = levelCap;
+    *GetSelectionPtr(TAB_DIFFICULTY, ITEM_DIFFICULTY_EXP_MULTIPLIER)  = expMult;
+    *GetSelectionPtr(TAB_DIFFICULTY, ITEM_DIFFICULTY_ITEM_PLAYER)     = playerItems;
+    *GetSelectionPtr(TAB_DIFFICULTY, ITEM_DIFFICULTY_ITEM_TRAINER)    = trainerItems;
+    *GetSelectionPtr(TAB_DIFFICULTY, ITEM_DIFFICULTY_MAX_PARTY_IVS)   = playerIvs;
+    *GetSelectionPtr(TAB_DIFFICULTY, ITEM_DIFFICULTY_SCALING_IVS)     = trainerIvs;
+    *GetSelectionPtr(TAB_DIFFICULTY, ITEM_DIFFICULTY_NO_EVS)          = 0; // YES, EVs as usual
+    *GetSelectionPtr(TAB_DIFFICULTY, ITEM_DIFFICULTY_SCALING_EVS)     = trainerEvs;
+    *GetSelectionPtr(TAB_DIFFICULTY, ITEM_DIFFICULTY_LESS_ESCAPES)    = 0; // OFF
+    *GetSelectionPtr(TAB_DIFFICULTY, ITEM_DIFFICULTY_ESCAPE_ROPE_DIG) = 0; // YES
+}
+
+static void ApplyEasyPresets(void)
+{
+    ApplyRecommendedPresets();
+    //                    cap  exp   items: you  foe  IVs: you  foe  foe EVs
+    ApplyDifficultyBundle(0,   2,           0,   1,        1,   0,   0); // no cap, x2.0, foe no items, yours 31, foe as is
+    *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_TRAINER_AI) = 0; // OFF: each trainer's own flags
+}
+
+static void ApplyHardcorePresets(void)
+{
+    ApplyRecommendedPresets();
+    ApplyDifficultyBundle(2,   0,           1,   0,        0,   2,   2); // hard cap, x1.0, no items for you, foe IVs and EVs HARD
+    *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_TRAINER_AI) = 2; // EXPERT
+}
+
+static void ApplyMinimalGrindingPresets(void)
+{
+    ApplyRecommendedPresets();
+    ApplyDifficultyBundle(0,   2,           0,   0,        1,   0,   0); // no cap, x2.0, yours 31
+    *GetSelectionPtr(TAB_CHEATS, ITEM_CHEATS_SHELF) = 1; // ON: Rare Candies, Ability Capsules, Bottle Caps for sale
+}
+
 // =============================================================================
 // Callbacks
 // =============================================================================
@@ -2112,11 +2166,18 @@ static void ProcessLeftRight(void)
 
     if (*sel != prev)
     {
-        // When GAMEMODE changes to RECOMMENDED, apply presets
-        if (sMenu->currentTab == TAB_MODE && itemIndex == ITEM_MODE_GAMEMODE && *sel == 0)
-            ApplyRecommendedPresets();
-        else if (sMenu->currentTab == TAB_MODE && itemIndex == ITEM_MODE_GAMEMODE && *sel == 2)
-            ApplyMutagenPresets();
+        // GAMEMODE presets: RECOMMENDED, MUTAGEN (QW-29), EASY, HARDCORE, MINIMAL GRINDING (QW-30)
+        if (sMenu->currentTab == TAB_MODE && itemIndex == ITEM_MODE_GAMEMODE)
+        {
+            switch (*sel)
+            {
+            case 0: ApplyRecommendedPresets(); break;
+            case 2: ApplyMutagenPresets(); break;
+            case 3: ApplyEasyPresets(); break;
+            case 4: ApplyHardcorePresets(); break;
+            case 5: ApplyMinimalGrindingPresets(); break;
+            }
+        }
 
         // Nuzlocke OFF or EASY — reset sub-options to defaults
         if (sMenu->currentTab == TAB_NUZLOCKE && itemIndex == ITEM_NUZLOCKE_NUZLOCKE
@@ -2290,7 +2351,8 @@ static void Task_ConfirmSaveYes(u8 taskId)
     gSaveBlock3Ptr->mutagenSettings.thirdType    = *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_THIRD_TYPE);
 
     // Cheats tab (QW-16): zero is Heart & Soul; the state-like ones are applied right away
-    gSaveBlock3Ptr->mutagenSettings.cheatShelf       = *GetSelectionPtr(TAB_CHEATS, ITEM_CHEATS_SHELF);
+    gSaveBlock3Ptr->mutagenSettings.cheatShelf       = *GetSelectionPtr(TAB_CHEATS, ITEM_CHEATS_SHELF) >= 1; // ON or ALL
+    gSaveBlock3Ptr->mutagenSettings.shopEverything   = *GetSelectionPtr(TAB_CHEATS, ITEM_CHEATS_SHELF) == 2; // ALL (QW-07)
     gSaveBlock3Ptr->mutagenSettings.infinitePp       = *GetSelectionPtr(TAB_CHEATS, ITEM_CHEATS_INFINITE_PP);
     gSaveBlock3Ptr->mutagenSettings.catchAlways      = *GetSelectionPtr(TAB_CHEATS, ITEM_CHEATS_CATCH_ALWAYS);
     gSaveBlock3Ptr->mutagenSettings.mobilePc         = *GetSelectionPtr(TAB_CHEATS, ITEM_CHEATS_MOBILE_PC);
@@ -2554,7 +2616,7 @@ void CB2_InitChallengeMenu(void)
             *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_THIRD_TYPE)   = gSaveBlock3Ptr->mutagenSettings.thirdType;
 
             // Cheats tab (QW-16)
-            *GetSelectionPtr(TAB_CHEATS, ITEM_CHEATS_SHELF)        = gSaveBlock3Ptr->mutagenSettings.cheatShelf;
+            *GetSelectionPtr(TAB_CHEATS, ITEM_CHEATS_SHELF)        = gSaveBlock3Ptr->mutagenSettings.shopEverything ? 2 : gSaveBlock3Ptr->mutagenSettings.cheatShelf;
             *GetSelectionPtr(TAB_CHEATS, ITEM_CHEATS_INFINITE_PP)  = gSaveBlock3Ptr->mutagenSettings.infinitePp;
             *GetSelectionPtr(TAB_CHEATS, ITEM_CHEATS_CATCH_ALWAYS) = gSaveBlock3Ptr->mutagenSettings.catchAlways;
             *GetSelectionPtr(TAB_CHEATS, ITEM_CHEATS_MOBILE_PC)    = gSaveBlock3Ptr->mutagenSettings.mobilePc;

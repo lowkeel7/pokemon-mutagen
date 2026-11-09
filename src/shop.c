@@ -527,7 +527,7 @@ static const u16 sShopInventory_EightBadges[] = {
 };
 
 // A badge-count list plus the SHINY TOKEN, built when the option is on (Pokémon Mutagen, QW-14).
-static EWRAM_DATA u16 sMutagenMartItems[64] = {0};
+static EWRAM_DATA u16 sMutagenMartItems[ITEMS_COUNT] = {0}; // room for CHEAT SHELF → ALL (QW-07): every item, ITEM_NONE last
 
 static const u16 *const sShopInventories[] =
 {
@@ -1011,7 +1011,8 @@ static void SetShopItemsForSale(const u16 *items)
 
     // Pokémon Mutagen: with SHINY TOKENS on, every Poké Mart also sells the token (QW-14), and with
     // the CHEAT SHELF on, the shelf below (QW-17); whether the script passed its own list (the
-    // early-game marts do) or took the badge-count one.
+    // early-game marts do) or took the badge-count one. CHEAT SHELF → ALL replaces the list with
+    // every item in the game but the key items, in ID order (QW-07).
     if (sMartInfo.martType == MART_TYPE_NORMAL && (AreShinyTokensSold() || CheatShelfOn()))
     {
         static const u16 sCheatShelf[] = {
@@ -1022,17 +1023,28 @@ static void SetShopItemsForSale(const u16 *items)
         };
         u32 n = 0;
 
-        while (sMartInfo.itemList[n] != ITEM_NONE && n < ARRAY_COUNT(sMutagenMartItems) - 2 - ARRAY_COUNT(sCheatShelf))
+        if (CheatShopEverything())
         {
-            sMutagenMartItems[n] = sMartInfo.itemList[n];
-            n++;
+            for (u32 item = ITEM_NONE + 1; item < ITEMS_COUNT && n < ARRAY_COUNT(sMutagenMartItems) - 1; item++)
+            {
+                if (gItemsInfo[item].pocket != POCKET_KEY_ITEMS)
+                    sMutagenMartItems[n++] = item;
+            }
         }
-        if (AreShinyTokensSold())
-            sMutagenMartItems[n++] = ITEM_SHINY_TOKEN;
-        if (CheatShelfOn())
+        else
         {
-            for (u32 i = 0; i < ARRAY_COUNT(sCheatShelf); i++)
-                sMutagenMartItems[n++] = sCheatShelf[i];
+            while (sMartInfo.itemList[n] != ITEM_NONE && n < ARRAY_COUNT(sMutagenMartItems) - 2 - ARRAY_COUNT(sCheatShelf))
+            {
+                sMutagenMartItems[n] = sMartInfo.itemList[n];
+                n++;
+            }
+            if (AreShinyTokensSold())
+                sMutagenMartItems[n++] = ITEM_SHINY_TOKEN;
+            if (CheatShelfOn())
+            {
+                for (u32 i = 0; i < ARRAY_COUNT(sCheatShelf); i++)
+                    sMutagenMartItems[n++] = sCheatShelf[i];
+            }
         }
         sMutagenMartItems[n] = ITEM_NONE;
         sMartInfo.itemList = sMutagenMartItems;

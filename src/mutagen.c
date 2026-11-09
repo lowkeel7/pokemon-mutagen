@@ -85,6 +85,12 @@ bool32 CheatShelfOn(void)
     return gSaveBlock3Ptr != NULL && gSaveBlock3Ptr->mutagenSettings.cheatShelf;
 }
 
+// CHEAT SHELF → ALL (QW-07): every Poké Mart sells every item in the game but the key items.
+bool32 CheatShopEverything(void)
+{
+    return gSaveBlock3Ptr != NULL && gSaveBlock3Ptr->mutagenSettings.shopEverything;
+}
+
 bool32 CheatInfinitePp(void)
 {
     return gSaveBlock3Ptr != NULL && gSaveBlock3Ptr->mutagenSettings.infinitePp;

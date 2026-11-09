@@ -369,7 +369,9 @@ struct MutagenSettings
     u8 noWildBattles:1;    // OW_FLAG_NO_ENCOUNTER
     u8 trainersDontSee:1;  // OW_FLAG_NO_TRAINER_SEE
     u8 dexComplete:1;      // every species seen and caught (QW-26)
-    u8 unused[28];
+    u8 shopEverything:1;   // CHEAT SHELF → ALL: every Poké Mart sells every item but the key items (QW-07)
+    u8 unused_02:7;
+    u8 unused[27];
 };
 
 struct SaveBlock3

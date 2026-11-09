@@ -30,6 +30,12 @@ Heart & Soul's own history see its documentation, and for the engine see `CHANGE
 - **A MUTAGEN tab** in the new-game and PC options, and **GAMEMODE → MUTAGEN** on the new-game
   menu: the recommended settings plus every Mutagen feature switched on in one press. Every row's
   first choice is Heart & Soul's behaviour, and older saves read every row as that.
+- **GAMEMODE presets EASY, HARDCORE and MINIMAL GRINDING** beside RECOMMENDED, CUSTOM and MUTAGEN,
+  each described on its row: the recommended settings plus a bundle of DIFFICULTY rows (EASY: no
+  level cap, double EXP, foes use no battle items, your Pokémon's IVs 31; HARDCORE: a hard level
+  cap, no battle items for you, foes with HARD IVs and EVs, EXPERT trainer AI; MINIMAL GRINDING: no
+  cap, double EXP, IVs 31 and the CHEAT SHELF on). A preset is a starting point: every row stays
+  yours to change.
 - **POKÉRUS odds** (MUTAGEN tab): RARE (the main games' 3 in 65,536 battles), UNCOMMON (1 in
   1,024), COMMON (1 in 128) or EPIDEMIC (1 in 16). Above RARE, a wild battle in which a party
   member catches it says so afterwards. It spreads through the party as it always did.
@@ -67,9 +73,10 @@ Heart & Soul's own history see its documentation, and for the engine see `CHANGE
   as a third icon in its summary and counted in battle. The strain's end is announced after the
   next wild battle, with what it awakened.
 - **A CHEATS tab** (fourth tab of the new-game and PC options), every row off by default: CHEAT
-  SHELF (every Poké Mart also sells Rare Candies, Master Balls, stones, caps…), INFINITE PP, CATCH
-  ALWAYS (any ball, its own look), MOBILE PC (the POKéMON BOX LINK in your bag), WALK ANYWHERE,
-  WILD BATTLES OFF, TRAINERS SEE OFF, POKéDEX COMPLETE.
+  SHELF (ON: every Poké Mart also sells Rare Candies, Master Balls, stones, caps…; ALL: every Poké
+  Mart sells every item in the game but the key items), INFINITE PP, CATCH ALWAYS (any ball, its
+  own look), MOBILE PC (the POKéMON BOX LINK in your bag), WALK ANYWHERE, WILD BATTLES OFF,
+  TRAINERS SEE OFF, POKéDEX COMPLETE.
 - **DS-style sprites**: FEATURES → SPRITES switches every Pokémon's battle art between GBA (the
   default, Heart & Soul's look) and DS: DS-era art for the 393 Gen 1-3 species, Gen 4 shadows
   under foes, female forms and the DS-style Substitute doll. Older saves read GBA.
