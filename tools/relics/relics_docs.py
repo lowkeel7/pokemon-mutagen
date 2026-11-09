@@ -80,6 +80,9 @@ def write(parts, build, cut):
     with open(OUT_MD, "w") as f:
         f.write(f"""# Relics: the species parts
 
+> **Work in progress.** The parts' sprites are a first pass, cut from the donors' own art by a script,
+> and they will be redone. What each part does in battle is built and tested.
+
 With **MUTAGEN → RELICS** on, a species part used from the bag on a party Pokémon is *worn*: it shows
 on the Pokémon's battle sprite, front and back, and in its summary, and the Pokémon has what the part
 gives, whatever its species: an ability; a family of moves that hits harder (slash, stab, bite,

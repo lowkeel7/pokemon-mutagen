@@ -290,4 +290,6 @@ The ❓ rows; any item you meant differently; whether a worn ABIL part should re
 holder's ability or add a second one (proposal: replace, which the engine already understands);
 the Starmie Gem's effect, now that nothing is consumed; whether "Feathers" meant Pidgeot's crest;
 the Sunflora part, which is its petals (SUNFLORA PETALS: the sprite has no seeds), or another name; the
-Shedinja shell as its two wing-shards (the whole shell is wider than a part's 32-pixel cell).
+Shedinja shell as its two wing-shards (the whole shell is wider than a part's 32-pixel cell); the
+parts' art as a whole, which the owner finds poor (2026-11-09): the page is marked work in progress until
+it is redone.
