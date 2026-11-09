@@ -70,6 +70,7 @@ enum MonData {
     MON_DATA_IS_MUTAGEN, // Pokémon Mutagen (SG-17)
     MON_DATA_THIRD_TYPE, // Pokémon Mutagen (SG-01): raw, TYPE_NONE for none
     MON_DATA_THIRD_TYPE_PENDING,
+    MON_DATA_RELIC, // Pokémon Mutagen (SG-09): the worn species part, RELIC_NONE for none
     MON_DATA_MET_LOCATION,
     MON_DATA_MET_LEVEL,
     MON_DATA_MET_GAME,
@@ -134,7 +135,7 @@ struct PokemonSubstruct0
     u16 species:11; // 2047 species.
     enum Type teraType:5; // 30 types.
     u16 heldItem:10; // 1023 items.
-    u16 unused_02:6;
+    u16 relic:6;     // Pokémon Mutagen (SG-09): the species part it wears, RELIC_NONE for none
     u32 experience:21;
     u32 nickname11:8; // 11th character of nickname.
     u32 unused_04:3;

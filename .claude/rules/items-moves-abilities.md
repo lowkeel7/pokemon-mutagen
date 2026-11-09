@@ -34,8 +34,20 @@ Anchors at HnS 2.0.6 (`167aa6d`). Every new thing also needs a BACKLOG row and, 
    debug name: `src/battle_debug.c:2288`.
 4. Test under `test/battle/hold_effect/`.
 
-"Grants an ability from the item slot" (Rock Head from a head shell) needs one hook where the
-engine resolves a battler's ability. Build it once, then let every such item be data.
+## Worn species part (a relic, SG-09)
+The hook exists: `GetMonAbility` (pokemon.c) returns the worn part's ability, so a new ABIL part is
+data. `src/relic.c` holds the overlay sprite and the battle hooks; `docs/pokerom/design/items.md`
+the list of parts.
+1. `RELIC_X` before `RELICS_COUNT` in `include/constants/relics.h` (6 bits per Pokémon: 63 parts at most).
+2. A row in `src/data/relics.h`: its item, its ability (`ABILITY_NONE` for none), its art and palette.
+3. The item as above (`.fieldUseFunc = ItemUseOutOfBattle_Relic`, `ITEM_USE_PARTY_MENU`); `RelicFromItem` finds the row.
+4. Art: `graphics/relics/<part>.png`, a 32x64 4-bit PNG, the front view bottom-aligned in the top
+   32x32 cell and the back view in the lower one, index 0 transparent, with `<part>.pal`; INCBIN in
+   `src/graphics.c`, externs in `include/graphics.h`. Cut it from the donor's own sprite (a script,
+   no drawing) and add the PROVENANCE row. The overlay sits on the wearer's head line (the first row
+   of its first frame that is wide enough) with its cell bottom 6 px below it (`RELIC_SINK`).
+5. A test in `test/battle/relic/` with `Relic(RELIC_X)` in the PLAYER block and
+   `gSaveBlock3Ptr->mutagenSettings.relics = TRUE;` in GIVEN; the same test with the option off.
 
 ## Move
 1. Enum at `include/constants/moves.h:908` ("Add any custom moves here"); bump `MOVES_COUNT`.

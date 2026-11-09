@@ -16493,6 +16493,26 @@ const struct ItemInfo gItemsInfo[] =
         .iconPic = gItemIcon_AbilityPatch,
         .iconPalette = gItemIconPalette_AbilityPatch,
     },
+
+    // Pokémon Mutagen (SG-09): species parts a Pokémon wears (MUTAGEN → RELICS). The art is the
+    // donor's own sprite, cut (graphics/relics, PROVENANCE.md).
+    [ITEM_CUBONE_SKULL] =
+    {
+        .name = ITEM_NAME("CUBONE SKULL"),
+        .pluralName = ITEM_PLURAL_NAME("Cubone Skulls"),
+        .price = 5000,
+        .holdEffectParam = 0,
+        .description = COMPOUND_STRING(
+            "A skull a Pokémon\n"
+            "can wear. It grants\n"
+            "ROCK HEAD."),
+        .pocket = POCKET_ITEMS,
+        .sortType = ITEM_TYPE_FIELD_USE,
+        .type = ITEM_USE_PARTY_MENU,
+        .fieldUseFunc = ItemUseOutOfBattle_Relic,
+        .iconPic = gItemIcon_CuboneSkull,
+        .iconPalette = gItemIconPalette_CuboneSkull,
+    },
 };
 
 #undef ITEM_NAME

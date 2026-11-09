@@ -1490,6 +1490,9 @@ const u16 gBattleAnimBackgroundImageMuddyWater_Pal[] = INCBIN_U16("graphics/batt
 
 // Gen 4 shadow — engine-wide
 const u32 gEnemyMonShadow_GfxGen4[] = INCBIN_U32("graphics/battle_interface/gen4/enemy_mon_shadow.4bpp.smol");
+// Pokémon Mutagen (SG-09): species parts worn on a Pokémon, cut from their donors' own sprites (graphics/relics)
+const u32 gRelicGfx_CuboneSkull[] = INCBIN_U32("graphics/relics/cubone_skull.4bpp");
+const u16 gRelicPal_CuboneSkull[] = INCBIN_U16("graphics/relics/cubone_skull.gbapal");
 // Gen 3 shadow — per-game
 #if IS_HNS
 const u32 gEnemyMonShadow_GfxGen3[] = INCBIN_U32("graphics/battle_interface/hns/enemy_mon_shadow.4bpp.smol");

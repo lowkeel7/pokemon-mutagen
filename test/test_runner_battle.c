@@ -19,6 +19,7 @@
 #include "constants/characters.h"
 #include "constants/trainers.h"
 #include "constants/abilities.h"
+#include "relic.h"
 
 #if defined(__INTELLISENSE__)
 #undef TestRunner_Battle_RecordAbilityPopUp
@@ -2357,6 +2358,13 @@ void SpeedIV_(u32 sourceLine, u32 speedIV)
     INVALID_IF(!DATA.currentMon, "Speed IV outside of PLAYER/OPPONENT");
     INVALID_IF(speedIV > MAX_PER_STAT_IVS, "Illegal speed IV: %d", speedIV);
     SetMonData(DATA.currentMon, MON_DATA_SPEED_IV, &speedIV);
+}
+
+void Relic_(u32 sourceLine, u32 relic) // Pokémon Mutagen (SG-09)
+{
+    INVALID_IF(!DATA.currentMon, "Relic outside of PLAYER/OPPONENT");
+    INVALID_IF(relic >= RELICS_COUNT, "Illegal relic: %d", relic);
+    SetMonData(DATA.currentMon, MON_DATA_RELIC, &relic);
 }
 
 void Item_(u32 sourceLine, u32 item)

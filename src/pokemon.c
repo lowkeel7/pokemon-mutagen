@@ -2895,6 +2895,7 @@ const struct NatureInfo gNaturesInfo[NUM_NATURES] =
 #include "data/object_events/object_event_pic_tables_followers.h"
 
 #include "data/pokemon/species_info.h"
+#include "relic.h"
 
 #define PP_UP_SHIFTS(val)           val,        (val) << 2,        (val) << 4,        (val) << 6
 #define PP_UP_SHIFTS_INV(val) (u8)~(val), (u8)~((val) << 2), (u8)~((val) << 4), (u8)~((val) << 6)
@@ -4649,6 +4650,9 @@ u32 GetBoxMonData3(struct BoxPokemon *boxMon, s32 field, u8 *data)
         case MON_DATA_THIRD_TYPE_PENDING:
             retVal = GetSubstruct1(boxMon)->thirdTypePending;
             break;
+        case MON_DATA_RELIC:
+            retVal = GetSubstruct0(boxMon)->relic;
+            break;
         case MON_DATA_MET_LOCATION:
             retVal = GetSubstruct3(boxMon)->metLocation;
             break;
@@ -5173,6 +5177,9 @@ void SetBoxMonData(struct BoxPokemon *boxMon, s32 field, const void *dataArg)
         case MON_DATA_THIRD_TYPE_PENDING:
             GetSubstruct1(boxMon)->thirdTypePending = (*data != 0);
             break;
+        case MON_DATA_RELIC:
+            GetSubstruct0(boxMon)->relic = *data & 0x3F;
+            break;
         case MON_DATA_MET_LOCATION:
             SET8(GetSubstruct3(boxMon)->metLocation);
             break;
@@ -5622,6 +5629,10 @@ enum Ability GetMonAbility(struct Pokemon *mon)
 {
     u16 species = GetMonData(mon, MON_DATA_SPECIES);
     u8 abilityNum = GetMonData(mon, MON_DATA_ABILITY_NUM);
+    u32 relic = GetMonRelic(mon); // Pokémon Mutagen (SG-09): a worn part's ability, whatever the species
+
+    if (relic != RELIC_NONE && GetRelicAbility(relic) != ABILITY_NONE)
+        return GetRelicAbility(relic);
     return GetAbilityBySpecies(species, abilityNum);
 }
 

@@ -38,6 +38,13 @@ Heart & Soul's own history see its documentation, and for the engine see `CHANGE
   level: the experience is re-mapped the way the randomizer's evolutions already were.
 
 ### New
+- **MUTAGEN → RELICS** (OFF, Heart & Soul / ON): species parts a Pokémon can wear. Used from the
+  bag on a party Pokémon, a part is worn: it shows on the Pokémon's battle sprite and in its
+  summary, and it grants its ability whatever the species. Using another part asks to swap it,
+  using the same part takes it off, and the part taken off goes back to the bag. The first part is
+  the **CUBONE SKULL**, which grants ROCK HEAD; its art is Cubone's own skull, cut from its sprite.
+  There is no in-game source yet: CHEAT SHELF → ALL sells it in every Poké Mart, and the debug menu
+  gives it.
 - **A MUTAGEN tab** in the new-game and PC options, and **GAMEMODE → MUTAGEN** on the new-game
   menu: the recommended settings plus every Mutagen feature switched on in one press. Every row's
   first choice is Heart & Soul's behaviour, and older saves read every row as that.

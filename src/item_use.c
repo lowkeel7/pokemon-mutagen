@@ -887,6 +887,12 @@ void ItemUseOutOfBattle_ShinyToken(u8 taskId) // Pokémon Mutagen (QW-14)
     SetUpItemUseCallback(taskId);
 }
 
+void ItemUseOutOfBattle_Relic(u8 taskId) // Pokémon Mutagen (SG-09)
+{
+    gItemUseCB = ItemUseCB_Relic;
+    SetUpItemUseCallback(taskId);
+}
+
 void ItemUseOutOfBattle_Mint(u8 taskId)
 {
     gItemUseCB = ItemUseCB_Mint;

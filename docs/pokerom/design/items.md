@@ -1,6 +1,8 @@
 # Species items (SG-09): draft
 
-Status: **draft for review**. Decided: about 6 effect templates; each item is a data row.
+Status: **draft for review; slice 1 built 2026-11-09** (RELICS option, the worn-part field, the bag flow, the
+ability hook, the overlay sprite, the Cubone Skull → Rock Head; `src/relic.c`). Decided: about 6 effect
+templates; each item is a data row.
 
 ## The idea: hold one way, use another
 Every species part has two sides:

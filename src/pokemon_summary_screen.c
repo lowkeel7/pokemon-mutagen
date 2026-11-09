@@ -54,6 +54,7 @@
 #include "constants/rgb.h"
 #include "constants/songs.h"
 #include "nuzlocke.h"
+#include "relic.h"
 
 // Screen titles (upper left)
 #define PSS_LABEL_WINDOW_POKEMON_INFO_TITLE 0
@@ -118,7 +119,8 @@ enum
     SPRITE_ARR_ID_TYPE, // 2 for mon types, 5 for move types(4 moves and 1 to learn), used interchangeably, because mon types and move types aren't shown on the same screen
     SPRITE_ARR_ID_MOVE_SELECTOR1 = SPRITE_ARR_ID_TYPE + TYPE_ICON_SPRITE_COUNT, // 10 sprites that make up the selector
     SPRITE_ARR_ID_MOVE_SELECTOR2 = SPRITE_ARR_ID_MOVE_SELECTOR1 + MOVE_SELECTOR_SPRITES_COUNT,
-    SPRITE_ARR_ID_COUNT = SPRITE_ARR_ID_MOVE_SELECTOR2 + MOVE_SELECTOR_SPRITES_COUNT
+    SPRITE_ARR_ID_RELIC = SPRITE_ARR_ID_MOVE_SELECTOR2 + MOVE_SELECTOR_SPRITES_COUNT, // Pokémon Mutagen (SG-09): the worn part over the picture
+    SPRITE_ARR_ID_COUNT
 };
 
 #define TILE_EMPTY_APPEAL_HEART  0x1039
@@ -316,6 +318,8 @@ static void SetContestMoveTypeIcons(void);
 static void SetNewMoveTypeIcon(void);
 static void SwapMovesTypeSprites(u8, u8);
 static u8 LoadMonGfxAndSprite(struct Pokemon *, s16 *);
+static void CreateRelicOverlay(void);
+static void DestroyRelicOverlay(void);
 static u8 CreateMonSprite(struct Pokemon *);
 static void SpriteCB_Pokemon(struct Sprite *);
 static void StopPokemonAnimations(void);
@@ -1483,6 +1487,7 @@ static bool8 LoadGraphics(void)
         sMonSummaryScreen->spriteIds[SPRITE_ARR_ID_MON] = LoadMonGfxAndSprite(&sMonSummaryScreen->currentMon, &sMonSummaryScreen->switchCounter);
         if (sMonSummaryScreen->spriteIds[SPRITE_ARR_ID_MON] != SPRITE_NONE)
         {
+            CreateRelicOverlay();
             sMonSummaryScreen->switchCounter = 0;
             gMain.state++;
         }
@@ -2214,6 +2219,7 @@ static void Task_ChangeSummaryMon(u8 taskId)
         break;
     case 1:
         SummaryScreen_DestroyAnimDelayTask();
+        DestroyRelicOverlay();
         DestroySpriteAndFreeResources(&gSprites[sMonSummaryScreen->spriteIds[SPRITE_ARR_ID_MON]]);
         break;
     case 2:
@@ -2264,6 +2270,7 @@ static void Task_ChangeSummaryMon(u8 taskId)
         sMonSummaryScreen->spriteIds[SPRITE_ARR_ID_MON] = LoadMonGfxAndSprite(&sMonSummaryScreen->currentMon, &data[1]);
         if (sMonSummaryScreen->spriteIds[SPRITE_ARR_ID_MON] == SPRITE_NONE)
             return;
+        CreateRelicOverlay();
         gSprites[sMonSummaryScreen->spriteIds[SPRITE_ARR_ID_MON]].data[2] = 1;
         ShowShinyStarObjIfMonShiny();
         TryDrawExperienceProgressBar();
@@ -3771,13 +3778,13 @@ static void PrintMonOTID(void)
 
 static void PrintMonAbilityName(void)
 {
-    enum Ability ability = GetAbilityBySpecies(sMonSummaryScreen->summary.species, sMonSummaryScreen->summary.abilityNum);
+    enum Ability ability = GetMonAbility(&sMonSummaryScreen->currentMon); // Pokémon Mutagen (SG-09): a worn part's ability shows
     PrintTextOnWindow(AddWindowFromTemplateList(sPageInfoTemplate, PSS_DATA_WINDOW_INFO_ABILITY), gAbilitiesInfo[ability].name, 0, 1, 0, 1);
 }
 
 static void PrintMonAbilityDescription(void)
 {
-    enum Ability ability = GetAbilityBySpecies(sMonSummaryScreen->summary.species, sMonSummaryScreen->summary.abilityNum);
+    enum Ability ability = GetMonAbility(&sMonSummaryScreen->currentMon);
     PrintTextOnWindow(AddWindowFromTemplateList(sPageInfoTemplate, PSS_DATA_WINDOW_INFO_ABILITY), gAbilitiesInfo[ability].description, 0, 17, 0, 0);
 }
 
@@ -4754,6 +4761,32 @@ static u8 LoadMonGfxAndSprite(struct Pokemon *mon, s16 *state)
         (*state)++;
         return 0xFF;
     }
+}
+
+// Pokémon Mutagen (SG-09): the worn species part over the Pokémon's picture (src/relic.c).
+static void CreateRelicOverlay(void)
+{
+    const u8 *frame;
+    u8 monSpriteId = sMonSummaryScreen->spriteIds[SPRITE_ARR_ID_MON];
+
+    DestroyRelicOverlay();
+    if (monSpriteId == SPRITE_NONE || monSpriteId >= MAX_SPRITES || sMonSummaryScreen->summary.isEgg)
+        return;
+    if (gMain.inBattle || gMonSpritesGfxPtr != NULL)
+        frame = gMonSpritesGfxPtr->spritesGfx[B_POSITION_OPPONENT_LEFT];
+    else
+        frame = MonSpritesGfxManager_GetSpritePtr(MON_SPR_GFX_MANAGER_A, B_POSITION_OPPONENT_LEFT);
+    sMonSummaryScreen->spriteIds[SPRITE_ARR_ID_RELIC] = Relic_CreateOverlay(GetMonRelic(&sMonSummaryScreen->currentMon),
+                                                                          monSpriteId, frame, FALSE, gSprites[monSpriteId].subpriority);
+}
+
+static void DestroyRelicOverlay(void)
+{
+    u8 spriteId = sMonSummaryScreen->spriteIds[SPRITE_ARR_ID_RELIC];
+
+    if (spriteId != SPRITE_NONE && spriteId < MAX_SPRITES && gSprites[spriteId].inUse)
+        DestroySprite(&gSprites[spriteId]);
+    sMonSummaryScreen->spriteIds[SPRITE_ARR_ID_RELIC] = SPRITE_NONE;
 }
 
 static void PlayMonCry(void)

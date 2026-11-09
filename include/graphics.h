@@ -650,6 +650,8 @@ extern const u32 gItemIcon_AbilityCapsule[];
 extern const u16 gItemIconPalette_AbilityCapsule[];
 extern const u32 gItemIcon_AbilityPatch[];
 extern const u16 gItemIconPalette_AbilityPatch[];
+extern const u32 gItemIcon_CuboneSkull[];
+extern const u16 gItemIconPalette_CuboneSkull[];
 // Mints
 extern const u32 gItemIcon_Mint[];
 extern const u16 gItemIconPalette_RedMint[];
@@ -3349,6 +3351,9 @@ extern const u16 gBattleAnimBackgroundImageMuddyWater_Pal[];
 extern const u32 gEnemyMonShadow_GfxGen4[];
 extern const u32 gEnemyMonShadow_GfxGen3[];
 extern const u32 gEnemyMonShadowsSized_GfxGen4[];
+// Pokémon Mutagen (SG-09): species parts worn on a Pokémon (src/relic.c)
+extern const u32 gRelicGfx_CuboneSkull[];
+extern const u16 gRelicPal_CuboneSkull[];
 extern const u32 gEnemyMonShadowsSized_GfxGen3[];
 
 extern const u32 gBattleAnimFogTilemap[];

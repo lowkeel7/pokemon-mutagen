@@ -2164,3 +2164,7 @@ const u16 gItemIconPalette_AzureFlute[] = INCBIN_U16("graphics/items/icon_palett
 
 const u32 gItemIcon_GBPlayer[] = INCBIN_U32("graphics/items/icons/gb_player.4bpp.smol");
 const u16 gItemIconPalette_GBPlayer[] = INCBIN_U16("graphics/items/icon_palettes/gb_player.gbapal");
+
+// Pokémon Mutagen (SG-09): species parts, cut from their donors' own sprites
+const u32 gItemIcon_CuboneSkull[] = INCBIN_U32("graphics/items/icons/cubone_skull.4bpp.smol");
+const u16 gItemIconPalette_CuboneSkull[] = INCBIN_U16("graphics/items/icon_palettes/cubone_skull.gbapal");

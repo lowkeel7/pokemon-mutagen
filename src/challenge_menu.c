@@ -87,6 +87,7 @@ enum {
     ITEM_MUTAGEN_NEW_GAME_PLUS,
     ITEM_MUTAGEN_DISCOVERY,
     ITEM_MUTAGEN_THIRD_TYPE,
+    ITEM_MUTAGEN_RELICS,
     ITEM_MUTAGEN_NEXT,
     ITEM_MUTAGEN_COUNT,
 };
@@ -493,6 +494,11 @@ static const u8 *const sDesc_Discovery[] = {
 static const u8 *const sDesc_ThirdType[] = {
     COMPOUND_STRING("Two types, as in Heart & Soul."),
     COMPOUND_STRING("The MUTAGEN grafts the type of the\nPokémon that passed it on, as a third."),
+};
+
+static const u8 *const sDesc_Relics[] = {
+    COMPOUND_STRING("Species parts stay in the BAG,\nas in Heart & Soul."),
+    COMPOUND_STRING("A part used on a Pokémon is worn:\nit shows, and grants its ability."),
 };
 
 static const u8 *const sDesc_MutagenNext[] = {
@@ -951,6 +957,12 @@ static const struct ChallengeMenuItem sTabItems_Mutagen[] = {
     [ITEM_MUTAGEN_THIRD_TYPE] = {
         .name         = COMPOUND_STRING("THIRD TYPE"),
         .descriptions = sDesc_ThirdType,
+        .numChoices   = 2,
+        .choiceNames  = sChoices_OffOn,
+    },
+    [ITEM_MUTAGEN_RELICS] = {
+        .name         = COMPOUND_STRING("RELICS"),
+        .descriptions = sDesc_Relics,
         .numChoices   = 2,
         .choiceNames  = sChoices_OffOn,
     },
@@ -1664,6 +1676,7 @@ static void ApplyMutagenPresets(void)
     *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_NEW_GAME_PLUS)   = 1; // KEEP LV
     *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_DISCOVERY)       = 1; // ON
     *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_THIRD_TYPE)      = 1; // ON
+    *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_RELICS)          = 1; // ON
 }
 
 // GAMEMODE → EASY / HARDCORE / MINIMAL GRINDING (QW-30): the recommended settings plus a bundle of
@@ -2354,6 +2367,7 @@ static void Task_ConfirmSaveYes(u8 taskId)
     gSaveBlock3Ptr->mutagenSettings.newGamePlus  = *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_NEW_GAME_PLUS);
     gSaveBlock3Ptr->mutagenSettings.discovery    = *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_DISCOVERY);
     gSaveBlock3Ptr->mutagenSettings.thirdType    = *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_THIRD_TYPE);
+    gSaveBlock3Ptr->mutagenSettings.relics       = *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_RELICS);
 
     // Cheats tab (QW-16): zero is Heart & Soul; the state-like ones are applied right away
     gSaveBlock3Ptr->mutagenSettings.cheatShelf       = *GetSelectionPtr(TAB_CHEATS, ITEM_CHEATS_SHELF) >= 1; // ON or ALL
@@ -2619,6 +2633,7 @@ void CB2_InitChallengeMenu(void)
             *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_NEW_GAME_PLUS)= gSaveBlock3Ptr->mutagenSettings.newGamePlus;
             *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_DISCOVERY)    = gSaveBlock3Ptr->mutagenSettings.discovery;
             *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_THIRD_TYPE)   = gSaveBlock3Ptr->mutagenSettings.thirdType;
+            *GetSelectionPtr(TAB_MUTAGEN, ITEM_MUTAGEN_RELICS)       = gSaveBlock3Ptr->mutagenSettings.relics;
 
             // Cheats tab (QW-16)
             *GetSelectionPtr(TAB_CHEATS, ITEM_CHEATS_SHELF)        = gSaveBlock3Ptr->mutagenSettings.shopEverything ? 2 : gSaveBlock3Ptr->mutagenSettings.cheatShelf;

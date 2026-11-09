@@ -15,6 +15,7 @@ void ItemUseOutOfBattle_Medicine(u8 taskId);
 void ItemUseOutOfBattle_AbilityCapsule(u8 taskId);
 void ItemUseOutOfBattle_AbilityPatch(u8 taskId);
 void ItemUseOutOfBattle_ShinyToken(u8 taskId);
+void ItemUseOutOfBattle_Relic(u8 taskId);
 void ItemUseOutOfBattle_Mint(u8 taskId);
 void ItemUseOutOfBattle_ResetEVs(u8 taskId);
 void ItemUseOutOfBattle_ReduceEV(u8 taskId);

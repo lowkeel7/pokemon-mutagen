@@ -1081,6 +1081,7 @@ enum __attribute__((packed)) Item
     ITEM_UNUSED_BERRY_3,
     ITEM_AZURE_FLUTE,
     ITEM_SHINY_TOKEN, // Pokémon Mutagen (QW-14)
+    ITEM_CUBONE_SKULL, // Pokémon Mutagen (SG-09): a species part to wear
 
     ITEMS_COUNT,
     ITEM_FIELD_ARROW = ITEMS_COUNT,

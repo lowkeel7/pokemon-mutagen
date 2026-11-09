@@ -13,6 +13,7 @@ bool32 AreShinyTokensSold(void);       // SHINY TOKEN in every Poké Mart (QW-14
 bool32 IsStarterPickAny(void);         // the lab's balls open a species list (SG-16)
 bool32 IsDiscoveryOn(void);            // wild bosses, lead-ability encounter pulls (QW-32)
 bool32 IsThirdTypeOn(void);            // the grafted third type is live (SG-01)
+bool32 AreRelicsOn(void);              // species parts can be worn (SG-09)
 bool32 CheatShelfOn(void);             // CHEATS tab (QW-16/17/18/26/13)
 bool32 CheatShopEverything(void);      // CHEAT SHELF → ALL: every item but the key items in every mart (QW-07)
 bool32 CheatInfinitePp(void);

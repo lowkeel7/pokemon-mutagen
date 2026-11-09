@@ -239,6 +239,11 @@ bool32 IsThirdTypeOn(void)
     return gSaveBlock3Ptr != NULL && gSaveBlock3Ptr->mutagenSettings.thirdType;
 }
 
+bool32 AreRelicsOn(void) // SG-09
+{
+    return gSaveBlock3Ptr != NULL && gSaveBlock3Ptr->mutagenSettings.relics;
+}
+
 u32 GetMonThirdType(struct Pokemon *mon)
 {
     u32 third;

@@ -37,6 +37,7 @@
 #include "test/battle.h"
 #include "test/test.h"
 #include "test/test_runner_battle.h"
+#include "relic.h"
 
 static EWRAM_DATA u8 sLinkSendTaskId = 0;
 static EWRAM_DATA u8 sLinkReceiveTaskId = 0;
@@ -2036,6 +2037,7 @@ void StartSendOutAnim(enum BattlerId battler, bool32 dontClearTransform, bool32 
     StartSpriteAnim(&gSprites[gBattlerSpriteIds[battler]], 0);
     gSprites[gBattlerSpriteIds[battler]].invisible = TRUE;
     gSprites[gBattlerSpriteIds[battler]].callback = SpriteCallbackDummy;
+    Relic_AttachToBattler(battler); // Pokémon Mutagen (SG-09): the worn part follows the new sprite
 
     gSprites[gBattleControllerData[battler]].data[1] = gBattlerSpriteIds[battler];
     gSprites[gBattleControllerData[battler]].data[2] = battler;
@@ -2044,6 +2046,7 @@ void StartSendOutAnim(enum BattlerId battler, bool32 dontClearTransform, bool32 
 
 static void FreeMonSprite(enum BattlerId battler)
 {
+    Relic_DetachFromBattler(battler); // Pokémon Mutagen (SG-09)
     FreeSpriteOamMatrix(&gSprites[gBattlerSpriteIds[battler]]);
     DestroySprite(&gSprites[gBattlerSpriteIds[battler]]);
     if (!IsOnPlayerSide(battler))
@@ -2371,6 +2374,7 @@ void BtlController_HandleLoadMonSprite(enum BattlerId battler)
 
     gSprites[gBattlerSpriteIds[battler]].x2 = -DISPLAY_WIDTH;
     gSprites[gBattlerSpriteIds[battler]].data[0] = battler;
+    Relic_AttachToBattler(battler); // Pokémon Mutagen (SG-09)
     gSprites[gBattlerSpriteIds[battler]].data[2] = species;
     gSprites[gBattlerSpriteIds[battler]].oam.paletteNum = battler;
     StartSpriteAnim(&gSprites[gBattlerSpriteIds[battler]], 0);

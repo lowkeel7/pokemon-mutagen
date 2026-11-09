@@ -32,6 +32,7 @@
 #include "constants/battle_palace.h"
 #include "constants/battle_move_effects.h"
 #include "constants/event_objects.h" // only for SHADOW_SIZE constants
+#include "relic.h"
 
 bool8 UseGen4BattleUI(void)
 {
@@ -178,6 +179,7 @@ void AllocateBattleSpritesData(void)
     gBattleSpritesDataPtr->healthBoxesData = AllocZeroed(sizeof(struct BattleHealthboxInfo) * MAX_BATTLERS_COUNT);
     gBattleSpritesDataPtr->animationData = AllocZeroed(sizeof(struct BattleAnimationInfo));
     gBattleSpritesDataPtr->battleBars = AllocZeroed(sizeof(struct BattleBarInfo) * MAX_BATTLERS_COUNT);
+    Relic_BattleInit(); // Pokémon Mutagen (SG-09)
 }
 
 void FreeBattleSpritesData(void)

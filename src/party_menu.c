@@ -33,6 +33,8 @@
 #include "graphics.h"
 #include "international_string_util.h"
 #include "item.h"
+#include "mutagen.h"
+#include "relic.h"
 #include "item_menu.h"
 #include "item_use.h"
 #include "caps.h"
@@ -5250,6 +5252,140 @@ void ItemUseCB_ShinyToken(u8 taskId, TaskFunc task)
 
 #undef tState
 #undef tMonId
+
+// Pokémon Mutagen (SG-09): a species part used on a Pokémon is worn (MUTAGEN → RELICS). Using one on
+// a Pokémon already wearing a part asks to swap, or to take the same part off; the part taken off
+// goes back to the bag.
+#define tState  data[0]
+#define tMonId  data[1]
+#define tRelic  data[2]
+#define tOldFunc 4
+
+static void Task_Relic(u8 taskId)
+{
+    static const u8 sText_PutOn[] = _("{STR_VAR_1} put on the {STR_VAR_2}!{PAUSE_UNTIL_PRESS}");
+    static const u8 sText_TookOff[] = _("{STR_VAR_1} took off the {STR_VAR_2}.{PAUSE_UNTIL_PRESS}");
+    static const u8 sText_TakeOff[] = _("{STR_VAR_1} is wearing the {STR_VAR_2}.\nTake it off?");
+    static const u8 sText_Swap[] = _("{STR_VAR_1} is wearing the {STR_VAR_2}.\nSwap it for the {STR_VAR_3}?");
+    static const u8 sText_BagFull[] = _("The BAG is full. The {STR_VAR_2}\ncan't be taken off.{PAUSE_UNTIL_PRESS}");
+    s16 *data = gTasks[taskId].data;
+    struct Pokemon *mon = &gPlayerParty[tMonId];
+    u32 worn = GetMonData(mon, MON_DATA_RELIC);
+    u32 relic = tRelic;
+
+    switch (tState)
+    {
+    case 0:
+        if (!AreRelicsOn() || relic == RELIC_NONE || GetMonData(mon, MON_DATA_IS_EGG)
+         || GetMonData(mon, MON_DATA_SPECIES) == SPECIES_NONE || worn >= RELICS_COUNT)
+        {
+            gPartyMenuUseExitCallback = FALSE;
+            PlaySE(SE_SELECT);
+            DisplayPartyMenuMessage(gText_WontHaveEffect, 1);
+            ScheduleBgCopyTilemapToVram(2);
+            gTasks[taskId].func = Task_ClosePartyMenuAfterText;
+            return;
+        }
+        GetMonNickname(mon, gStringVar1);
+        if (worn == RELIC_NONE)
+        {
+            SetMonData(mon, MON_DATA_RELIC, &relic);
+            RemoveBagItem(gSpecialVar_ItemId, 1);
+            gPartyMenuUseExitCallback = TRUE;
+            PlaySE(SE_USE_ITEM);
+            CopyItemName(gRelicsInfo[relic].item, gStringVar2);
+            StringExpandPlaceholders(gStringVar4, sText_PutOn);
+            DisplayPartyMenuMessage(gStringVar4, 1);
+            ScheduleBgCopyTilemapToVram(2);
+            gTasks[taskId].func = Task_ClosePartyMenuAfterText;
+            return;
+        }
+        CopyItemName(gRelicsInfo[worn].item, gStringVar2);
+        CopyItemName(gRelicsInfo[relic].item, gStringVar3);
+        StringExpandPlaceholders(gStringVar4, worn == relic ? sText_TakeOff : sText_Swap);
+        PlaySE(SE_SELECT);
+        DisplayPartyMenuMessage(gStringVar4, 1);
+        ScheduleBgCopyTilemapToVram(2);
+        tState++;
+        break;
+    case 1:
+        if (!IsPartyMenuTextPrinterActive())
+        {
+            PartyMenuDisplayYesNoMenu();
+            tState++;
+        }
+        break;
+    case 2:
+        switch (Menu_ProcessInputNoWrapClearOnChoose())
+        {
+        case 0:
+            tState++;
+            break;
+        case 1:
+        case MENU_B_PRESSED:
+            gPartyMenuUseExitCallback = FALSE;
+            PlaySE(SE_SELECT);
+            ScheduleBgCopyTilemapToVram(2);
+            // Back to choosing a Pokémon, as the Ability Capsule does.
+            ClearStdWindowAndFrameToTransparent(6, 0);
+            ClearWindowTilemap(6);
+            DisplayPartyMenuStdMessage(5);
+            gTasks[taskId].func = (void *)GetWordTaskArg(taskId, tOldFunc);
+            return;
+        }
+        break;
+    case 3:
+        GetMonNickname(mon, gStringVar1);
+        CopyItemName(gRelicsInfo[worn].item, gStringVar2);
+        if (!CheckBagHasSpace(gRelicsInfo[worn].item, 1))
+        {
+            gPartyMenuUseExitCallback = FALSE;
+            PlaySE(SE_FAILURE);
+            StringExpandPlaceholders(gStringVar4, sText_BagFull);
+            DisplayPartyMenuMessage(gStringVar4, 1);
+            ScheduleBgCopyTilemapToVram(2);
+            gTasks[taskId].func = Task_ClosePartyMenuAfterText;
+            return;
+        }
+        AddBagItem(gRelicsInfo[worn].item, 1);
+        if (worn == relic)
+        {
+            u32 none = RELIC_NONE;
+
+            SetMonData(mon, MON_DATA_RELIC, &none);
+            StringExpandPlaceholders(gStringVar4, sText_TookOff);
+        }
+        else
+        {
+            SetMonData(mon, MON_DATA_RELIC, &relic);
+            RemoveBagItem(gSpecialVar_ItemId, 1);
+            CopyItemName(gRelicsInfo[relic].item, gStringVar2);
+            StringExpandPlaceholders(gStringVar4, sText_PutOn);
+        }
+        gPartyMenuUseExitCallback = TRUE;
+        PlaySE(SE_USE_ITEM);
+        DisplayPartyMenuMessage(gStringVar4, 1);
+        ScheduleBgCopyTilemapToVram(2);
+        gTasks[taskId].func = Task_ClosePartyMenuAfterText;
+        break;
+    }
+}
+
+void ItemUseCB_Relic(u8 taskId, TaskFunc task)
+{
+    s16 *data = gTasks[taskId].data;
+
+    tState = 0;
+    tMonId = gPartyMenu.slotId;
+    tRelic = RelicFromItem(gSpecialVar_ItemId);
+    SetWordTaskArg(taskId, tOldFunc, (uintptr_t)(gTasks[taskId].func));
+    gTasks[taskId].func = Task_Relic;
+}
+
+#undef tState
+#undef tMonId
+#undef tRelic
+#undef tOldFunc
 
 #define tState      data[0]
 #define tMonId      data[1]
