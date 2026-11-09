@@ -19,7 +19,8 @@ bool32 CheatShopEverything(void);      // CHEAT SHELF → ALL: every item but th
 bool32 CheatInfinitePp(void);
 bool32 CheatCatchAlways(void);
 void Mutagen_ApplyCheats(void);        // flags, the Box Link and the Pokédex follow the CHEATS rows
-u32 GetMonThirdType(struct Pokemon *mon); // the live third type, TYPE_NONE when off, pending or unset
+u32 GetMonThirdType(struct Pokemon *mon); // the live third type, TYPE_NONE when off, pending or unset; a worn part's type first (SG-09)
+u32 GetMonOwnThirdType(struct Pokemon *mon); // the Pokémon's own grafted type under any worn part, TYPE_NONE when off, pending or unset
 extern bool8 gWildBossPending;         // the wild Pokémon just created is a boss (QW-32)
 u32 GetShinyStarterMode(void);         // 0 chance, 1 ask, 2 always (SG-16)
 void Mutagen_StarterPicker(struct ScriptContext *ctx);

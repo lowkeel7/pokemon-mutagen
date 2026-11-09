@@ -6,6 +6,7 @@
 #include "battle_controllers.h"
 #include "battle_gfx_sfx_util.h"
 #include "battle_interface.h"
+#include "battle_main.h"
 #include "battle_pike.h"
 #include "battle_pyramid.h"
 #include "battle_pyramid_bag.h"
@@ -92,6 +93,7 @@ enum {
     MENU_GIVE,
     MENU_TAKE_ITEM,
     MENU_MOVE_ITEM,
+    MENU_TAKE_OFF_RELIC, // Pokémon Mutagen (SG-09): the worn species part comes off
     MENU_MAIL,
     MENU_TAKE_MAIL,
     MENU_READ,
@@ -469,6 +471,7 @@ static void CursorCb_Cancel1(u8);
 static void CursorCb_Item(u8);
 static void CursorCb_Give(u8);
 static void CursorCb_TakeItem(u8);
+static void CursorCb_TakeOffRelic(u8);
 static void CursorCb_MoveItem(u8);
 static void CursorCb_Mail(u8);
 static void CursorCb_Read(u8);
@@ -2807,7 +2810,13 @@ static u8 DisplaySelectionWindow(u8 windowType)
         SetWindowTemplateFields(&window, 2, 19, 19 - (sPartyMenuInternal->numActions * 2), 10, sPartyMenuInternal->numActions * 2, 14, 0x2E9);
         break;
     case SELECTWINDOW_ITEM:
-        window = sItemGiveTakeWindowTemplate;
+        // Pokémon Mutagen (SG-09): with TAKE OFF added the fixed template is a row short and a
+        // tile too narrow; one column left and as tall as its rows (the message box ends at tile 19,
+        // and the block has room to 0x400).
+        if (sPartyMenuInternal->numActions > ARRAY_COUNT(sPartyMenuAction_GiveTakeItemCancel))
+            SetWindowTemplateFields(&window, 2, 22, 19 - (sPartyMenuInternal->numActions * 2), 7, sPartyMenuInternal->numActions * 2, 14, 0x39D);
+        else
+            window = sItemGiveTakeWindowTemplate;
         break;
     case SELECTWINDOW_MAIL:
         window = sMailReadTakeWindowTemplate;
@@ -2912,6 +2921,13 @@ static void SetPartyMonSelectionActions(struct Pokemon *mons, u8 slotId, u8 acti
         sPartyMenuInternal->numActions = sPartyMenuActionCounts[action];
         for (i = 0; i < sPartyMenuInternal->numActions; i++)
             sPartyMenuInternal->actions[i] = sPartyMenuActions[action][i];
+        // Pokémon Mutagen (SG-09): a worn part comes off from here, before CANCEL, so a single part
+        // is never stuck on for want of a second one in the bag.
+        if (action == ACTIONS_ITEM && GetMonRelic(&mons[slotId]) != RELIC_NONE)
+        {
+            sPartyMenuInternal->actions[sPartyMenuInternal->numActions - 1] = MENU_TAKE_OFF_RELIC;
+            sPartyMenuInternal->actions[sPartyMenuInternal->numActions++] = MENU_CANCEL2;
+        }
     }
 }
 
@@ -3709,6 +3725,38 @@ static void CursorCb_TakeItem(u8 taskId)
     default: // Took item
         DisplayTookHeldItemMessage(mon, item, TRUE);
         break;
+    }
+    ScheduleBgCopyTilemapToVram(2);
+    gTasks[taskId].func = Task_UpdateHeldItemSprite;
+}
+
+// Pokémon Mutagen (SG-09): the worn part comes off and returns to the bag; the Pokémon is exactly
+// as it was before the part went on, since its own ability and third type were never written over.
+static void CursorCb_TakeOffRelic(u8 taskId)
+{
+    static const u8 sText_TookOff[] = _("{STR_VAR_1} took off the {STR_VAR_2}.{PAUSE_UNTIL_PRESS}");
+    static const u8 sText_BagFull[] = _("The BAG is full. The {STR_VAR_2}\ncan't be taken off.{PAUSE_UNTIL_PRESS}");
+    struct Pokemon *mon = &gPlayerParty[gPartyMenu.slotId];
+    u32 relic = GetMonData(mon, MON_DATA_RELIC), zero = 0;
+
+    PlaySE(SE_SELECT);
+    PartyMenuRemoveWindow(&sPartyMenuInternal->windowId[0]);
+    PartyMenuRemoveWindow(&sPartyMenuInternal->windowId[1]);
+    if (relic != RELIC_NONE && relic < RELICS_COUNT)
+    {
+        GetMonNickname(mon, gStringVar1);
+        CopyItemName(gRelicsInfo[relic].item, gStringVar2);
+        if (AddBagItem(gRelicsInfo[relic].item, 1))
+        {
+            SetMonData(mon, MON_DATA_RELIC, &zero);
+            SetMonData(mon, MON_DATA_RELIC_TYPE_OFF, &zero);
+            StringExpandPlaceholders(gStringVar4, sText_TookOff);
+        }
+        else
+        {
+            StringExpandPlaceholders(gStringVar4, sText_BagFull);
+        }
+        DisplayPartyMenuMessage(gStringVar4, TRUE);
     }
     ScheduleBgCopyTilemapToVram(2);
     gTasks[taskId].func = Task_UpdateHeldItemSprite;
@@ -5268,10 +5316,15 @@ static void Task_Relic(u8 taskId)
     static const u8 sText_TakeOff[] = _("{STR_VAR_1} is wearing the {STR_VAR_2}.\nTake it off?");
     static const u8 sText_Swap[] = _("{STR_VAR_1} is wearing the {STR_VAR_2}.\nSwap it for the {STR_VAR_3}?");
     static const u8 sText_BagFull[] = _("The BAG is full. The {STR_VAR_2}\ncan't be taken off.{PAUSE_UNTIL_PRESS}");
+    static const u8 sText_WhichType[] = _("{STR_VAR_1} has {STR_VAR_3} as its third\ntype. Show {STR_VAR_2} instead?");
+    static const u8 sText_ShowsType[] = _("{STR_VAR_1} shows {STR_VAR_2}\nwhile it wears the part.{PAUSE_UNTIL_PRESS}");
+    static const u8 sText_KeepsType[] = _("{STR_VAR_1} keeps {STR_VAR_3}\nunder the part.{PAUSE_UNTIL_PRESS}");
+    static const u8 sText_ApostropheS[] = _("'s ");
     s16 *data = gTasks[taskId].data;
     struct Pokemon *mon = &gPlayerParty[tMonId];
     u32 worn = GetMonData(mon, MON_DATA_RELIC);
     u32 relic = tRelic;
+    u32 zero = 0, one = 1;
 
     switch (tState)
     {
@@ -5290,6 +5343,7 @@ static void Task_Relic(u8 taskId)
         if (worn == RELIC_NONE)
         {
             SetMonData(mon, MON_DATA_RELIC, &relic);
+            SetMonData(mon, MON_DATA_RELIC_TYPE_OFF, &zero);
             RemoveBagItem(gSpecialVar_ItemId, 1);
             gPartyMenuUseExitCallback = TRUE;
             PlaySE(SE_USE_ITEM);
@@ -5297,7 +5351,7 @@ static void Task_Relic(u8 taskId)
             StringExpandPlaceholders(gStringVar4, sText_PutOn);
             DisplayPartyMenuMessage(gStringVar4, 1);
             ScheduleBgCopyTilemapToVram(2);
-            gTasks[taskId].func = Task_ClosePartyMenuAfterText;
+            tState = 4;
             return;
         }
         CopyItemName(gRelicsInfo[worn].item, gStringVar2);
@@ -5348,22 +5402,76 @@ static void Task_Relic(u8 taskId)
             return;
         }
         AddBagItem(gRelicsInfo[worn].item, 1);
+        SetMonData(mon, MON_DATA_RELIC_TYPE_OFF, &zero); // the pick belongs to the part taken off
+        gPartyMenuUseExitCallback = TRUE;
+        PlaySE(SE_USE_ITEM);
         if (worn == relic)
         {
             u32 none = RELIC_NONE;
 
             SetMonData(mon, MON_DATA_RELIC, &none);
             StringExpandPlaceholders(gStringVar4, sText_TookOff);
+            DisplayPartyMenuMessage(gStringVar4, 1);
+            ScheduleBgCopyTilemapToVram(2);
+            gTasks[taskId].func = Task_ClosePartyMenuAfterText;
+            return;
         }
-        else
+        SetMonData(mon, MON_DATA_RELIC, &relic);
+        RemoveBagItem(gSpecialVar_ItemId, 1);
+        CopyItemName(gRelicsInfo[relic].item, gStringVar2);
+        StringExpandPlaceholders(gStringVar4, sText_PutOn);
+        DisplayPartyMenuMessage(gStringVar4, 1);
+        ScheduleBgCopyTilemapToVram(2);
+        tState = 4;
+        break;
+    case 4:
+        // The part is on. Its type shows as the third type (THIRD TYPE on); when the Pokémon has a
+        // third type of its own, the player picks which shows. Nothing is written over: the own
+        // type waits under the part, and comes back when the part comes off.
+        if (IsPartyMenuTextPrinterActive())
+            break;
         {
-            SetMonData(mon, MON_DATA_RELIC, &relic);
-            RemoveBagItem(gSpecialVar_ItemId, 1);
+            u32 own = GetMonOwnThirdType(mon), lent = GetRelicType(relic);
+
+            if (own == TYPE_NONE || lent == TYPE_NONE || own == lent)
+            {
+                gTasks[taskId].func = Task_ClosePartyMenuAfterText;
+                return;
+            }
+            GetMonNickname(mon, gStringVar1);
             CopyItemName(gRelicsInfo[relic].item, gStringVar2);
-            StringExpandPlaceholders(gStringVar4, sText_PutOn);
+            StringAppend(gStringVar2, sText_ApostropheS);
+            StringAppend(gStringVar2, gTypesInfo[lent].name);
+            StringCopy(gStringVar3, gTypesInfo[own].name);
+            StringExpandPlaceholders(gStringVar4, sText_WhichType);
+            DisplayPartyMenuMessage(gStringVar4, 1);
+            ScheduleBgCopyTilemapToVram(2);
+            tState = 5;
         }
-        gPartyMenuUseExitCallback = TRUE;
-        PlaySE(SE_USE_ITEM);
+        break;
+    case 5:
+        if (!IsPartyMenuTextPrinterActive())
+        {
+            PartyMenuDisplayYesNoMenu();
+            tState = 6;
+        }
+        break;
+    case 6:
+        switch (Menu_ProcessInputNoWrapClearOnChoose())
+        {
+        case 0:
+            SetMonData(mon, MON_DATA_RELIC_TYPE_OFF, &zero);
+            StringExpandPlaceholders(gStringVar4, sText_ShowsType);
+            break;
+        case 1:
+        case MENU_B_PRESSED:
+            SetMonData(mon, MON_DATA_RELIC_TYPE_OFF, &one);
+            StringExpandPlaceholders(gStringVar4, sText_KeepsType);
+            break;
+        default:
+            return;
+        }
+        PlaySE(SE_SELECT);
         DisplayPartyMenuMessage(gStringVar4, 1);
         ScheduleBgCopyTilemapToVram(2);
         gTasks[taskId].func = Task_ClosePartyMenuAfterText;

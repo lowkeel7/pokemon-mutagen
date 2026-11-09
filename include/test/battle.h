@@ -1041,6 +1041,8 @@ struct moveWithPP {
 #define SpeedIV(speedIV) SpeedIV_(__LINE__, speedIV)
 #define Item(item) Item_(__LINE__, item)
 #define Relic(relic) Relic_(__LINE__, relic)
+#define ThirdType(type) ThirdType_(__LINE__, type)
+#define RelicTypeOff() RelicTypeOff_(__LINE__)
 #define Moves(move1, ...) do { u16 moves_[MAX_MON_MOVES] = {move1, __VA_ARGS__}; Moves_(__LINE__, moves_); } while (0)
 #define MovesWithPP(movewithpp1, ...) MovesWithPP_(__LINE__, (struct moveWithPP[MAX_MON_MOVES]) {movewithpp1, __VA_ARGS__})
 #define Friendship(friendship) Friendship_(__LINE__, friendship)
@@ -1087,6 +1089,8 @@ void SpDefenseIV_(u32 sourceLine, u32 spDefenseIV);
 void SpeedIV_(u32 sourceLine, u32 speedIV);
 void Item_(u32 sourceLine, u32 item);
 void Relic_(u32 sourceLine, u32 relic); // Pokémon Mutagen (SG-09): the worn species part
+void ThirdType_(u32 sourceLine, u32 type); // Pokémon Mutagen (SG-01): the Pokémon's own grafted third type
+void RelicTypeOff_(u32 sourceLine); // Pokémon Mutagen (SG-09): the player kept the own third type under the part
 void Moves_(u32 sourceLine, u16 moves[MAX_MON_MOVES]);
 void MovesWithPP_(u32 sourceLine, struct moveWithPP moveWithPP[MAX_MON_MOVES]);
 void Friendship_(u32 sourceLine, u32 friendship);

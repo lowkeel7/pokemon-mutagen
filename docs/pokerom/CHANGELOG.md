@@ -18,6 +18,11 @@ Heart & Soul's own history see its documentation, and for the engine see `CHANGE
   side, with the shiny colours and the DS female forms on toggles (`tools/site/sprites.py`).
 
 ### Fixed
+- The Mutagen's grafted third type (MUTAGEN → THIRD TYPE) showed in the summary but did not count
+  in battle: the battle filled a Pokémon's types from its species at the first send-out and at
+  every switch-in and left the third slot empty; only the AI's switch simulation read it. Both
+  paths now read the live third type, which the relic tests caught (the first battle tests to
+  depend on a third type).
 - Day Care: with a LEVEL CAP set, a Pokémon deposited above the cap "grew by 2xx levels" and the
   fee ran to over ¥20,000 (a u8 underflow); the shown level and the fee now follow the capped
   experience the Pokémon really gets. From Heart & Soul+ (Soulgold).
@@ -55,7 +60,12 @@ Heart & Soul's own history see its documentation, and for the engine see `CHANGE
   cut from the donor's sprites by a script (the Charizard skull is Cubone's skull in Charizard's
   colours); nothing is drawn. A wild Pokémon of a donor species drops its part one time in four
   when it faints; CHEAT SHELF → ALL sells them all, and the sandbox build starts with one of each.
-  The parts' page: `docs/pokerom/relics.md`.
+  With **MUTAGEN → THIRD TYPE** on, a worn part also lends its donor's type as the wearer's third
+  type (Lotad Lily: Water; Lapras Shell: Water; Charizard Skull: Fire), shown in the summary and
+  counted in battle, for as long as it is worn. A Pokémon that already has a third type of its own
+  is asked which to show; its own type is never written over and comes back when the part comes
+  off. A worn part also comes off from the party menu (the Pokémon → ITEM → TAKE OFF), so a single
+  part is never stuck on. The parts' page: `docs/pokerom/relics.md`.
 - **A MUTAGEN tab** in the new-game and PC options, and **GAMEMODE → MUTAGEN** on the new-game
   menu: the recommended settings plus every Mutagen feature switched on in one press. Every row's
   first choice is Heart & Soul's behaviour, and older saves read every row as that.

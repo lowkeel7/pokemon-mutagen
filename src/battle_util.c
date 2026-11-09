@@ -9611,14 +9611,19 @@ void CopyMonAbilityAndTypesToBattleMon(enum BattlerId battler, struct Pokemon *m
     #endif
     gBattleMons[battler].types[0] = GetSpeciesType(gBattleMons[battler].species, 0);
     gBattleMons[battler].types[1] = GetSpeciesType(gBattleMons[battler].species, 1);
-    gBattleMons[battler].types[2] = TYPE_MYSTERY;
-    {
-        // Pokémon Mutagen (SG-01): the grafted third type, in the slot Forest's Curse uses.
-        u32 third = GetMonThirdType(mon);
+    SetBattlerThirdType(battler, mon);
+}
 
-        if (third != TYPE_NONE && third != gBattleMons[battler].types[0] && third != gBattleMons[battler].types[1])
-            gBattleMons[battler].types[2] = third;
-    }
+// Pokémon Mutagen (SG-01, SG-09): the Pokémon's live third type, the Mutagen's graft or the type a
+// worn part lends, into the slot Forest's Curse uses. Every place that fills a battler's types from
+// its species calls this: the battle's first draw, a switch-in, and the AI's switch simulation.
+void SetBattlerThirdType(enum BattlerId battler, struct Pokemon *mon)
+{
+    u32 third = GetMonThirdType(mon);
+
+    gBattleMons[battler].types[2] = TYPE_MYSTERY;
+    if (third != TYPE_NONE && third != gBattleMons[battler].types[0] && third != gBattleMons[battler].types[1])
+        gBattleMons[battler].types[2] = third;
 }
 
 void RecalcBattlerStats(enum BattlerId battler, struct Pokemon *mon, bool32 isDynamaxing)

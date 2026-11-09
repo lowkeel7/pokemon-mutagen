@@ -1,8 +1,9 @@
 # Species items (SG-09): draft
 
-Status: **draft for review; slices 1 and 2 built 2026-11-09** (RELICS option, the worn-part field, the bag
+Status: **draft for review; slices 1, 2 and 3 built 2026-11-09** (RELICS option, the worn-part field, the bag
 flow, the ability hook, the overlay sprite placed by anchor; all 24 ability parts as data rows with art
-cut by `tools/relics/cut.py`; wild donors drop their part; `src/relic.c`, the parts' page
+cut by `tools/relics/cut.py`; wild donors drop their part; the type a part lends while worn, with the
+player's pick when the Pokémon has a third type of its own; `src/relic.c`, the parts' page
 [relics.md](../relics.md)). Decided: about 6 effect templates; each item is a data row.
 
 ## Two rules every slice keeps (owner, 2026-11-09)
@@ -174,7 +175,10 @@ wild in Johto and Kanto (Charizard, Bastiodon, Skuntank, Metagross…) wait for 
 
 ## Build order
 1. ~~ABIL hook~~ (built) + FAM flags (unlocks the FAM rows as data).
-2. ~~Third-type USE~~ → the type a part lends while worn (reversible; needs SG-01, built): next.
+2. ~~Third-type USE~~ → ~~the type a part lends while worn~~ (built 2026-11-09: a worn part's donor type
+   shows as the third type while THIRD TYPE is on, read, never written; a Pokémon with a third type of its
+   own is asked which to show, the pick is one bit, `relicTypeOff`; off comes the part, back comes the own).
+   TAKE OFF in the party menu's ITEM submenu takes a worn part off without a second copy in the bag.
 3. EVO rows; MISC rows one by one; ING after crafting exists.
 4. ~~Icons~~: every part's icon is its own cut, no asset pack needed.
 

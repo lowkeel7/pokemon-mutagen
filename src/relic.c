@@ -101,6 +101,25 @@ enum Ability GetRelicAbility(u32 relic)
     return relic < RELICS_COUNT ? gRelicsInfo[relic].ability : ABILITY_NONE;
 }
 
+u32 GetRelicType(u32 relic)
+{
+    if (relic == RELIC_NONE || relic >= RELICS_COUNT || gRelicsInfo[relic].donor == SPECIES_NONE)
+        return TYPE_NONE;
+    return gSpeciesInfo[gRelicsInfo[relic].donor].types[0];
+}
+
+// Read while worn, never written: the part's type shows as the wearer's third type (MUTAGEN →
+// THIRD TYPE on) unless the player chose to keep the Pokémon's own third type under it, which is
+// the one bit the choice costs. Take the part off and the own type is back, untouched.
+u32 GetMonRelicType(struct Pokemon *mon)
+{
+    u32 relic = GetMonRelic(mon);
+
+    if (relic == RELIC_NONE || !IsThirdTypeOn() || GetMonData(mon, MON_DATA_RELIC_TYPE_OFF))
+        return TYPE_NONE;
+    return GetRelicType(relic);
+}
+
 // One read of the Pokémon: an egg's field is zero (the bag refuses to dress one), so no egg check.
 u32 GetMonRelic(struct Pokemon *mon)
 {

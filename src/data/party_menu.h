@@ -705,6 +705,7 @@ struct
     [MENU_GIVE]            = {gMenuText_Give,                     CursorCb_Give},
     [MENU_TAKE_ITEM]       = {COMPOUND_STRING("TAKE"),            CursorCb_TakeItem},
     [MENU_MOVE_ITEM]       = {COMPOUND_STRING("MOVE"),            CursorCb_MoveItem},
+    [MENU_TAKE_OFF_RELIC]  = {COMPOUND_STRING("TAKE OFF"),        CursorCb_TakeOffRelic}, // Pokémon Mutagen (SG-09)
     [MENU_MAIL]            = {COMPOUND_STRING("MAIL"),            CursorCb_Mail},
     [MENU_TAKE_MAIL]       = {COMPOUND_STRING("TAKE"),            CursorCb_TakeMail},
     [MENU_READ]            = {COMPOUND_STRING("READ"),            CursorCb_Read},

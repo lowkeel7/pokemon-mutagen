@@ -4653,6 +4653,9 @@ u32 GetBoxMonData3(struct BoxPokemon *boxMon, s32 field, u8 *data)
         case MON_DATA_RELIC:
             retVal = GetSubstruct0(boxMon)->relic;
             break;
+        case MON_DATA_RELIC_TYPE_OFF:
+            retVal = GetSubstruct0(boxMon)->relicTypeOff;
+            break;
         case MON_DATA_MET_LOCATION:
             retVal = GetSubstruct3(boxMon)->metLocation;
             break;
@@ -5179,6 +5182,9 @@ void SetBoxMonData(struct BoxPokemon *boxMon, s32 field, const void *dataArg)
             break;
         case MON_DATA_RELIC:
             GetSubstruct0(boxMon)->relic = *data & 0x3F;
+            break;
+        case MON_DATA_RELIC_TYPE_OFF:
+            GetSubstruct0(boxMon)->relicTypeOff = *data & 1;
             break;
         case MON_DATA_MET_LOCATION:
             SET8(GetSubstruct3(boxMon)->metLocation);

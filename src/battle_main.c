@@ -3672,7 +3672,7 @@ static void DoBattleIntro(void)
                 memcpy(&gBattleMons[battler], &gBattleResources->bufferB[battler][4], sizeof(struct BattlePokemon));
                 gBattleMons[battler].types[0] = GetSpeciesType(gBattleMons[battler].species, 0);
                 gBattleMons[battler].types[1] = GetSpeciesType(gBattleMons[battler].species, 1);
-                gBattleMons[battler].types[2] = TYPE_MYSTERY;
+                SetBattlerThirdType(battler, GetBattlerMon(battler)); // Pokémon Mutagen (SG-01, SG-09): the graft or a worn part's type
                 gBattleMons[battler].ability = GetMonAbility(GetBattlerMon(battler)); // Pokémon Mutagen (SG-09): a worn part's ability, else the species'
                 gBattleStruct->battlerState[battler].hpOnSwitchout = gBattleMons[battler].hp;
                 memset(&gBattleMons[battler].volatiles, 0, sizeof(struct Volatiles));

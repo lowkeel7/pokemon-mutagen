@@ -2367,6 +2367,21 @@ void Relic_(u32 sourceLine, u32 relic) // Pokémon Mutagen (SG-09)
     SetMonData(DATA.currentMon, MON_DATA_RELIC, &relic);
 }
 
+void ThirdType_(u32 sourceLine, u32 type) // Pokémon Mutagen (SG-01)
+{
+    INVALID_IF(!DATA.currentMon, "ThirdType outside of PLAYER/OPPONENT");
+    INVALID_IF(type >= NUMBER_OF_MON_TYPES, "Illegal type: %d", type);
+    SetMonData(DATA.currentMon, MON_DATA_THIRD_TYPE, &type);
+}
+
+void RelicTypeOff_(u32 sourceLine) // Pokémon Mutagen (SG-09)
+{
+    u32 one = 1;
+
+    INVALID_IF(!DATA.currentMon, "RelicTypeOff outside of PLAYER/OPPONENT");
+    SetMonData(DATA.currentMon, MON_DATA_RELIC_TYPE_OFF, &one);
+}
+
 void Item_(u32 sourceLine, u32 item)
 {
     INVALID_IF(!DATA.currentMon, "Item outside of PLAYER/OPPONENT");

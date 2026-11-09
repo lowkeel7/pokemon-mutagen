@@ -71,6 +71,7 @@ enum MonData {
     MON_DATA_THIRD_TYPE, // Pokémon Mutagen (SG-01): raw, TYPE_NONE for none
     MON_DATA_THIRD_TYPE_PENDING,
     MON_DATA_RELIC, // Pokémon Mutagen (SG-09): the worn species part, RELIC_NONE for none
+    MON_DATA_RELIC_TYPE_OFF, // the worn part's type is not shown: the Pokémon's own third type stays (the player's pick)
     MON_DATA_MET_LOCATION,
     MON_DATA_MET_LEVEL,
     MON_DATA_MET_GAME,
@@ -138,7 +139,8 @@ struct PokemonSubstruct0
     u16 relic:6;     // Pokémon Mutagen (SG-09): the species part it wears, RELIC_NONE for none
     u32 experience:21;
     u32 nickname11:8; // 11th character of nickname.
-    u32 unused_04:3;
+    u32 relicTypeOff:1; // Pokémon Mutagen (SG-09): the player kept the Pokémon's own third type under the worn part's
+    u32 unused_04:2;
     u8 ppBonuses;
     u8 friendship;
     u16 pokeball:6; // 63 balls.

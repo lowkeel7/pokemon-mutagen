@@ -55,8 +55,8 @@ def write(parts, build):
 
 With **MUTAGEN → RELICS** on, a species part used from the bag on a party Pokémon is *worn*: it shows
 on the Pokémon's battle sprite, front and back, and in its summary, and the Pokémon has the part's
-ability whatever its species. Using another part asks to swap; using the same part takes it off,
-and the part goes back to the bag. Nothing is written to the Pokémon but the part's index, so
+ability whatever its species. Using another part asks to swap; the party menu's ITEM → TAKE OFF (or
+using the same part again) takes it off, and the part goes back to the bag. Nothing is written to the Pokémon but the part's index, so
 taking a part off gives it back exactly as it was. Every part is the donor species' own pixels,
 cut by `tools/relics/cut.py` (nothing is drawn); the ROM colours it with the donor's palette.
 
@@ -71,8 +71,9 @@ starts with one of each. Generated from the same table the ROM is built from: {l
 </tbody>
 </table>
 
-The type a part lends is its donor's first type; it becomes the wearer's third type while the part
-is worn when **MUTAGEN → THIRD TYPE** is on (the next slice; see the design note
-[Species items](design/items.md)).
+The type a part lends is its donor's first type: with **MUTAGEN → THIRD TYPE** on it is the
+wearer's third type while the part is worn, in the summary and in battle. A Pokémon that already
+has a third type of its own is asked which to show; its own type is never written over, and comes
+back when the part comes off (design note: [Species items](design/items.md)).
 """)
     print(f"wrote {OUT_MD} and {3 * len(rows)} images")

@@ -17,12 +17,12 @@ Anchors at HnS 2.0.6 (`167aa6d`). None of the `unused_*` fields below are refere
 ## Per-Pokémon bits (`include/pokemon.h`)
 | Where | Free | Notes |
 |---|---|---|
-| Substruct0 (:129) | `unused_04:3`, `unused_0A:2` | `teraType:5` at :132; reusable only if Tera stays off. `relic:6` (SG-09, was `unused_02:6`) is the worn species part |
+| Substruct0 (:129) | `unused_04:2`, `unused_0A:2` | `teraType:5` at :132; reusable only if Tera stays off. `relic:6` (SG-09, was `unused_02:6`) is the worn species part; `relicTypeOff:1` (SG-09, from `unused_04`) keeps the own third type under it |
 | Substruct1 | `unused_06:2` | `thirdType:5` (SG-01) and `thirdTypePending:1` (SG-17) claimed, were `unused_04:5` and one bit of `unused_06` |
 | Substruct3 | (none) | `isMutagen:1` claimed by SG-17 (was `unused_0B`) |
 | BoxPokemon (:255) | `unused_13:1`, `unused_1E:1` | `shinyModifier:1` at :273 |
 
-Total about 9 bits free. Claimed: SG-17 `isMutagen` (Substruct3), SG-01 `thirdType:5` + `thirdTypePending:1` (Substruct1; `teraType` was not usable: CreateBoxMon fills it for every Pokémon), SG-09 `relic:6` (Substruct0, `MON_DATA_RELIC`). Planned: variant flags (1 each).
+Total about 8 bits free. Claimed: SG-17 `isMutagen` (Substruct3), SG-01 `thirdType:5` + `thirdTypePending:1` (Substruct1; `teraType` was not usable: CreateBoxMon fills it for every Pokémon), SG-09 `relic:6` + `relicTypeOff:1` (Substruct0, `MON_DATA_RELIC`, `MON_DATA_RELIC_TYPE_OFF`). Planned: variant flags (1 each).
 Claim them in BACKLOG before writing code, so two features don't take the same bits.
 
 ## Option bits (`struct ChallengeSettings`)

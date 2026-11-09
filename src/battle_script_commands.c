@@ -5306,7 +5306,7 @@ static void Cmd_switchindataupdate(void)
 
     gBattleMons[battler].types[0] = GetSpeciesType(gBattleMons[battler].species, 0);
     gBattleMons[battler].types[1] = GetSpeciesType(gBattleMons[battler].species, 1);
-    gBattleMons[battler].types[2] = TYPE_MYSTERY;
+    SetBattlerThirdType(battler, GetBattlerMon(battler)); // Pokémon Mutagen (SG-01, SG-09): the graft or a worn part's type
     gBattleMons[battler].ability = GetMonAbility(GetBattlerMon(battler)); // Pokémon Mutagen (SG-09): a worn part's ability, else the species'
     #if TESTING
     if (gTestRunnerEnabled)

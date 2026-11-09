@@ -38,6 +38,8 @@ u32 RelicFromItem(u16 item);                 // RELIC_NONE if the item is not a 
 u32 RelicOfDonor(u16 species);               // the part a wild Pokémon of this species may drop, RELIC_NONE for none
 u32 GetMonRelic(struct Pokemon *mon);        // the worn part, RELIC_NONE when the option is off
 enum Ability GetRelicAbility(u32 relic);
+u32 GetRelicType(u32 relic);                 // the type a worn part lends: its donor's first type; TYPE_NONE for none
+u32 GetMonRelicType(struct Pokemon *mon);    // the type the worn part lends this Pokémon, TYPE_NONE when none shows (options off, nothing worn, or the own type kept)
 
 // The overlay sprite: `frame` is the wearer's decompressed first frame (64x64 4bpp), which places
 // the part. Returns SPRITE_NONE when nothing is worn or nothing can be drawn.

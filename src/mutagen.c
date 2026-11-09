@@ -10,6 +10,7 @@
 #include "palette.h"
 #include "party_menu.h"
 #include "pokemon.h"
+#include "relic.h"
 #include "script.h"
 #include "string_util.h"
 #include "task.h"
@@ -245,6 +246,23 @@ bool32 AreRelicsOn(void) // SG-09
 }
 
 u32 GetMonThirdType(struct Pokemon *mon)
+{
+    u32 third;
+
+    if (!IsThirdTypeOn())
+        return TYPE_NONE;
+    third = GetMonRelicType(mon); // Pokémon Mutagen (SG-09): a worn part's type shows over the Pokémon's own
+    if (third != TYPE_NONE)
+        return third;
+    if (GetMonData(mon, MON_DATA_THIRD_TYPE_PENDING))
+        return TYPE_NONE;
+    third = GetMonData(mon, MON_DATA_THIRD_TYPE);
+    if (third >= NUMBER_OF_MON_TYPES || third == TYPE_MYSTERY || third == TYPE_STELLAR)
+        return TYPE_NONE;
+    return third;
+}
+
+u32 GetMonOwnThirdType(struct Pokemon *mon)
 {
     u32 third;
 
