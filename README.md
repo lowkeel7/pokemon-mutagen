@@ -51,6 +51,9 @@ N and the version's 1 were drawn by that assistant in Heart & Soul's existing pi
 maintainer's request; everything else in the art, and all music and story text, is Heart & Soul's
 or credited in PROVENANCE.md. Heart & Soul's own disclosure is in [its README](docs/hns/README.md).
 
+**Made with [Irie](https://github.com/irie-people/irie)**, the open-source Mac app that runs those
+assistant sessions side by side and keeps them in check.
+
 ## Build it yourself
 
 `make hns` builds the development ROM and `tools/release.sh` the release and its patch; setup,

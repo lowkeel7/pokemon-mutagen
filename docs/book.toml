@@ -6,7 +6,7 @@ title = "Pokémon Mutagen"
 [output.html]
 git-repository-url = "https://github.com/rh-hideout/pokeemerald-expansion"
 edit-url-template = "https://github.com/rh-hideout/pokeemerald-expansion/edit/master/docs/{path}"
-site-url = "/"   # set to "/<repository>/" when the pages are published (RELEASE.md)
+site-url = "/pokemon-mutagen/"   # the repository's name on GitHub Pages (RELEASE.md)
 
 [preprocessor.fix_links]
 command = "python3 fix_links.py"
