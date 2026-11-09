@@ -120,6 +120,26 @@ list of hammer/body moves. Every non-ING item is also an ingredient.
 3. EVO rows; MISC rows one by one; ING after crafting exists.
 4. Icons: 24×24, 16 colours, made by hand or taken from credited asset packs (PROVENANCE). No AI art.
 
+## Owner's notes (2026-11-09)
+- **Worn, not held.** Using a part on a Pokémon puts it *on* the Pokémon: the part shows on its
+  battle sprite (front and back) and in the summary, and its ABIL effect applies whatever the
+  species is. The example: a Cubone Skull worn by any Pokémon draws the skull on its sprite and
+  gives it Rock Head, regardless of the Pokémon's type or anything else. The worn part is a
+  per-Pokémon field (one index, 6 bits: up to 63 parts), separate from the held item, so a worn
+  part and a held item coexist. Using another part asks to swap; the old one goes back to the bag.
+- **The third type is the player's choice.** Whenever a source offers a third type (the Mutagen's
+  graft, a part's USE, inheritance) and the Pokémon already has one, the game asks which to keep;
+  nothing overwrites a third type silently. Breeding (SG-18): when the parents carry different
+  third types, the player chooses which one the egg inherits; one parent's type passes down
+  unasked. Evolution keeps the third type (it is per-Pokémon data already).
+- Build order, revised: (1) the worn-part field and option (MUTAGEN → RELICS OFF (0) / ON), the
+  bag "use" flow with the swap prompt, the ABIL hook in `GetMonAbility` (summary and battle read
+  it), the sprite overlay (an extra OAM sprite following the battler as the DS shadows do, anchored
+  at the top centre of the first frame's drawn pixels, with a per-species override table for the
+  odd shapes), and the Cubone Skull as the first part; its art is cut from Cubone's own sprite
+  (PROVENANCE row, no new drawing). (2) The other ABIL rows as data. (3) USE → third type with the
+  choice prompt. (4) FAM / STAT / EVO / MISC rows.
+
 ## Open for review
-The ❓ rows; any item you meant differently; whether a held ABIL item should replace the
+The ❓ rows; any item you meant differently; whether a worn ABIL part should replace the
 holder's ability or add a second one (proposal: replace, which the engine already understands).
