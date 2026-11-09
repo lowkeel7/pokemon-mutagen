@@ -188,3 +188,34 @@ main:has(.m-hero) { max-width: 1080px; }
 .evo .lines { display: inline-flex; flex-direction: column; gap: 8px; }
 .evo .line { display: inline-flex; align-items: center; }
 .evo .line.mutagen .mon { outline: 2px solid var(--m-strain); outline-offset: 2px; border-radius: 8px; }
+
+/* Sprite styles (docs/pokerom/sprite-styles.md, written by tools/site/sprites.py): cells cut from the
+   sheets in docs/pokerom/sheets/, 16 a row; the page's checkboxes toggle .shiny / .female / .icons. */
+.styles .controls { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 0 0 1.2em; font-size: 0.95em; }
+.styles .controls label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+.styles .controls input { accent-color: var(--m-strain); }
+.styles h2 small { font: 400 10px/1 var(--m-pixel); letter-spacing: 0.14em; color: var(--m-ash); margin-inline-start: 10px; vertical-align: middle; }
+.styles .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(172px, 1fr)); gap: 10px; margin: 0 0 1.5em; }
+.styles.female .grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }   /* room for the third cell */
+.styles .card { padding: 10px 10px 8px; border: 1px solid var(--table-border-color); border-radius: var(--m-radius); background: var(--quote-bg); }
+.styles .name { font-weight: 600; font-size: 0.9em; line-height: 1.2; margin-block-end: 6px; }
+.styles .name small { font: 400 9px/1 var(--m-pixel); letter-spacing: 0.1em; color: var(--m-ash); }
+.styles .cells { display: flex; gap: 6px; align-items: flex-end; }
+.styles figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.styles figcaption { font: 400 9px/1 var(--m-pixel); letter-spacing: 0.12em; color: var(--m-ash); }
+.styles .sp { width: 64px; height: 64px; image-rendering: pixelated; background-repeat: no-repeat;
+  background-position: calc(var(--x) * -64px) calc(var(--y) * -64px); }
+.styles .sp.gba { background-image: url(../sheets/front-gba.png); }
+.styles .sp.ds { background-image: url(../sheets/front-ds.png); }
+.styles .sp.dsf { background-image: url(../sheets/front-ds-female.png); }
+.styles.shiny .sp.gba { background-image: url(../sheets/front-gba-shiny.png); }
+.styles.shiny .sp.ds { background-image: url(../sheets/front-ds-shiny.png); }
+.styles.shiny .sp.dsf { background-image: url(../sheets/front-ds-female-shiny.png); }
+.styles figure.f { display: none; }
+.styles.female .card[data-f] figure.f { display: flex; }
+.styles .icons { display: none; gap: 6px; margin-block-start: 6px; }
+.styles.icons .icons { display: flex; }
+.styles .ic { width: 32px; height: 32px; image-rendering: pixelated; background-repeat: no-repeat;
+  background-position: calc(var(--x) * -32px) calc(var(--y) * -32px); }
+.styles .ic.gba { background-image: url(../sheets/icon-gba.png); }
+.styles .ic.ds { background-image: url(../sheets/icon-ds.png); }

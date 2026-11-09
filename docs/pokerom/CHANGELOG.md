@@ -14,6 +14,8 @@ Heart & Soul's own history see its documentation, and for the engine see `CHANGE
   page, the evolution tree shows the fork on the Mutagen's line, and the videos get title cards and
   captions in the same type. Rules and files: `docs/pokerom/design/brand.md`; generator:
   `tools/brand/brand.py`. Nothing in it is a generated image.
+- A **Sprite styles** page on the site shows every Gen 1 to 3 Pokémon in its GBA and DS art side by
+  side, with the shiny colours and the DS female forms on toggles (`tools/site/sprites.py`).
 
 ### Fixed
 - Day Care: with a LEVEL CAP set, a Pokémon deposited above the cap "grew by 2xx levels" and the

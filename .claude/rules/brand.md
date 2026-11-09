@@ -35,7 +35,10 @@ this file is the working notes.
   prepend `<script>localStorage.setItem("mdbook-theme","navy")</script>` to its head.
 - **The evolution tree** (`docs/pokerom/evolutions.md`, `sprites/`) is written by
   `tools/site/evolutions.py`; its styles live in `mutagen.css` (`.evo`), the Mutagen arrow is the
-  mark. Rerun it after any `IF_MUTAGEN*` change.
+  mark. Rerun it after any `IF_MUTAGEN*` change. **The sprite-styles page**
+  (`docs/pokerom/sprite-styles.md`, sheets in `docs/pokerom/sheets/`, 3 MB) is written by
+  `tools/site/sprites.py` from `graphics/pokemon/*/{anim_front,anim_front_gba,anim_frontf,icon*}.png`
+  and the `.pal` files; styles in `mutagen.css` (`.styles`). Rerun it after any Gen 1-3 art change.
 - **Videos**: `tools/video/stitch.py` (GBA clips + captions → one branded video with the title
   card) and `tools/voxel/record.py` (the voxel walk, title card first). Both read the TTFs in
   `docs/pokerom/brand/fonts/`; ffmpeg's drawtext cannot read woff2.

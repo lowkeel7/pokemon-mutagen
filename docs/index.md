@@ -4,7 +4,7 @@
 {{#include pokerom/brand/wordmark-inline.svg}}
 <p class="m-tagline">A second line of evolution.</p>
 <p class="m-lede">A Game Boy Advance game, forked from Pokémon Heart & Soul. The Mutagen, a mutant strain of Pokérus, lets a Pokémon evolve along a second line, into its Paradox or regional twin, and grafts a third type onto it. Everything new is an option; switched off, the game plays like Heart & Soul.</p>
-<div class="m-actions"><a class="m-btn primary" href="project-readme.html#play">Play it</a><a class="m-btn ghost" href="pokerom/evolutions.html">The evolutions</a><a class="m-btn ghost" href="https://github.com/lowkeel7/pokemon-mutagen">GitHub</a></div>
+<div class="m-actions"><a class="m-btn primary" href="project-readme.html#play">Play it</a><a class="m-btn ghost" href="pokerom/evolutions.html">The evolutions</a><a class="m-btn ghost" href="pokerom/sprite-styles.html">Sprite styles</a><a class="m-btn ghost" href="https://github.com/lowkeel7/pokemon-mutagen">GitHub</a></div>
 <div class="m-chips"><span class="m-chip">GBA · flash cart · mGBA</span><span class="m-chip">Patch, never a ROM</span><span class="m-chip">v0.1.0</span></div>
 </div>
 <div class="m-tree">
@@ -38,6 +38,7 @@ The full notes, the bug-report address and the credits are in [the project READM
 
 <ul class="m-links">
 <li><a href="pokerom/evolutions.html"><b>Mutagen evolutions</b><span>Every family with a second line, with the game's own sprites.</span></a></li>
+<li><a href="pokerom/sprite-styles.html"><b>Sprite styles</b><span>Every Gen 1 to 3 Pokémon in its GBA and DS art, shiny and female forms too.</span></a></li>
 <li><a href="pokerom/CHANGELOG.html"><b>Changelog</b><span>What changed against Heart & Soul 2.0.6, release by release.</span></a></li>
 <li><a href="pokerom/BACKLOG.html"><b>Backlog</b><span>Every feature: its tier, its hook in the code and where it stands.</span></a></li>
 <li><a href="pokerom/design/brand.html"><b>Design notes</b><span>The brand, the type roots, status escalation, species items.</span></a></li>
